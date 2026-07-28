@@ -62,7 +62,7 @@ const BODIES: Body[] = [
   {
     name: "Mercury",
     r: 11,
-    d: 1.88,
+    d: 2.07,
     period: 154,
     start: 130,
     spin: 102,
@@ -73,7 +73,7 @@ const BODIES: Body[] = [
   {
     name: "Venus",
     r: 15.5,
-    d: 2.72,
+    d: 2.99,
     period: 237,
     start: 40,
     spin: 144,
@@ -87,7 +87,7 @@ const BODIES: Body[] = [
   {
     name: "Earth",
     r: 20.5,
-    d: 3.2,
+    d: 3.52,
     period: 336,
     start: 200,
     spin: 48,
@@ -103,7 +103,7 @@ const BODIES: Body[] = [
   {
     name: "Mars",
     r: 26,
-    d: 2.44,
+    d: 2.68,
     period: 429,
     start: 118,
     spin: 53,
@@ -114,7 +114,7 @@ const BODIES: Body[] = [
   {
     name: "Jupiter",
     r: 32,
-    d: 5.28,
+    d: 5.81,
     period: 557,
     start: 85,
     spin: 29,
@@ -134,7 +134,7 @@ const BODIES: Body[] = [
   {
     name: "Saturn",
     r: 38.2,
-    d: 4.4,
+    d: 4.84,
     period: 723,
     start: 200,
     spin: 34,
@@ -152,7 +152,7 @@ const BODIES: Body[] = [
   {
     name: "Uranus",
     r: 43.8,
-    d: 3.6,
+    d: 3.96,
     period: 928,
     start: 255,
     spin: 42,
@@ -166,7 +166,7 @@ const BODIES: Body[] = [
   {
     name: "Neptune",
     r: 49.2,
-    d: 3.4,
+    d: 3.74,
     period: 1152,
     start: 105,
     spin: 38,
@@ -181,11 +181,11 @@ const BODIES: Body[] = [
 
 /** Tiny bodies drifting between the giants — the grit that sells the scale. */
 const MINOR = [
-  { r: 28.9, d: 0.34, period: 480, start: 340, o: 0.42 },
-  { r: 29.4, d: 0.27, period: 419, start: 96, o: 0.34 },
-  { r: 29.9, d: 0.24, period: 528, start: 188, o: 0.27 },
-  { r: 41.2, d: 0.29, period: 832, start: 128, o: 0.25 },
-  { r: 46.4, d: 0.24, period: 1024, start: 22, o: 0.22 },
+  { r: 28.9, d: 0.37, period: 480, start: 340, o: 0.42 },
+  { r: 29.4, d: 0.3, period: 419, start: 96, o: 0.34 },
+  { r: 29.9, d: 0.26, period: 528, start: 188, o: 0.27 },
+  { r: 41.2, d: 0.32, period: 832, start: 128, o: 0.25 },
+  { r: 46.4, d: 0.26, period: 1024, start: 22, o: 0.22 },
 ];
 
 /** Orbits share a slightly displaced focus, as real ellipses do. */
@@ -358,14 +358,15 @@ export default function SolarSystem({
           leaves the seam of that texture visible as a faint square. Nothing
           about the sun needs the plane's rotation, so it stays flat. */}
       <div className="pointer-events-none absolute left-1/2 top-1/2">
-        {/* Four layers, and only the innermost is the body. Everything gained
-            here is light, not sun: the disc is 5.75cqw rather than 4.6 purely
-            to cancel the container's 20% reduction, so it lands on screen at
-            the same pixel size it always had. Each shell is wider and fainter
-            than the last and the outermost reaches past the orbits entirely —
-            the point is that the surrounding space looks lit, not that the sun
-            looks large. Alphas stay low and the hue stays ivory so it reads
-            warm rather than bright. */}
+        {/* Four layers, and only the innermost is the body. Everything else
+            here is light, not sun: each shell is wider and fainter than the
+            last and the outermost reaches past the orbits entirely, because
+            the point is that the surrounding space looks lit rather than that
+            the sun looks large. Alphas stay low so it reads warm, not bright.
+
+            The disc is held a little above Jupiter's diameter on purpose. The
+            two are close enough now that letting the largest planet overtake
+            the star would quietly invert the hierarchy of the whole scene. */}
         <div
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
           style={{
@@ -408,8 +409,8 @@ export default function SolarSystem({
         <div
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
           style={{
-            width: "5.75cqw",
-            height: "5.75cqw",
+            width: "6.2cqw",
+            height: "6.2cqw",
             background:
               "radial-gradient(circle at 50% 46%, #ffffff 0%, #fff6dd 38%, #fbe0a4 72%, #f2c977 100%)",
             boxShadow: "0 0 34px 11px rgba(248,224,168,0.42)",

@@ -51,12 +51,11 @@ export default function Scene() {
             paints out to ~50.9% — the box must leave room for that overhang.
 
             The system is deliberately given less of the viewport than it can
-            take: at 72vw/64svh it clears a fifth of the width it used to fill,
-            and that margin is the composition. It should read as suspended in
-            space rather than fitted to the frame. A phone gives up less — the
-            viewport is already tight there, and the same cut would leave the
-            outer bodies too small to make out. */}
-        <div className="mx-auto w-[min(76vw,64svh)] sm:w-[min(72vw,64svh)]">
+            take, and that margin is the composition — it should read as
+            suspended in space rather than fitted to the frame. A phone gives
+            up less of it, since the viewport is already tight there and the
+            same cut would leave the outer bodies too small to make out. */}
+        <div className="mx-auto w-[min(84vw,70svh)] sm:w-[min(79vw,70svh)]">
           <SolarSystem
             onTiltChange={(t, s) => {
               // one write per frame is plenty for a background layer

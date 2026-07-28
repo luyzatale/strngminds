@@ -47,7 +47,7 @@ export default function Hero() {
           viewport and into the composition — it belongs to the system above it
           rather than to the edge below it. Well clear of the corner controls,
           which reach only 56px up. */}
-      <p className="pointer-events-none absolute bottom-24 left-1/2 z-10 w-full -translate-x-1/2 whitespace-nowrap text-center text-[0.62rem] uppercase tracking-[0.24em] text-ink-faint sm:bottom-[5.5rem] sm:text-[0.68rem] sm:tracking-[0.3em]">
+      <p className="pointer-events-none absolute bottom-24 left-1/2 z-10 w-full -translate-x-1/2 whitespace-nowrap text-center text-[0.53rem] uppercase tracking-[0.24em] text-ink-faint sm:bottom-[5.5rem] sm:text-[0.58rem] sm:tracking-[0.3em]">
         Drag to turn
         <span className="sm:hidden"> · tap a planet</span>
         <span className="hidden sm:inline"> · hover a planet</span>
