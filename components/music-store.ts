@@ -11,6 +11,7 @@ export type MusicController = {
   play: () => void;
   pause: () => void;
   togglePlay: () => void;
+  resume?: () => void;
   /** Spotify's own rewind-and-play; the name has no "At" on it. */
   playFromStart?: () => void;
   seek?: (seconds: number) => void;
@@ -37,6 +38,8 @@ const listeners = new Set<() => void>();
 let position = 0;
 let watchdog = 0;
 let startedAt = 0;
+/** whether the track has been under way at all in this visit */
+let opened = false;
 
 export const musicStore = {
   controller: null as MusicController | null,
@@ -80,6 +83,7 @@ export const musicStore = {
 
     position = 0;
     startedAt = Date.now();
+    opened = true;
 
     /**
      * All three synchronously, inside the gesture that asked for it. A phone
@@ -115,6 +119,30 @@ export const musicStore = {
         position = 0;
       }
     }, 400);
+  },
+
+  /**
+   * The play button.
+   *
+   * Until the track has been under way once, this starts it at the top —
+   * the embed can otherwise pick up at a position it remembers from an
+   * earlier visit. After that it simply resumes, which is what the separate
+   * restart is for.
+   */
+  toggle() {
+    if (state.playing) {
+      this.pause();
+      return;
+    }
+    if (!opened) {
+      this.playFromTop(TRACK);
+      return;
+    }
+    this.controller?.resume?.() ?? this.controller?.play();
+  },
+
+  restart() {
+    this.playFromTop(TRACK);
   },
 
   pause() {

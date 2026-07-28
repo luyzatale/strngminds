@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { LogoLockup } from "@/components/Logo";
 import InstallButton from "@/components/InstallButton";
-import MusicButton from "@/components/MusicButton";
 import ThemeToggle from "@/components/ThemeToggle";
 import { clsx } from "@/lib/clsx";
 
@@ -93,7 +92,6 @@ export default function Nav({ links = [] }: { links?: Link[] }) {
 
         <div className="flex shrink-0 items-center gap-2 sm:gap-2.5">
           <InstallButton />
-          <MusicButton />
           <ThemeToggle />
 
           {/* The contact pill is a phone's worth of width on its own, so on a
