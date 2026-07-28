@@ -12,7 +12,7 @@ export default function Hero() {
   return (
     <section
       id="top"
-      className="relative flex min-h-[100svh] items-center justify-center overflow-hidden px-4 pb-20 pt-[var(--nav-h)] sm:px-10 sm:pb-16"
+      className="relative flex min-h-[100svh] items-center justify-center overflow-hidden px-4 pb-24 pt-[var(--nav-h)] sm:px-10 sm:pb-16"
     >
       <h1 className="sr-only">
         Strng Minds — a contemplative practice where philosophy, astronomy,
@@ -41,20 +41,22 @@ export default function Hero() {
  * so does its opacity — the ones that drift in among the orbits are small and
  * nearly transparent, the big ones stay out at the corners.
  */
+type Galaxy = {
+  x: number;
+  y: number;
+  size: number;
+  tilt: number;
+  flatten: number;
+  duration: number;
+  reverse: boolean;
+  strength: number;
+  opacity: number;
+  seed: number;
+};
+
 const GALAXIES = (() => {
   const rnd = seeded(9137);
-  const out: {
-    x: number;
-    y: number;
-    size: number;
-    tilt: number;
-    flatten: number;
-    duration: number;
-    reverse: boolean;
-    strength: number;
-    opacity: number;
-    seed: number;
-  }[] = [];
+  const out = [] as Galaxy[];
 
   let guard = 0;
   while (out.length < 9 && guard++ < 900) {
@@ -63,6 +65,7 @@ const GALAXIES = (() => {
     // 0 at the sun, 1 in the corners
     const d = Math.hypot(x - 0.5, y - 0.5) / Math.SQRT1_2;
     if (d < 0.24) continue; // never on top of the sun
+    if (y < 0.17 || y > 0.9) continue; // clear of the bar and of the hint
     if (out.some((g) => Math.hypot(g.x / 100 - x, g.y / 100 - y) < 0.17)) continue;
 
     out.push({
@@ -79,8 +82,33 @@ const GALAXIES = (() => {
     });
   }
 
-  // biggest first, so the breakpoint rules below drop the faintest ones on small screens
-  return out.sort((a, b) => b.size - a.size);
+  out.sort((a, b) => b.size - a.size);
+
+  /**
+   * Three of them carry the phone, and they are chosen one per vertical band
+   * rather than by size alone — taking simply the largest three lands them all
+   * in whichever half of the frame the seed happened to favour, and the field
+   * reads bottom-heavy.
+   */
+  const bands: [number, number][] = [
+    [0.19, 0.42],
+    [0.42, 0.65],
+    [0.65, 0.86],
+  ];
+  const onPhone = new Set<number>();
+  for (const [lo, hi] of bands) {
+    const i = out.findIndex(
+      (g, idx) => !onPhone.has(idx) && g.y / 100 >= lo && g.y / 100 < hi,
+    );
+    if (i !== -1) onPhone.add(i);
+  }
+
+  let extra = 0;
+  return out.map((g, i) => {
+    if (onPhone.has(i)) return { ...g, tier: "phone" as const };
+    extra += 1;
+    return { ...g, tier: extra <= 3 ? ("sm" as const) : ("lg" as const) };
+  });
 })();
 
 function HeroDecor() {
@@ -95,7 +123,11 @@ function HeroDecor() {
         <div
           key={g.seed}
           className={
-            i < 2 ? "absolute" : i < 5 ? "absolute hidden sm:block" : "absolute hidden lg:block"
+            g.tier === "phone"
+              ? "absolute"
+              : g.tier === "sm"
+                ? "absolute hidden sm:block"
+                : "absolute hidden lg:block"
           }
           style={{
             left: `${g.x}%`,

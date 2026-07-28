@@ -43,7 +43,10 @@ export default function Scene() {
         <Starfield seed={21} count={340} clear={0} />
       </motion.div>
 
-      <FadeIn delay={0.2} y={18} className="relative z-10 w-full">
+      {/* Nudged up a touch on phones: a mobile browser's own bar overlays the
+          bottom of the visible area, so dead-centre in the viewport reads low
+          on the screen. */}
+      <FadeIn delay={0.2} y={18} className="relative z-10 -mt-[3svh] w-full sm:mt-0">
         {/* Neptune's centre is at 49.2% and it is ~2% wide, so the system
             paints out to ~51% — the box must leave room for that overhang. */}
         <div className="mx-auto w-[min(84vw,74svh)] sm:w-[min(90vw,80svh)]">

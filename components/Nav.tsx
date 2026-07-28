@@ -54,7 +54,7 @@ export default function Nav({ links = [] }: { links?: Link[] }) {
         aria-label="Primary"
         className="mx-auto flex h-[var(--nav-h)] w-full max-w-[110rem] items-center justify-between gap-3 px-5 sm:px-10 lg:px-14"
       >
-        <a href="#top" className="relative -m-2 p-2" aria-label="Strng Minds — home">
+        <a href="/" className="relative -m-2 p-2" aria-label="Strng Minds — home">
           <LogoLockup />
         </a>
 

@@ -110,7 +110,7 @@ export default function InstallButton() {
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             onClick={(e) => e.stopPropagation()}
-            className="absolute right-0 top-[calc(100%+0.75rem)] z-50 w-[16rem] rounded-2xl border border-line bg-paper/90 p-5 text-left shadow-lift backdrop-blur-xl"
+            className="fixed inset-x-4 top-[calc(var(--nav-h)+0.5rem)] z-50 rounded-2xl border border-line bg-paper/90 p-5 text-left shadow-lift backdrop-blur-xl sm:absolute sm:inset-x-auto sm:right-0 sm:top-[calc(100%+0.75rem)] sm:w-[16rem]"
           >
             <p className="text-[0.62rem] uppercase tracking-[0.24em] text-ink-faint">
               On iPhone
