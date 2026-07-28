@@ -10,24 +10,15 @@ export const THEME_KEY = "sm-theme";
  * The script that runs before paint, so the page never flashes the wrong
  * theme. Kept here so the storage key and the toggle can never drift apart.
  */
-export const themeScript = `(function(){try{var s=localStorage.getItem("${THEME_KEY}");var d=s||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.dataset.theme=d;}catch(e){}})();`;
+export const themeScript = `(function(){try{var s=localStorage.getItem("${THEME_KEY}");document.documentElement.dataset.theme=s||"dark";}catch(e){document.documentElement.dataset.theme="dark";}})();`;
 
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>("light");
+  const [theme, setTheme] = useState<Theme>("dark");
 
   useEffect(() => {
-    const current = (document.documentElement.dataset.theme as Theme) ?? "light";
+    // the page opens at night unless the visitor has said otherwise
+    const current = (document.documentElement.dataset.theme as Theme) ?? "dark";
     setTheme(current);
-
-    const media = window.matchMedia("(prefers-color-scheme: dark)");
-    const follow = () => {
-      if (localStorage.getItem(THEME_KEY)) return; // they have chosen
-      const next: Theme = media.matches ? "dark" : "light";
-      document.documentElement.dataset.theme = next;
-      setTheme(next);
-    };
-    media.addEventListener("change", follow);
-    return () => media.removeEventListener("change", follow);
   }, []);
 
   const toggle = () => {

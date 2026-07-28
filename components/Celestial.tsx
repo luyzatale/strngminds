@@ -241,7 +241,6 @@ export function Constellation({
    scene in front of it is moved.
    ──────────────────────────────────────────────────────────── */
 
-const STAR_PERIOD = 21; // 2π / 0.3 — the reference's speed
 
 export function Starfield({
   seed = 21,
@@ -256,7 +255,16 @@ export function Starfield({
   className?: string;
 }) {
   const rnd = seeded(seed);
-  const stars: { x: number; y: number; s: number; o: number; gold: boolean }[] = [];
+  const stars: {
+    x: number;
+    y: number;
+    s: number;
+    o: number;
+    gold: boolean;
+    sparkle: boolean;
+    dur: number;
+    delay: number;
+  }[] = [];
 
   let guard = 0;
   while (stars.length < count && guard++ < count * 40) {
@@ -270,6 +278,10 @@ export function Starfield({
       s: round((0.5 + 0.5 * rnd()) * 3.1, 2),
       o: round(0.24 + rnd() * 0.5, 2),
       gold: rnd() > 0.62,
+      // roughly one in six catches the light; the rest are fixed points
+      sparkle: rnd() > 0.83,
+      dur: round(5 + rnd() * 7, 2),
+      delay: round(rnd() * 14, 2),
     });
   }
 
@@ -291,10 +303,16 @@ export function Starfield({
             background: st.gold
               ? "radial-gradient(circle, #e6d3ab 0%, rgba(230,211,171,0.55) 45%, rgba(230,211,171,0) 100%)"
               : "radial-gradient(circle, #c3c0d8 0%, rgba(195,192,216,0.5) 45%, rgba(195,192,216,0) 100%)",
-            animationName: "sm-star-pulse",
-            animationDuration: `${STAR_PERIOD}s`,
-            animationTimingFunction: "ease-in-out",
-            animationIterationCount: "infinite",
+            ...(st.sparkle
+              ? {
+                  ["--star-o" as string]: st.o,
+                  animationName: "sm-sparkle",
+                  animationDuration: `${st.dur}s`,
+                  animationTimingFunction: "ease-in-out",
+                  animationIterationCount: "infinite",
+                  animationDelay: `${st.delay}s`,
+                }
+              : null),
           }}
         />
       ))}

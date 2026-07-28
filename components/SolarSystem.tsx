@@ -521,13 +521,16 @@ function Planet({
         </>
       )}
 
-      {/* the name, kept clear of the body itself */}
+      {/* The name. It gets a generous fixed width centred by margin rather than
+          a shrink-to-fit box: an absolutely positioned auto-width element is
+          capped at (containing block − left), which here is half a planet, so
+          the text would be laid out in ~20px and spill out of its own box. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute left-1/2 top-full z-20 whitespace-nowrap pt-3 text-center transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
+        className="pointer-events-none absolute left-1/2 top-full z-20 -ml-[7rem] w-[14rem] whitespace-nowrap pt-3 text-center transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
         style={{
           opacity: active ? 1 : 0,
-          transform: `translate(-50%, ${active ? "0px" : "-4px"})`,
+          transform: `translateY(${active ? "0px" : "-4px"})`,
         }}
       >
         <span className="block font-serif text-[0.98rem] tracking-[0.12em] text-ink">

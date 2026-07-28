@@ -291,3 +291,18 @@
     transform: translate3d(-50%, 0, 0);
   }
 }
+
+/* A sparkle is a brief brightening, not a fade in and out: most of the cycle
+   sits at rest so the field stays calm and only the odd star catches. */
+@keyframes sm-sparkle {
+  0%,
+  62%,
+  100% {
+    opacity: calc(var(--star-o, 0.4) * var(--star-scale, 1));
+    transform: scale(1);
+  }
+  78% {
+    opacity: calc(min(1, var(--star-o, 0.4) * 3.2) * var(--star-scale, 1));
+    transform: scale(1.7);
+  }
+}
