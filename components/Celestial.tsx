@@ -64,7 +64,7 @@ export const VERDANT_CORE = ["#fdf6dd", "#e9dcae", "#5fae9a"];
  * spiral with fewer points on it, not a different shape.
  */
 const dotsFor = (size: number) =>
-  Math.max(180, Math.min(460, Math.round(size * 2.4)));
+  Math.max(150, Math.min(420, Math.round(size * 1.7)));
 
 function galaxyDots(seed: number, count = 460, ink = GALAXY_INK): Dot[] {
   const rnd = seeded(seed);
@@ -178,6 +178,152 @@ export function Galaxy({
           </svg>
         </div>
       </div>
+    </div>
+  );
+}
+
+/* ────────────────────────────────────────────────────────────
+   Distant galaxies — the ones too small to draw dot by dot.
+   ──────────────────────────────────────────────────────────── */
+
+/** Single colours, drawn from the same palette the dot fields use. */
+export const SOFT_INK = [
+  "#b7b3d6",
+  "#cfd2e4",
+  "#d8c29a",
+  "#c8c3e0",
+  "#e2dcc6",
+  "#bdb9d2",
+];
+
+export const SOFT_CORE = ["#efeaf6", "#fff8e8", "#e8eaf4", "#f4eee2"];
+
+/**
+ * A galaxy at 20–120px, rendered as two stacked gradients instead of several
+ * hundred `<circle>` elements.
+ *
+ * This is the whole reason the field can hold fifty objects rather than a
+ * dozen. Below roughly 120px a spiral is not legible — the arms fall under a
+ * pixel and every dot the SVG version draws is describing structure nobody can
+ * resolve. A flattened disc with a brighter core is indistinguishable at that
+ * size and costs two nodes.
+ *
+ * There is deliberately no `blur()` here either. The brief for these is "heavy
+ * blur, barely visible", but a filter would force a rendering context for each
+ * one, and forty of those is a real cost on a phone. Gentle gradient stops are
+ * already soft — the blur is baked into the paint rather than applied over it.
+ */
+export function SoftGalaxy({
+  size,
+  tilt = -20,
+  flatten = 0.4,
+  ink = SOFT_INK[0],
+  core = SOFT_CORE[0],
+  opacity = 0.2,
+  className,
+  style,
+}: {
+  size: number;
+  tilt?: number;
+  flatten?: number;
+  ink?: string;
+  core?: string;
+  opacity?: number;
+  className?: string;
+  style?: CSSProperties;
+}) {
+  return (
+    <div
+      className={className}
+      style={{
+        width: size,
+        height: size,
+        opacity,
+        filter: "var(--galaxy-filter, none)",
+        ...style,
+      }}
+      aria-hidden="true"
+    >
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          borderRadius: "50%",
+          transform: `rotate(${tilt}deg) scaleY(${flatten})`,
+          /**
+           * Both stops are deliberately weak and the falloff deliberately
+           * long. A first pass used a bright core with a short falloff, and
+           * at these sizes that does not read as a distant galaxy at all — it
+           * reads as lens flare, a hard bright lozenge scratched across the
+           * frame. What a far galaxy actually looks like is a smudge you are
+           * not sure you saw. No stop here goes above 40% alpha, and the
+           * outer one runs all the way to 86% of the radius before it
+           * vanishes, so there is no edge anywhere to catch the eye.
+           */
+          background: [
+            `radial-gradient(closest-side circle at 50% 50%, ${core}52 0%, ${core}1f 30%, ${core}00 54%)`,
+            `radial-gradient(closest-side circle at 50% 50%, ${ink}45 0%, ${ink}24 34%, ${ink}0f 60%, ${ink}00 86%)`,
+          ].join(","),
+        }}
+      />
+    </div>
+  );
+}
+
+/* ────────────────────────────────────────────────────────────
+   Nebulae — atmosphere rather than objects.
+   ──────────────────────────────────────────────────────────── */
+
+type Cloud = { x: number; y: number; w: number; h: number; c: string; o: number; tilt: number };
+
+/**
+ * Four clouds, and the whole intent is that you cannot quite tell they are
+ * there. They are not blurred either — at 5–9% alpha over 600–900px, the
+ * gradient's own falloff is far softer than any filter would make it, and
+ * layers this large are exactly where a `blur()` gets expensive.
+ *
+ * Colours are the existing tokens and nothing else: paper white, the warm
+ * ivory, and the earth blue pulled right down.
+ */
+const CLOUDS: Cloud[] = [
+  { x: 74, y: 18, w: 940, h: 580, c: "247,232,199", o: 0.05, tilt: -18 },
+  { x: 16, y: 62, w: 860, h: 700, c: "77,143,200", o: 0.034, tilt: 24 },
+  { x: 58, y: 88, w: 980, h: 520, c: "255,255,255", o: 0.03, tilt: -8 },
+  { x: 30, y: 12, w: 700, h: 540, c: "50,94,145", o: 0.038, tilt: 32 },
+];
+
+export function Nebulae({ phone = false }: { phone?: boolean }) {
+  const clouds = phone ? CLOUDS.slice(0, 2) : CLOUDS;
+
+  return (
+    <div
+      className="pointer-events-none absolute inset-0"
+      style={{ display: "var(--nebula-show, block)" }}
+      aria-hidden="true"
+    >
+      {clouds.map((c, i) => (
+        <div
+          key={i}
+          className="absolute"
+          style={{
+            left: `${c.x}%`,
+            top: `${c.y}%`,
+            width: c.w,
+            height: c.h,
+            marginLeft: -c.w / 2,
+            marginTop: -c.h / 2,
+            background: `radial-gradient(closest-side ellipse at 50% 50%, rgba(${c.c},${c.o}) 0%, rgba(${c.c},${c.o * 0.45}) 38%, rgba(${c.c},0) 76%)`,
+            // the tilt lives on an inner property-free element's own transform,
+            // and the drift keyframe below owns the wrapper's
+            rotate: `${c.tilt}deg`,
+            animationName: "sm-nebula-drift",
+            animationDuration: `${420 + i * 90}s`,
+            animationTimingFunction: "ease-in-out",
+            animationIterationCount: "infinite",
+            animationDirection: "alternate",
+          }}
+        />
+      ))}
     </div>
   );
 }
@@ -338,10 +484,41 @@ export function Starfield({
     delay: number;
   }[] = [];
 
+  /**
+   * Space is not evenly sprinkled, and an even sprinkle is the one thing that
+   * reads instantly as generated. Seven loose centres take a little over half
+   * the field between them, each draw pulled toward its centre by a power
+   * curve so the density falls off smoothly and never draws an edge you could
+   * point at; the remainder land anywhere at all.
+   *
+   * What this leaves out matters as much as what it puts down. The gaps
+   * between clusters are the empty regions — they are not carved, they are
+   * simply where the clusters are not.
+   */
+  const clusters = Array.from({ length: 7 }, () => ({
+    x: rnd(),
+    y: rnd(),
+    r: 0.11 + rnd() * 0.17,
+  }));
+
   let guard = 0;
   while (stars.length < count && guard++ < count * 40) {
-    const x = rnd();
-    const y = rnd();
+    let x: number;
+    let y: number;
+
+    if (rnd() < 0.56) {
+      const c = clusters[Math.floor(rnd() * clusters.length)];
+      const rad = c.r * Math.pow(rnd(), 1.9);
+      const a = rnd() * Math.PI * 2;
+      x = c.x + Math.cos(a) * rad;
+      // slightly elongated, so a cluster never resolves into a disc
+      y = c.y + Math.sin(a) * rad * 1.35;
+      if (x < 0 || x > 1 || y < 0 || y > 1) continue;
+    } else {
+      x = rnd();
+      y = rnd();
+    }
+
     if (Math.hypot(x - 0.5, y - 0.5) < clear) continue;
     /**
      * How near the star is: 0 is far back in the field, 1 is close. Size and
@@ -355,13 +532,13 @@ export function Starfield({
       x: round(x * 100, 2),
       y: round(y * 100, 2),
       // (0.5 + 0.5 * random) * factor, as in the reference, at a smaller factor
-      s: round((0.42 + 0.58 * near) * 1.75, 2),
-      o: round(0.1 + near * 0.26, 2),
+      s: round((0.42 + 0.58 * near) * 1.6, 2),
+      o: round(0.05 + near * 0.2, 2),
       gold: rnd() > 0.62,
-      // roughly one in eight catches the light; the rest are fixed points
-      sparkle: rnd() > 0.88,
-      dur: round(5 + rnd() * 7, 2),
-      delay: round(rnd() * 14, 2),
+      // roughly one in ten catches the light; the rest are fixed points
+      sparkle: rnd() > 0.9,
+      dur: round(6 + rnd() * 9, 2),
+      delay: round(rnd() * 18, 2),
     });
   }
 

@@ -443,7 +443,7 @@ function Orbit({
           very bottom of the brightness scale, below the stars and well below
           the bodies it carries. */}
       <div
-        className="pointer-events-none absolute rounded-full border border-gold/[0.12]"
+        className="pointer-events-none absolute rounded-full border border-gold/10"
         style={{ ...box, ...preserve }}
       />
       <div

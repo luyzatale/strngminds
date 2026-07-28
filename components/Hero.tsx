@@ -7,6 +7,10 @@ import {
   Galaxy,
   NEBULA_CORE,
   NEBULA_INK,
+  Nebulae,
+  SOFT_CORE,
+  SOFT_INK,
+  SoftGalaxy,
   VERDANT_CORE,
   VERDANT_INK,
 } from "@/components/Celestial";
@@ -53,19 +57,16 @@ export default function Hero() {
   );
 }
 
-/**
- * Galaxies are scattered from a fixed seed rather than placed by hand, so the
- * field reads as aleatory. Distance from the sun is the depth axis, and three
- * properties hang off it together — size, opacity and focus. What drifts in
- * among the orbits is small, faint and slightly soft; what sits in the corners
- * is larger and sharper, and still nowhere near bright enough to argue with
- * the centre.
- *
- * The sizes are three fixed values rather than a continuum. A smooth ramp
- * produces nine galaxies that all look like the same object at slightly
- * different distances; three separated scales produce a near, a middle and a
- * far population, which is what actually reads as depth.
- */
+/* ────────────────────────────────────────────────────────────
+   The universe.
+
+   Five layers, ordered by distance, and the ordering is the whole design.
+   Everything about a body follows from how far away it is meant to be: how
+   large it is drawn, how bright, how sharp, whether it is worth drawing as a
+   spiral at all, and which of the three drifting layers carries it. Nothing
+   is placed to fill a gap — the gaps are the point.
+   ──────────────────────────────────────────────────────────── */
+
 type Tint = "nebula" | "frost" | "verdant";
 
 const INK: Record<Tint, string[]> = {
@@ -80,194 +81,208 @@ const CORE: Record<Tint, string[]> = {
   verdant: VERDANT_CORE,
 };
 
-/** Everything needed to paint one galaxy in one place. */
-type Placed = {
-  /** percentages of the hero, so the arrangement holds at any screen height */
+type Common = {
+  /** percentages of the hero, so an arrangement holds at any screen size */
   x: number;
   y: number;
   size: number;
   tilt: number;
   flatten: number;
-  duration: number;
-  reverse: boolean;
   opacity: number;
-  /** defocus in px — the far ones sit well behind the plane of focus */
-  blur: number;
-  tinted: Tint | null;
+  /** unique — two galaxies sharing a seed are the same galaxy twice */
   seed: number;
 };
 
-/** The scattered ones carry three terms the composed ones have no use for. */
-type Scattered = Placed & {
-  strength: number;
-  /** 0 at the sun, 1 in the corners; the depth axis everything hangs off */
-  d: number;
-  tier: "sm" | "lg";
+/** Big enough that the arms resolve, so drawn dot by dot. */
+type Spiral = Common & {
+  kind: "spiral";
+  duration: number;
+  reverse: boolean;
+  blur: number;
+  tinted: Tint | null;
 };
 
-/** Small, medium, large. */
-const GALAXY_SCALE = [72, 124, 202];
+/** Too small for arms to mean anything, so drawn as light. */
+type Soft = Common & {
+  kind: "soft";
+  ink: string;
+  core: string;
+  /** whether it survives onto a phone, where the field is thinned out */
+  phone: boolean;
+};
+
+type Body = Spiral | Soft;
+
+/** 0 at the sun, 1 at a corner. The axis everything else hangs off. */
+const depth = (x: number, y: number) =>
+  Math.hypot(x - 0.5, y - 0.5) / Math.SQRT1_2;
+
 /**
- * The far population is the least in focus, in the same order — but only just.
- * A heavier hand here (1.4px on a 72px disc built from sub-pixel dots) erases
- * the spiral entirely and leaves a grey smudge, which reads as a smear on the
- * glass rather than as a distant object. Depth is carried by size and opacity;
- * blur only confirms it.
+ * Three regions nothing is allowed into.
+ *
+ * Rejection sampling with a minimum gap gives an even spread, and an even
+ * spread is the opposite of what deep space looks like — it reads as a texture
+ * rather than a distance. These carve out the large bare areas that make the
+ * populated ones feel populated. They are placed by hand and off-axis, so the
+ * emptiness is asymmetric too.
  */
-const GALAXY_BLUR = [0.9, 0.5, 0.2];
+const VOIDS = [
+  { x: 0.34, y: 0.16, r: 0.2 },
+  { x: 0.68, y: 0.89, r: 0.18 },
+  { x: 0.04, y: 0.85, r: 0.15 },
+];
 
-const GALAXIES: Scattered[] = (() => {
-  const rnd = seeded(9137);
-  const out = [] as Omit<Scattered, "tinted" | "tier">[];
+type Spot = { x: number; y: number };
 
+/**
+ * Scatter `count` positions under the field's rules.
+ *
+ * `edge` is the one that does the compositional work: a candidate survives
+ * with probability `depth ^ edge`, so above 1 the population is pushed out
+ * toward the frame and below 1 it is allowed to come inward. That is how the
+ * field frames the system instead of ringing it — the big things stay out at
+ * the border and only the faintest are permitted near the middle.
+ */
+function scatter(
+  rnd: () => number,
+  count: number,
+  o: { gap: number; clear: number; edge: number; taken: Spot[] },
+): Spot[] {
+  const out: Spot[] = [];
   let guard = 0;
-  while (out.length < 9 && guard++ < 900) {
+
+  while (out.length < count && guard++ < count * 400) {
     const x = rnd();
     const y = rnd();
-    // 0 at the sun, 1 in the corners
-    const d = Math.hypot(x - 0.5, y - 0.5) / Math.SQRT1_2;
-    if (d < 0.24) continue; // never on top of the sun
-    if (y < 0.17 || y > 0.9) continue; // clear of the bar and of the hint
-    if (out.some((g) => Math.hypot(g.x / 100 - x, g.y / 100 - y) < 0.17)) continue;
+    const d = depth(x, y);
 
-    /**
-     * Every `rnd()` below is drawn in the same order and the same number of
-     * times as before, deliberately: the scatter, the teal galaxy's place to
-     * the left of the system and the phone selection are all downstream of
-     * this sequence, and a single extra draw would reshuffle a composition
-     * that is already settled. Size and blur are assigned after the loop,
-     * from depth, without consuming any randomness.
-     */
-    out.push({
-      x: round(x * 100, 2),
-      y: round(y * 100, 2),
-      size: 0, // assigned below
-      tilt: Math.round(-60 + rnd() * 120),
-      flatten: round(0.26 + rnd() * 0.28, 2),
-      // slow enough that catching it moving takes deliberate attention
-      duration: Math.round(900 + rnd() * 800),
-      reverse: rnd() > 0.5,
-      strength: Math.round(3 + rnd() * 4),
-      // the corners top out at 45%; the near-centre ones sit at a third of that
-      opacity: round(0.12 + d * 0.33, 2),
-      blur: 0, // assigned below
-      d: round(d, 3),
-      seed: 7 + Math.floor(rnd() * 900),
-    });
+    if (d < o.clear) continue; // never over the system
+    if (y < 0.07 || y > 0.95) continue; // clear of the bar and of the hint
+    if (rnd() > Math.pow(d, o.edge)) continue;
+    if (VOIDS.some((v) => Math.hypot(v.x - x, v.y - y) < v.r)) continue;
+    if (o.taken.some((t) => Math.hypot(t.x - x, t.y - y) < o.gap)) continue;
+
+    out.push({ x, y });
+    o.taken.push({ x, y });
   }
 
-  /**
-   * Three populations of three, split by rank rather than by a threshold on
-   * `d`. A threshold is the obvious way to do it and it does not work: this
-   * scatter's distances cluster in the middle, and cutting at 0.44/0.70 put
-   * seven of the nine in one band — nine galaxies at one size, which is
-   * exactly the flat field the three scales exist to break up. Ranking
-   * guarantees the near, middle and far groups all actually exist, and since
-   * the rank is on distance from the sun the large ones still land outside.
-   */
-  const byDepth = [...out].sort((a, b) => a.d - b.d);
-  byDepth.forEach((g, i) => {
-    const band = Math.min(2, Math.floor((i * 3) / byDepth.length));
-    g.size = GALAXY_SCALE[band];
-    g.blur = GALAXY_BLUR[band];
-  });
+  return out;
+}
 
-  out.sort((a, b) => b.size - a.size);
+/**
+ * Layer 5 — the anchors. Three, placed by hand, because three objects that
+ * carry a composition are not a job for a random number generator.
+ *
+ * Two of them sit on a diagonal, upper-right against mid-left, which balances
+ * without symmetry; the third is smaller and quieter and sits low on the right
+ * to stop that diagonal reading as a rule. They also carry three of the four
+ * painted palettes, the teal one keeping its standing place at the left of the
+ * system.
+ */
+const HEROES: Spiral[] = [
+  { kind: "spiral", x: 83, y: 23, size: 232, tilt: -28, flatten: 0.4, opacity: 0.66, blur: 0.15, duration: 21600, reverse: false, tinted: "nebula", seed: 4101 },
+  { kind: "spiral", x: 10, y: 50, size: 214, tilt: 16, flatten: 0.34, opacity: 0.62, blur: 0.15, duration: 25200, reverse: true, tinted: "verdant", seed: 4207 },
+  { kind: "spiral", x: 86, y: 73, size: 190, tilt: -52, flatten: 0.44, opacity: 0.57, blur: 0.2, duration: 28800, reverse: false, tinted: "frost", seed: 4313 },
+];
 
-  /**
-   * Four are painted from photographs — two violet, one blue-and-amber, one
-   * teal — and each has to sit fully in frame: the biggest are pushed into the corners
-   * and bleed off the edge, where a colour barely registers. They are also
-   * kept apart, so a pair does not read as one patch of colour.
-   */
-  const tint = new Map<number, Tint>();
-  const taken: { x: number; y: number }[] = [];
+const { MEDIUM, SMALL, TINY } = (() => {
+  const rnd = seeded(4703);
+  const taken: Spot[] = HEROES.map((h) => ({ x: h.x / 100, y: h.y / 100 }));
 
-  /**
-   * The teal one is placed rather than picked: it belongs to the left of the
-   * system, so it takes the leftmost galaxy sitting at roughly the height of
-   * the sun.
-   */
-  const verdant = out
-    .map((g, i) => ({ g, i }))
-    .filter(
-      ({ g }) =>
-        g.x / 100 >= 0.06 &&
-        g.x / 100 <= 0.3 &&
-        g.y / 100 >= 0.3 &&
-        g.y / 100 <= 0.72,
-    )
-    .sort((a, b) => a.g.x - b.g.x)[0];
-
-  if (verdant) {
-    tint.set(verdant.i, "verdant");
-    taken.push({ x: verdant.g.x / 100, y: verdant.g.y / 100 });
-  }
-
-  for (let i = 0; i < out.length && tint.size < 4; i++) {
-    if (tint.has(i)) continue;
-    const g = out[i];
-    const x = g.x / 100;
-    const y = g.y / 100;
-    if (x < 0.14 || x > 0.86 || y < 0.18 || y > 0.82) continue;
-    // the scatter already keeps them 0.17 apart, so this only stops a pair
-    // landing shoulder to shoulder
-    if (taken.some((t) => Math.hypot(t.x - x, t.y - y) < 0.18)) continue;
-    const nebulas = [...tint.values()].filter((t) => t === "nebula").length;
-    tint.set(i, nebulas < 2 ? "nebula" : "frost");
-    taken.push({ x, y });
-  }
+  const mediumAt = scatter(rnd, 7, { gap: 0.2, clear: 0.44, edge: 1.2, taken });
+  const smallAt = scatter(rnd, 12, { gap: 0.13, clear: 0.33, edge: 0.85, taken });
+  const tinyAt = scatter(rnd, 30, { gap: 0.07, clear: 0.25, edge: 0.5, taken });
 
   /**
-   * The painted four are the point of the field, so they come in as soon as
-   * this set does; two plain ones join them to keep the colour from reading as
-   * the whole story, and the remaining three wait for a large screen.
+   * Layer 4 — the frame. Large enough to still be spirals, dim enough that
+   * they register as structure rather than as objects. One of them carries the
+   * second violet palette.
    */
-  let plain = 0;
-  return out.map((g, i) => {
-    const tinted = tint.get(i) ?? null;
-    if (!tinted) plain += 1;
-    return {
-      ...g,
-      tinted,
-      opacity: tinted ? Math.min(0.56, g.opacity + 0.14) : g.opacity,
-      tier: tinted || plain <= 2 ? ("sm" as const) : ("lg" as const),
-    };
-  });
+  const MEDIUM: Spiral[] = mediumAt.map((s, i) => ({
+    kind: "spiral",
+    x: round(s.x * 100, 2),
+    y: round(s.y * 100, 2),
+    size: Math.round(122 + rnd() * 56),
+    tilt: Math.round(-70 + rnd() * 140),
+    flatten: round(0.24 + rnd() * 0.28, 2),
+    opacity: round(0.31 + rnd() * 0.13, 2),
+    blur: 0.5,
+    // an order of magnitude slower than the heroes, which are already slow
+    duration: Math.round(32400 + rnd() * 12600),
+    reverse: rnd() > 0.5,
+    tinted: i === 0 ? "nebula" : null,
+    seed: 5000 + i * 37,
+  }));
+
+  /**
+   * Layer 3, near half — present, but only as much as a distant thing is.
+   *
+   * Note the flatten range, which is nothing like the spirals'. A galaxy drawn
+   * at 0.2 flatten is a sliver, and a faint sliver at this size is a scratch
+   * on the lens, not an object in space. Held between 0.45 and 0.85 they stay
+   * round enough to read as things rather than as marks.
+   */
+  const SMALL: Soft[] = smallAt.map((s, i) => ({
+    kind: "soft",
+    x: round(s.x * 100, 2),
+    y: round(s.y * 100, 2),
+    size: Math.round(58 + rnd() * 50),
+    tilt: Math.round(-80 + rnd() * 160),
+    flatten: round(0.45 + rnd() * 0.4, 2),
+    opacity: round(0.13 + rnd() * 0.08, 2),
+    ink: SOFT_INK[Math.floor(rnd() * SOFT_INK.length)],
+    core: SOFT_CORE[Math.floor(rnd() * SOFT_CORE.length)],
+    phone: i < 5,
+    seed: 6000 + i * 41,
+  }));
+
+  /**
+   * Layer 3, far half — the ones that are only ever seen by accident. At this
+   * size and this opacity none of them is legible on its own; what they do is
+   * make the count of things out there feel unbounded, which is the whole job.
+   */
+  const TINY: Soft[] = tinyAt.map((s, i) => ({
+    kind: "soft",
+    x: round(s.x * 100, 2),
+    y: round(s.y * 100, 2),
+    size: Math.round(18 + rnd() * 30),
+    tilt: Math.round(-90 + rnd() * 180),
+    flatten: round(0.55 + rnd() * 0.35, 2),
+    opacity: round(0.055 + rnd() * 0.055, 2),
+    ink: SOFT_INK[Math.floor(rnd() * SOFT_INK.length)],
+    core: SOFT_CORE[Math.floor(rnd() * SOFT_CORE.length)],
+    phone: i < 16,
+    seed: 7000 + i * 43,
+  }));
+
+  return { MEDIUM, SMALL, TINY };
 })();
 
 /**
- * The phone is composed by hand rather than sampled from the set above, and
- * that is the whole point. Those nine positions were arranged for a landscape
- * frame; replayed as percentages into 390×844 they fall apart — the galaxy at
- * x=8% loses half its width off the left edge, two of the three visible ones
- * stack up on the right, and the top third of the screen empties out entirely.
- * No subset of a landscape composition is a portrait composition.
+ * The phone's anchors, still composed by hand rather than sampled.
  *
- * So: five, descending the screen and alternating sides, each one clear of the
- * bar above and the hint and controls below. Weight is balanced across the
- * centre line rather than counted — three on the left against two on the
- * right, but the right pair carries the largest of the five. The teal one
- * keeps its standing instruction to sit at the left of the system; on a frame
- * this narrow that means overlapping the outer orbits, which is what depth
- * looks like when there is no room beside the object.
+ * The reasoning has not changed: percentages arranged for a landscape frame
+ * come apart in portrait, and no subset of a landscape composition is a
+ * portrait composition. What has changed is that only the anchors need this
+ * treatment now — the small and tiny layers above are diffuse enough to be
+ * texture rather than composition, so they carry over to both frames and only
+ * get thinned.
+ *
+ * Five, descending the screen and alternating sides, each clear of the bar
+ * above and the hint and controls below. The first and last are held at 17%
+ * and 76% rather than nearer the edges: a percentage is a different number of
+ * pixels on a 640-tall screen than a 932-tall one, and pushed further out the
+ * short end of that range slid one under the bar and the other across the
+ * hint.
  */
-const PHONE_GALAXIES: Placed[] = [
-  /**
-   * The first and last are held at 17% and 76% rather than pushed nearer the
-   * edges. A percentage is a different number of pixels on a 640-tall screen
-   * than on a 932-tall one, and at 14/82 the short end of that range slid the
-   * top galaxy under the bar and the bottom one across the hint. These two
-   * bounds clear both at every height in between.
-   */
-  // far, small, and barely there — it only has to stop the top from being bare
-  { x: 24, y: 17, size: 78, tilt: -34, flatten: 0.36, duration: 1300, reverse: false, opacity: 0.26, blur: 0.9, tinted: null, seed: 311 },
-  { x: 79, y: 25, size: 118, tilt: 22, flatten: 0.42, duration: 1050, reverse: true, opacity: 0.42, blur: 0.5, tinted: "nebula", seed: 428 },
+const PHONE: Body[] = [
+  { kind: "soft", x: 24, y: 17, size: 74, tilt: -34, flatten: 0.36, opacity: 0.2, ink: SOFT_INK[1], core: SOFT_CORE[0], phone: true, seed: 8101 },
+  { kind: "spiral", x: 79, y: 25, size: 128, tilt: 22, flatten: 0.42, opacity: 0.44, blur: 0.3, duration: 25200, reverse: true, tinted: "nebula", seed: 8207 },
   // left of the system, at the height of the sun
-  { x: 15, y: 47, size: 118, tilt: -18, flatten: 0.38, duration: 1450, reverse: false, opacity: 0.44, blur: 0.5, tinted: "verdant", seed: 573 },
+  { kind: "spiral", x: 15, y: 47, size: 132, tilt: -18, flatten: 0.38, opacity: 0.46, blur: 0.3, duration: 28800, reverse: false, tinted: "verdant", seed: 8313 },
   // the nearest and largest, set against the two on the left below it
-  { x: 74, y: 69, size: 170, tilt: 41, flatten: 0.34, duration: 1180, reverse: true, opacity: 0.4, blur: 0.2, tinted: "frost", seed: 664 },
-  { x: 26, y: 76, size: 118, tilt: -52, flatten: 0.3, duration: 1600, reverse: false, opacity: 0.34, blur: 0.5, tinted: null, seed: 742 },
+  { kind: "spiral", x: 74, y: 69, size: 174, tilt: 41, flatten: 0.34, opacity: 0.5, blur: 0.25, duration: 21600, reverse: true, tinted: "frost", seed: 8419 },
+  { kind: "soft", x: 26, y: 76, size: 112, tilt: -52, flatten: 0.3, opacity: 0.28, ink: SOFT_INK[2], core: SOFT_CORE[3], phone: true, seed: 8525 },
 ];
 
 function HeroDecor() {
@@ -276,28 +291,81 @@ function HeroDecor() {
       className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
       aria-hidden="true"
     >
-      <Dust seed={91} count={14} />
+      {/* Atmosphere, beneath everything. */}
+      <div className="hidden sm:block">
+        <Nebulae />
+      </div>
+      <div className="sm:hidden">
+        <Nebulae phone />
+      </div>
 
-      {/* The two arrangements swap over wholesale at `sm`; neither is a subset
-          of the other. Below that the phone gets no pointer parallax either —
-          PointerField switches itself off for a coarse pointer, so it would be
-          five springs animating nothing. */}
-      {PHONE_GALAXIES.map((g) => (
-        <GalaxyAt key={g.seed} g={g} className="absolute sm:hidden" />
-      ))}
+      {/* Layer 3 — the far field. Barely moves, because it is barely there. */}
+      <div
+        className="absolute inset-0"
+        style={{
+          animationName: "sm-layer-far",
+          animationDuration: "340s",
+          animationTimingFunction: "ease-in-out",
+          animationIterationCount: "infinite",
+        }}
+      >
+        {TINY.map((b) => (
+          <GalaxyAt
+            key={b.seed}
+            b={b}
+            className={b.phone ? "absolute" : "absolute hidden sm:block"}
+          />
+        ))}
+      </div>
 
-      {GALAXIES.map((g, i) => (
-        <GalaxyAt
-          key={g.seed}
-          g={g}
-          className={
-            g.tier === "sm"
-              ? "absolute hidden sm:block"
-              : "absolute hidden lg:block"
-          }
-          parallax={{ strength: g.strength, invert: i % 2 === 1 }}
-        />
-      ))}
+      {/* Layer 4 — the middle distance. */}
+      <div
+        className="absolute inset-0"
+        style={{
+          animationName: "sm-layer-mid",
+          animationDuration: "260s",
+          animationTimingFunction: "ease-in-out",
+          animationIterationCount: "infinite",
+        }}
+      >
+        {SMALL.map((b) => (
+          <GalaxyAt
+            key={b.seed}
+            b={b}
+            className={b.phone ? "absolute" : "absolute hidden sm:block"}
+          />
+        ))}
+        {MEDIUM.map((b) => (
+          <GalaxyAt key={b.seed} b={b} className="absolute hidden sm:block" />
+        ))}
+      </div>
+
+      {/* Layer 5 — the anchors, and the only things given pointer parallax.
+          Fifty springs for fifty specks would cost the main thread a great
+          deal to say almost nothing; three is where it reads. */}
+      <div
+        className="absolute inset-0"
+        style={{
+          animationName: "sm-layer-near",
+          animationDuration: "200s",
+          animationTimingFunction: "ease-in-out",
+          animationIterationCount: "infinite",
+        }}
+      >
+        {HEROES.map((b, i) => (
+          <GalaxyAt
+            key={b.seed}
+            b={b}
+            className="absolute hidden sm:block"
+            parallax={{ strength: 5, invert: i % 2 === 1 }}
+          />
+        ))}
+        {PHONE.map((b) => (
+          <GalaxyAt key={b.seed} b={b} className="absolute sm:hidden" />
+        ))}
+      </div>
+
+      <Dust seed={91} count={9} />
 
       {/* Hidden details. Small enough and faint enough that they are found on
           a second look rather than seen on the first. */}
@@ -316,46 +384,55 @@ function HeroDecor() {
   );
 }
 
-/** One galaxy, at one place, however it got there. */
+/** One galaxy, at one place, drawn whichever way its distance calls for. */
 function GalaxyAt({
-  g,
+  b,
   className,
   parallax,
 }: {
-  g: Placed;
+  b: Body;
   className: string;
   parallax?: { strength: number; invert: boolean };
 }) {
-  const body = (
-    <Galaxy
-      seed={g.seed}
-      size={g.size}
-      tilt={g.tilt}
-      flatten={g.flatten}
-      duration={g.duration}
-      reverse={g.reverse}
-      ink={g.tinted ? INK[g.tinted] : undefined}
-      core={g.tinted ? CORE[g.tinted] : undefined}
-      style={{ opacity: g.opacity }}
-    />
-  );
+  const inner =
+    b.kind === "spiral" ? (
+      <Galaxy
+        seed={b.seed}
+        size={b.size}
+        tilt={b.tilt}
+        flatten={b.flatten}
+        duration={b.duration}
+        reverse={b.reverse}
+        ink={b.tinted ? INK[b.tinted] : undefined}
+        core={b.tinted ? CORE[b.tinted] : undefined}
+        style={{ opacity: b.opacity }}
+      />
+    ) : (
+      <SoftGalaxy
+        size={b.size}
+        tilt={b.tilt}
+        flatten={b.flatten}
+        ink={b.ink}
+        core={b.core}
+        opacity={b.opacity}
+      />
+    );
 
   return (
     <div
       className={className}
       style={{
-        left: `${g.x}%`,
-        top: `${g.y}%`,
+        left: `${b.x}%`,
+        top: `${b.y}%`,
         transform: "translate(-50%, -50%)",
         /* Defocus sits out here rather than inside Galaxy, which already
-           spends its own `filter` on the theme's brightness correction. The
-           painted ones keep most of their edge — they are the deliberate notes
-           of colour in the field, and blurring them to the same degree as the
-           rest would grey them out. */
-        filter: `blur(${g.tinted ? round(g.blur * 0.4, 2) : g.blur}px)`,
+           spends its own `filter` on the theme's brightness correction. Only
+           the spirals get one at all — the soft ones have their softness in
+           the paint, which costs nothing. */
+        ...(b.kind === "spiral" ? { filter: `blur(${b.blur}px)` } : null),
       }}
     >
-      {parallax ? <Parallax {...parallax}>{body}</Parallax> : body}
+      {parallax ? <Parallax {...parallax}>{inner}</Parallax> : inner}
     </div>
   );
 }

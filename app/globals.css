@@ -58,6 +58,14 @@
      */
     --star-drift: 75s;
     --galaxy-filter: brightness(0.82) saturate(1.15);
+    /**
+     * Nebulae are a dark-sky effect and only a dark-sky effect. The same pale
+     * blue that reads as atmosphere over #08080d reads as a grey stain over
+     * white paper — a large soft wash on light ground looks like dirt on the
+     * page, not like light in space. A keyword token switches the whole layer
+     * off rather than fading it, so light mode pays nothing to composite it.
+     */
+    --nebula-show: none;
   }
 
   /* Dark is a real theme, not an inversion: the same palette, re-lit. Every
@@ -83,6 +91,7 @@
 
     --star-scale: 2.2;
     --galaxy-filter: none;
+    --nebula-show: block;
   }
 
   @media (min-width: 768px) {
@@ -244,10 +253,10 @@
   0%,
   72%,
   100% {
-    opacity: 0.2;
+    opacity: 0.15;
   }
   86% {
-    opacity: 0.42;
+    opacity: 0.3;
   }
 }
 
@@ -357,6 +366,52 @@
   }
   50% {
     transform: scale(1.33);
+  }
+}
+
+/* The camera, such as it is.
+   Three layers of the background drift a few pixels over several minutes, each
+   on its own clock and its own amplitude — the nearer the layer, the further
+   it goes. None of this is meant to be seen moving. It is meant to stop the
+   field reading as a photograph, which is the one thing a still starfield
+   always eventually does. */
+@keyframes sm-layer-far {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(3px, -2px, 0);
+  }
+}
+
+@keyframes sm-layer-mid {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(-6px, 4px, 0);
+  }
+}
+
+@keyframes sm-layer-near {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(9px, -6px, 0);
+  }
+}
+
+/* The clouds move further, because they have no edge for the eye to track. */
+@keyframes sm-nebula-drift {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(-16px, 11px, 0) scale(1.05);
   }
 }
 
