@@ -12,7 +12,7 @@ export default function Hero() {
   return (
     <section
       id="top"
-      className="relative flex min-h-[100svh] items-center justify-center overflow-hidden px-6 pb-16 pt-[var(--nav-h)] sm:px-10"
+      className="relative flex min-h-[100svh] items-center justify-center overflow-hidden px-4 pb-20 pt-[var(--nav-h)] sm:px-10 sm:pb-16"
     >
       <h1 className="sr-only">
         Strng Minds — a contemplative practice where philosophy, astronomy,
@@ -25,8 +25,10 @@ export default function Hero() {
         <Scene />
       </FadeIn>
 
-      <p className="pointer-events-none absolute bottom-8 left-1/2 z-10 -translate-x-1/2 text-[0.6rem] uppercase tracking-[0.3em] text-ink-faint">
-        Drag to turn · hover a planet
+      <p className="pointer-events-none absolute bottom-7 left-1/2 z-10 w-full -translate-x-1/2 whitespace-nowrap text-center text-[0.55rem] uppercase tracking-[0.22em] text-ink-faint sm:bottom-8 sm:text-[0.6rem] sm:tracking-[0.3em]">
+        Drag to turn
+        <span className="sm:hidden"> · tap a planet</span>
+        <span className="hidden sm:inline"> · hover a planet</span>
       </p>
     </section>
   );

@@ -44,15 +44,21 @@ export function LogoMark({
   );
 }
 
+/**
+ * On a phone the two words stack, which both fits the bar and echoes the
+ * circular emblem; from `sm` up they sit on one line at full size.
+ */
 export function Wordmark({ className }: { className?: string }) {
   return (
     <span
       className={clsx(
-        "font-serif text-[1.18rem] font-medium uppercase leading-none tracking-[0.24em] text-ink",
+        "flex flex-col whitespace-nowrap font-serif text-[0.86rem] font-medium uppercase leading-[1.06] tracking-[0.16em] text-ink",
+        "sm:flex-row sm:gap-[0.34em] sm:text-[1.18rem] sm:leading-none sm:tracking-[0.24em]",
         className,
       )}
     >
-      Strng Minds
+      <span>Strng</span>
+      <span>Minds</span>
     </span>
   );
 }
@@ -65,8 +71,8 @@ export function LogoLockup({
   animated?: boolean;
 }) {
   return (
-    <span className={clsx("inline-flex items-center gap-3.5", className)}>
-      <LogoMark animated={animated} />
+    <span className={clsx("inline-flex items-center gap-2.5 sm:gap-3.5", className)}>
+      <LogoMark animated={animated} size={28} />
       <Wordmark />
       <span className="sr-only">Strng Minds — home</span>
     </span>

@@ -1,15 +1,17 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "framer-motion";
 
 /**
  * Background music, via Spotify's official embed.
  *
- * Two constraints shape this: browsers refuse to autoplay audio without a
- * gesture, and Spotify's terms want their player visible rather than hidden in
- * a corner. So the nav carries a small control that starts and stops playback,
- * and the real player fades in at the foot of the page while it runs.
+ * Browsers refuse to autoplay audio without a gesture, so playback starts from
+ * the small control in the nav. The embed itself is kept mounted but invisible
+ * at the author's request — re-parenting or unmounting it would tear down the
+ * iframe mid-track, and display:none can suspend media, so it is held in the
+ * viewport at zero opacity instead. (Spotify's embed terms expect their player
+ * to be visible; that is a call for whoever ships this.)
  *
  * Listeners without a Spotify session get the track's 30-second preview;
  * logged-in listeners get the whole thing.
@@ -121,22 +123,13 @@ export default function Music() {
         </span>
       </button>
 
-      {/* One mount point, always present: re-parenting it would tear down the
-          iframe mid-track. It simply fades out of the way when paused. */}
-      <motion.div
-        initial={false}
-        animate={{
-          opacity: playing && !failed ? 1 : 0,
-          y: playing && !failed ? 0 : 14,
-        }}
-        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        aria-hidden={!playing}
-        className={`fixed bottom-6 left-6 z-40 w-[min(20rem,calc(100vw-3rem))] overflow-hidden rounded-2xl border border-line bg-paper/80 p-1.5 shadow-lift backdrop-blur-xl ${
-          playing && !failed ? "" : "pointer-events-none"
-        }`}
+      {/* One mount point, always present and never visible. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed bottom-0 left-0 z-[-1] h-[80px] w-[320px] overflow-hidden opacity-0"
       >
         <div ref={holder} />
-      </motion.div>
+      </div>
     </>
   );
 }

@@ -221,6 +221,7 @@ export default function SolarSystem({
   const billboard = useMotionTemplate`rotateZ(${negSpin}deg) rotateX(${negTilt}deg)`;
 
   const onPointerDown = (e: PointerEvent<HTMLDivElement>) => {
+    setNamed(null);
     drag.current = { x: e.clientX, y: e.clientY };
     setDragging(true);
     // synthetic pointers (tests, scripted input) have no capture target
@@ -303,6 +304,7 @@ export default function SolarSystem({
                       active={named === b.name}
                       onEnter={() => setNamed(b.name)}
                       onLeave={() => setNamed((n) => (n === b.name ? null : n))}
+                      onTap={() => setNamed((n) => (n === b.name ? null : b.name))}
                     />
                   </div>
                 </motion.div>
@@ -449,11 +451,13 @@ function Planet({
   active,
   onEnter,
   onLeave,
+  onTap,
 }: {
   body: Body;
   active: boolean;
   onEnter: () => void;
   onLeave: () => void;
+  onTap: () => void;
 }) {
   return (
     <div className="pointer-events-none relative">
@@ -462,8 +466,14 @@ function Planet({
         role="img"
         tabIndex={0}
         aria-label={body.name}
-        onPointerEnter={onEnter}
-        onPointerLeave={onLeave}
+        onPointerEnter={(e) => e.pointerType === "mouse" && onEnter()}
+        onPointerLeave={(e) => e.pointerType === "mouse" && onLeave()}
+        onPointerDown={(e) => {
+          if (e.pointerType === "mouse") return;
+          // a tap names the body instead of starting a drag
+          e.stopPropagation();
+          onTap();
+        }}
         onFocus={onEnter}
         onBlur={onLeave}
         style={{

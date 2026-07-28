@@ -292,17 +292,20 @@
   }
 }
 
-/* A sparkle is a brief brightening, not a fade in and out: most of the cycle
-   sits at rest so the field stays calm and only the odd star catches. */
+/* A sparkle is a brief catch of light, not a fade in and out.
+   The rest state is deliberately dimmer and smaller than a fixed star: in the
+   dark theme --star-scale is 2.2, so a normal star already sits at or near
+   full opacity and a "brighter" keyframe would have nowhere to go. Starting
+   low is what gives the flash somewhere to travel. */
 @keyframes sm-sparkle {
   0%,
-  62%,
+  58%,
   100% {
-    opacity: calc(var(--star-o, 0.4) * var(--star-scale, 1));
-    transform: scale(1);
+    opacity: calc(var(--star-o, 0.4) * var(--star-scale, 1) * 0.34);
+    transform: scale(0.75);
   }
-  78% {
-    opacity: calc(min(1, var(--star-o, 0.4) * 3.2) * var(--star-scale, 1));
-    transform: scale(1.7);
+  74% {
+    opacity: min(1, var(--star-o, 0.4) * var(--star-scale, 1) * 2);
+    transform: scale(2.6);
   }
 }

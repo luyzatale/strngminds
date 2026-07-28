@@ -51,7 +51,7 @@ export default function Nav({ links = [] }: { links?: Link[] }) {
     >
       <nav
         aria-label="Primary"
-        className="mx-auto flex h-[var(--nav-h)] w-full max-w-[110rem] items-center justify-between px-6 sm:px-10 lg:px-14"
+        className="mx-auto flex h-[var(--nav-h)] w-full max-w-[110rem] items-center justify-between gap-3 px-5 sm:px-10 lg:px-14"
       >
         <a href="#top" className="relative -m-2 p-2" aria-label="Strng Minds — home">
           <LogoLockup />
@@ -73,13 +73,13 @@ export default function Nav({ links = [] }: { links?: Link[] }) {
           </ul>
         )}
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-2.5">
           <Music />
           <ThemeToggle />
 
           <a
             href={CONTACT}
-            className="inline-flex h-9 items-center rounded-full border border-line-strong px-5 text-[0.8rem] tracking-[0.04em] text-ink transition-[background-color,border-color] duration-500 hover:border-gold hover:bg-ivory/20"
+            className="inline-flex h-10 items-center rounded-full border border-line-strong px-3.5 text-[0.74rem] tracking-[0.04em] text-ink transition-[background-color,border-color] duration-500 hover:border-gold hover:bg-ivory/20 sm:h-9 sm:px-5 sm:text-[0.8rem]"
           >
             Begin
           </a>

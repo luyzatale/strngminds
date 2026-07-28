@@ -33,7 +33,9 @@ export default function Scene() {
       </motion.div>
 
       <div className="relative z-10 w-full">
-        <div className="mx-auto w-[min(92vw,80svh)]">
+        {/* Neptune's centre is at 49.2% and it is ~2% wide, so the system
+            paints out to ~51% — the box must leave room for that overhang. */}
+        <div className="mx-auto w-[min(84vw,74svh)] sm:w-[min(90vw,80svh)]">
           <SolarSystem
             onTiltChange={(t, s) => {
               // one write per frame is plenty for a background layer
