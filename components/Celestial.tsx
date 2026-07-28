@@ -54,6 +54,18 @@ export const VERDANT_INK = [
 
 export const VERDANT_CORE = ["#fdf6dd", "#e9dcae", "#5fae9a"];
 
+/**
+ * How many dots a disc of this size is worth.
+ *
+ * Every dot is its own `<circle>`, so density is paid for in DOM nodes — and
+ * once the galaxies came down to 72–202px, a flat 460 was drawing several
+ * hundred elements per galaxy describing structure finer than a pixel. The
+ * spiral is parameterised by `i / count`, so a sparser field is the same
+ * spiral with fewer points on it, not a different shape.
+ */
+const dotsFor = (size: number) =>
+  Math.max(180, Math.min(460, Math.round(size * 2.4)));
+
 function galaxyDots(seed: number, count = 460, ink = GALAXY_INK): Dot[] {
   const rnd = seeded(seed);
   const dots: Dot[] = [];
@@ -77,8 +89,8 @@ function galaxyDots(seed: number, count = 460, ink = GALAXY_INK): Dot[] {
     });
   }
 
-  // A faint halo of field stars around the disc.
-  for (let i = 0; i < 90; i++) {
+  // A faint halo of field stars around the disc, scaled with it.
+  for (let i = 0; i < Math.round(count * 0.2); i++) {
     const a = rnd() * Math.PI * 2;
     const rad = 12 + rnd() * 34;
     dots.push({
@@ -118,7 +130,7 @@ export function Galaxy({
   className?: string;
   style?: CSSProperties;
 }) {
-  const dots = galaxyDots(seed, 460, ink);
+  const dots = galaxyDots(seed, dotsFor(size), ink);
   const id = `gx-${seed}`;
 
   return (
