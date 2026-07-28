@@ -1,5 +1,5 @@
 import Scene from "@/components/Scene";
-import { BlackHole, Constellation, Dust, Galaxy } from "@/components/Celestial";
+import { Constellation, Dust, Galaxy } from "@/components/Celestial";
 import { Parallax } from "@/components/Motion";
 import { round, seeded } from "@/lib/rand";
 
@@ -118,8 +118,6 @@ function HeroDecor() {
       aria-hidden="true"
     >
       <Dust seed={91} count={14} />
-
-      <BlackHole size={44} duration={360} />
 
       {GALAXIES.map((g, i) => (
         <div
