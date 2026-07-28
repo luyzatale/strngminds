@@ -1,5 +1,11 @@
 import Scene from "@/components/Scene";
-import { Constellation, Dust, Galaxy } from "@/components/Celestial";
+import {
+  Constellation,
+  Dust,
+  Galaxy,
+  NEBULA_CORE,
+  NEBULA_INK,
+} from "@/components/Celestial";
 import { Parallax } from "@/components/Motion";
 import { round, seeded } from "@/lib/rand";
 
@@ -103,11 +109,25 @@ const GALAXIES = (() => {
     if (i !== -1) onPhone.add(i);
   }
 
+  /**
+   * The violet one has to be a galaxy that sits fully in frame — the biggest
+   * are pushed into the corners and bleed off the edge, where a colour barely
+   * registers. So: the largest that clears every edge by a fifth.
+   */
+  const violet = out.findIndex(
+    (g) =>
+      g.x / 100 > 0.2 &&
+      g.x / 100 < 0.8 &&
+      g.y / 100 > 0.22 &&
+      g.y / 100 < 0.78,
+  );
+
   let extra = 0;
   return out.map((g, i) => {
-    if (onPhone.has(i)) return { ...g, tier: "phone" as const };
+    const tinted = i === violet;
+    if (onPhone.has(i)) return { ...g, tinted, tier: "phone" as const };
     extra += 1;
-    return { ...g, tier: extra <= 3 ? ("sm" as const) : ("lg" as const) };
+    return { ...g, tinted, tier: extra <= 3 ? ("sm" as const) : ("lg" as const) };
   });
 })();
 
@@ -143,7 +163,11 @@ function HeroDecor() {
               flatten={g.flatten}
               duration={g.duration}
               reverse={g.reverse}
-              style={{ opacity: g.opacity }}
+              ink={g.tinted ? NEBULA_INK : undefined}
+              core={g.tinted ? NEBULA_CORE : undefined}
+              style={{
+                opacity: g.tinted ? Math.min(1, g.opacity + 0.25) : g.opacity,
+              }}
             />
           </Parallax>
         </div>

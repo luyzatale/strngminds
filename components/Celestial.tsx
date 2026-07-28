@@ -10,7 +10,22 @@ type Dot = { x: number; y: number; r: number; o: number; c: string };
 
 const GALAXY_INK = ["#b7b3d6", "#c8c3e0", "#d8c29a", "#cfd2e4", "#e2dcc6"];
 
-function galaxyDots(seed: number, count = 460): Dot[] {
+/**
+ * One galaxy is painted from a photograph instead: violet arms with pink
+ * star-forming knots, a warm gold core, and a blue-white haze at the rim.
+ */
+export const NEBULA_INK = [
+  "#a687e2",
+  "#bf8fe0",
+  "#e579bd",
+  "#8f7ed2",
+  "#e0cb9a",
+  "#cdd8f2",
+];
+
+export const NEBULA_CORE = ["#fff6e0", "#f0d9a4", "#a186dd"];
+
+function galaxyDots(seed: number, count = 460, ink = GALAXY_INK): Dot[] {
   const rnd = seeded(seed);
   const dots: Dot[] = [];
   const arms = 2;
@@ -29,7 +44,7 @@ function galaxyDots(seed: number, count = 460): Dot[] {
       y: round(50 + Math.sin(theta) * radius + jy, 2),
       r: round(0.22 + rnd() * 0.55, 2),
       o: round(0.12 + rnd() * 0.5 * (1 - radius / 46), 2),
-      c: GALAXY_INK[Math.floor(rnd() * GALAXY_INK.length)],
+      c: ink[Math.floor(rnd() * ink.length)],
     });
   }
 
@@ -42,7 +57,7 @@ function galaxyDots(seed: number, count = 460): Dot[] {
       y: round(50 + Math.sin(a) * rad, 2),
       r: round(0.14 + rnd() * 0.24, 2),
       o: round(0.06 + rnd() * 0.16, 2),
-      c: GALAXY_INK[Math.floor(rnd() * GALAXY_INK.length)],
+      c: ink[Math.floor(rnd() * ink.length)],
     });
   }
 
@@ -56,6 +71,10 @@ export function Galaxy({
   flatten = 0.44,
   duration = 420,
   reverse = false,
+  /** dot colours; NEBULA_INK for the violet one */
+  ink = GALAXY_INK,
+  /** the three inner stops of the core glow */
+  core = ["#fff8e6", "#f3e6c8", "#ded9ef"],
   className,
   style,
 }: {
@@ -65,10 +84,12 @@ export function Galaxy({
   flatten?: number;
   duration?: number;
   reverse?: boolean;
+  ink?: string[];
+  core?: string[];
   className?: string;
   style?: CSSProperties;
 }) {
-  const dots = galaxyDots(seed);
+  const dots = galaxyDots(seed, 460, ink);
   const id = `gx-${seed}`;
 
   return (
@@ -103,9 +124,9 @@ export function Galaxy({
           <svg viewBox="0 0 100 100" width="100%" height="100%" role="presentation">
             <defs>
               <radialGradient id={`${id}-core`}>
-                <stop offset="0%" stopColor="#fff8e6" stopOpacity="0.95" />
-                <stop offset="26%" stopColor="#f3e6c8" stopOpacity="0.55" />
-                <stop offset="58%" stopColor="#ded9ef" stopOpacity="0.18" />
+                <stop offset="0%" stopColor={core[0]} stopOpacity="0.95" />
+                <stop offset="26%" stopColor={core[1]} stopOpacity="0.55" />
+                <stop offset="58%" stopColor={core[2]} stopOpacity="0.24" />
                 <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
               </radialGradient>
             </defs>
