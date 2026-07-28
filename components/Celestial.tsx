@@ -256,7 +256,7 @@ export function Constellation({
       aria-hidden="true"
     >
       <svg viewBox="0 0 100 72" width="100%" role="presentation">
-        <g stroke="#d8c29a" strokeWidth="0.35" opacity="0.7" fill="none">
+        <g stroke="#d8c29a" strokeWidth="0.28" opacity="0.45" fill="none">
           {edges.map(([a, b], i) => (
             <line
               key={i}
@@ -268,13 +268,13 @@ export function Constellation({
           ))}
         </g>
         {pts.map(([x, y], i) => {
-          const s = 1.5 + rnd() * 1.5;
+          const s = 1.1 + rnd() * 1.1;
           return (
             <path
               key={i}
               d={sparklePath(x, y, s)}
               fill="#d8c29a"
-              opacity={round(0.5 + rnd() * 0.45, 2)}
+              opacity={round(0.34 + rnd() * 0.3, 2)}
             />
           );
         })}
@@ -331,15 +331,23 @@ export function Starfield({
     const x = rnd();
     const y = rnd();
     if (Math.hypot(x - 0.5, y - 0.5) < clear) continue;
+    /**
+     * How near the star is: 0 is far back in the field, 1 is close. Size and
+     * brightness both follow it, and follow it together — that single shared
+     * term is what turns a scatter of points at unrelated opacities into
+     * something with depth. The field is mostly small and mostly faint, with
+     * only a handful near enough to read as bright.
+     */
+    const near = rnd();
     stars.push({
       x: round(x * 100, 2),
       y: round(y * 100, 2),
-      // (0.5 + 0.5 * random) * factor, as in the reference
-      s: round((0.5 + 0.5 * rnd()) * 2.4, 2),
-      o: round(0.24 + rnd() * 0.5, 2),
+      // (0.5 + 0.5 * random) * factor, as in the reference, at a smaller factor
+      s: round((0.42 + 0.58 * near) * 1.75, 2),
+      o: round(0.1 + near * 0.26, 2),
       gold: rnd() > 0.62,
-      // roughly one in six catches the light; the rest are fixed points
-      sparkle: rnd() > 0.83,
+      // roughly one in eight catches the light; the rest are fixed points
+      sparkle: rnd() > 0.88,
       dur: round(5 + rnd() * 7, 2),
       delay: round(rnd() * 14, 2),
     });

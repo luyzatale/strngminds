@@ -34,8 +34,8 @@ export function LogoMark({
         <span
           className="absolute left-1/2 top-0 rounded-full bg-gold-deep"
           style={{
-            width: Math.max(3, size * 0.105),
-            height: Math.max(3, size * 0.105),
+            width: Math.max(2.5, size * 0.105),
+            height: Math.max(2.5, size * 0.105),
             transform: "translate(-50%, -50%)",
           }}
         />
@@ -47,13 +47,19 @@ export function LogoMark({
 /**
  * On a phone the two words stack, which both fits the bar and echoes the
  * circular emblem; from `sm` up they sit on one line at full size.
+ *
+ * Set small on purpose. A house that is sure of itself does not need its name
+ * at the size of a headline, and the mark reads as more confident for being
+ * quieter than the thing it introduces. The tracking comes in slightly with
+ * the size: wide letterspacing that reads as air at 1.18rem reads as a gap at
+ * 0.95rem.
  */
 export function Wordmark({ className }: { className?: string }) {
   return (
     <span
       className={clsx(
-        "flex flex-col whitespace-nowrap font-serif text-[0.86rem] font-medium uppercase leading-[1.06] tracking-[0.16em] text-ink",
-        "sm:flex-row sm:gap-[0.34em] sm:text-[1.18rem] sm:leading-none sm:tracking-[0.24em]",
+        "flex flex-col whitespace-nowrap font-serif text-[0.7rem] font-medium uppercase leading-[1.06] tracking-[0.13em] text-ink",
+        "sm:flex-row sm:gap-[0.32em] sm:text-[0.95rem] sm:leading-none sm:tracking-[0.2em]",
         className,
       )}
     >
@@ -71,8 +77,8 @@ export function LogoLockup({
   animated?: boolean;
 }) {
   return (
-    <span className={clsx("inline-flex items-center gap-2.5 sm:gap-3.5", className)}>
-      <LogoMark animated={animated} size={28} />
+    <span className={clsx("inline-flex items-center gap-2 sm:gap-2.5", className)}>
+      <LogoMark animated={animated} size={22} />
       <Wordmark />
       <span className="sr-only">Strng Minds — home</span>
     </span>

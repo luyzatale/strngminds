@@ -10,8 +10,14 @@ import { musicStore } from "@/components/music-store";
  * player itself, so they neither move nor reset between pages.
  */
 
+/**
+ * Quieter than they were, in two ways: smaller, and resting below full
+ * opacity so they recede until the pointer finds them. They stay 36px on a
+ * phone — the one place where the diameter is also the tap target — and take
+ * the full reduction from `sm` up, where a cursor makes 32px ample.
+ */
 const BUTTON =
-  "flex h-10 w-10 items-center justify-center rounded-full border border-line-strong bg-paper/70 text-ink backdrop-blur-md transition-[background-color,border-color,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-gold hover:bg-ivory/20 disabled:opacity-40";
+  "flex h-9 w-9 sm:h-8 sm:w-8 items-center justify-center rounded-full border border-line-strong/70 bg-paper/60 text-ink-soft opacity-70 backdrop-blur-md transition-[background-color,border-color,opacity,color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-gold hover:bg-ivory/20 hover:text-ink hover:opacity-100 focus-visible:opacity-100 disabled:opacity-40";
 
 export default function MusicControls() {
   const { ready, playing, failed } = useSyncExternalStore(
@@ -50,7 +56,7 @@ export default function MusicControls() {
         title="Start again"
         className={BUTTON}
       >
-        <svg viewBox="0 0 16 16" className="h-4 w-4" fill="none" aria-hidden="true">
+        <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" aria-hidden="true">
           <path
             d="M13 8a5 5 0 1 1-1.6-3.66"
             stroke="currentColor"
@@ -77,7 +83,7 @@ export default function MusicControls() {
         className={BUTTON}
       >
         {/* three bars, moving only while something is actually playing */}
-        <span className="flex h-3.5 w-3.5 items-end justify-center gap-[2px]">
+        <span className="flex h-3 w-3 items-end justify-center gap-[2px]">
           {[0, 1, 2].map((i) => (
             <span
               key={i}

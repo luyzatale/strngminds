@@ -62,7 +62,7 @@ const BODIES: Body[] = [
   {
     name: "Mercury",
     r: 11,
-    d: 2.35,
+    d: 1.88,
     period: 96,
     start: 130,
     spin: 64,
@@ -73,7 +73,7 @@ const BODIES: Body[] = [
   {
     name: "Venus",
     r: 15.5,
-    d: 3.4,
+    d: 2.72,
     period: 148,
     start: 40,
     spin: 90,
@@ -87,7 +87,7 @@ const BODIES: Body[] = [
   {
     name: "Earth",
     r: 20.5,
-    d: 4.0,
+    d: 3.2,
     period: 210,
     start: 200,
     spin: 30,
@@ -103,7 +103,7 @@ const BODIES: Body[] = [
   {
     name: "Mars",
     r: 26,
-    d: 3.05,
+    d: 2.44,
     period: 268,
     start: 118,
     spin: 33,
@@ -114,7 +114,7 @@ const BODIES: Body[] = [
   {
     name: "Jupiter",
     r: 32,
-    d: 6.6,
+    d: 5.28,
     period: 348,
     start: 85,
     spin: 18,
@@ -134,7 +134,7 @@ const BODIES: Body[] = [
   {
     name: "Saturn",
     r: 38.2,
-    d: 5.5,
+    d: 4.4,
     period: 452,
     start: 200,
     spin: 21,
@@ -152,7 +152,7 @@ const BODIES: Body[] = [
   {
     name: "Uranus",
     r: 43.8,
-    d: 4.5,
+    d: 3.6,
     period: 580,
     start: 255,
     spin: 26,
@@ -166,7 +166,7 @@ const BODIES: Body[] = [
   {
     name: "Neptune",
     r: 49.2,
-    d: 4.25,
+    d: 3.4,
     period: 720,
     start: 105,
     spin: 24,
@@ -181,11 +181,11 @@ const BODIES: Body[] = [
 
 /** Tiny bodies drifting between the giants — the grit that sells the scale. */
 const MINOR = [
-  { r: 28.9, d: 0.42, period: 300, start: 340, o: 0.5 },
-  { r: 29.4, d: 0.34, period: 262, start: 96, o: 0.4 },
-  { r: 29.9, d: 0.3, period: 330, start: 188, o: 0.32 },
-  { r: 41.2, d: 0.36, period: 520, start: 128, o: 0.3 },
-  { r: 46.4, d: 0.3, period: 640, start: 22, o: 0.26 },
+  { r: 28.9, d: 0.34, period: 300, start: 340, o: 0.42 },
+  { r: 29.4, d: 0.27, period: 262, start: 96, o: 0.34 },
+  { r: 29.9, d: 0.24, period: 330, start: 188, o: 0.27 },
+  { r: 41.2, d: 0.29, period: 520, start: 128, o: 0.25 },
+  { r: 46.4, d: 0.24, period: 640, start: 22, o: 0.22 },
 ];
 
 /** Orbits share a slightly displaced focus, as real ellipses do. */
@@ -358,34 +358,52 @@ export default function SolarSystem({
           leaves the seam of that texture visible as a faint square. Nothing
           about the sun needs the plane's rotation, so it stays flat. */}
       <div className="pointer-events-none absolute left-1/2 top-1/2">
+        {/* Four layers, and only the innermost is the body. Everything gained
+            here is light, not sun: the disc is 5.75cqw rather than 4.6 purely
+            to cancel the container's 20% reduction, so it lands on screen at
+            the same pixel size it always had. Each shell is wider and fainter
+            than the last and the outermost reaches past the orbits entirely —
+            the point is that the surrounding space looks lit, not that the sun
+            looks large. Alphas stay low and the hue stays ivory so it reads
+            warm rather than bright. */}
         <div
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
           style={{
-            width: "34cqw",
-            height: "34cqw",
+            width: "96cqw",
+            height: "96cqw",
             background:
-              "radial-gradient(circle, rgba(247,232,199,0.62) 0%, rgba(247,232,199,0.2) 38%, rgba(247,232,199,0) 70%)",
-            animation: "sm-breathe 13s ease-in-out infinite",
+              "radial-gradient(circle, rgba(247,232,199,0.11) 0%, rgba(247,232,199,0.055) 32%, rgba(247,232,199,0.018) 56%, rgba(247,232,199,0) 76%)",
+            animation: "sm-breathe 29s ease-in-out infinite",
           }}
         />
         <div
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
           style={{
-            width: "13cqw",
-            height: "13cqw",
+            width: "58cqw",
+            height: "58cqw",
             background:
-              "radial-gradient(circle, rgba(255,247,228,0.98) 0%, rgba(250,224,163,0.72) 26%, rgba(240,206,142,0.28) 52%, rgba(240,206,142,0) 74%)",
-            animation: "sm-breathe 9s ease-in-out infinite",
+              "radial-gradient(circle, rgba(247,232,199,0.26) 0%, rgba(247,232,199,0.11) 38%, rgba(247,232,199,0) 74%)",
+            animation: "sm-breathe 21s ease-in-out infinite",
           }}
         />
         <div
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
           style={{
-            width: "4.6cqw",
-            height: "4.6cqw",
+            width: "19cqw",
+            height: "19cqw",
+            background:
+              "radial-gradient(circle, rgba(255,247,228,0.92) 0%, rgba(250,224,163,0.5) 28%, rgba(240,206,142,0.2) 54%, rgba(240,206,142,0) 76%)",
+            animation: "sm-breathe 15s ease-in-out infinite",
+          }}
+        />
+        <div
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
+          style={{
+            width: "5.75cqw",
+            height: "5.75cqw",
             background:
               "radial-gradient(circle at 50% 46%, #ffffff 0%, #fff6dd 38%, #fbe0a4 72%, #f2c977 100%)",
-            boxShadow: "0 0 22px 6px rgba(248,224,168,0.55)",
+            boxShadow: "0 0 34px 11px rgba(248,224,168,0.42)",
           }}
         />
       </div>
@@ -421,8 +439,11 @@ function Orbit({
 
   return (
     <>
+      {/* The ring should be discovered rather than announced: a hairline at the
+          very bottom of the brightness scale, below the stars and well below
+          the bodies it carries. */}
       <div
-        className="pointer-events-none absolute rounded-full border border-gold/45"
+        className="pointer-events-none absolute rounded-full border border-gold/[0.12]"
         style={{ ...box, ...preserve }}
       />
       <div
@@ -519,7 +540,7 @@ function Planet({
       {body.ring && (
         <>
           <div
-            className="pointer-events-none absolute left-1/2 top-1/2 rounded-[50%] border border-gold-deep/55"
+            className="pointer-events-none absolute left-1/2 top-1/2 rounded-[50%] border border-gold-deep/40"
             style={{
               width: `${body.d * 2.15}cqw`,
               height: `${body.d * 0.62}cqw`,
@@ -527,7 +548,7 @@ function Planet({
             }}
           />
           <div
-            className="pointer-events-none absolute left-1/2 top-1/2 rounded-[50%] border border-gold/40"
+            className="pointer-events-none absolute left-1/2 top-1/2 rounded-[50%] border border-gold/28"
             style={{
               width: `${body.d * 1.72}cqw`,
               height: `${body.d * 0.48}cqw`,

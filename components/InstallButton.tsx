@@ -104,7 +104,7 @@ export default function InstallButton() {
         aria-label="Add Strng Minds to your home screen"
         title="Add to home screen"
         aria-expanded={ios ? open : undefined}
-        className="flex h-10 w-10 items-center justify-center rounded-full border border-line-strong text-ink transition-[background-color,border-color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-gold hover:bg-ivory/20 sm:h-9 sm:w-9"
+        className="flex h-9 w-9 items-center justify-center rounded-full border border-line-strong/70 text-ink transition-[background-color,border-color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-gold hover:bg-ivory/20 sm:h-8 sm:w-8"
       >
         {/* a phone, with the arrow of an install */}
         <svg viewBox="0 0 16 16" className="h-4 w-4" aria-hidden="true" fill="none">

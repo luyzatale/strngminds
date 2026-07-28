@@ -40,16 +40,23 @@ export default function Scene() {
         className="pointer-events-none absolute -inset-[15%] z-0"
         style={{ x, y }}
       >
-        <Starfield seed={21} count={340} mobileCount={130} clear={0} drift />
+        <Starfield seed={21} count={460} mobileCount={170} clear={0} drift />
       </motion.div>
 
       {/* Nudged up a touch on phones: a mobile browser's own bar overlays the
           bottom of the visible area, so dead-centre in the viewport reads low
           on the screen. */}
       <FadeIn delay={0.2} y={18} className="relative z-10 -mt-[3svh] w-full sm:mt-0">
-        {/* Neptune's centre is at 49.2% and it is ~2% wide, so the system
-            paints out to ~51% — the box must leave room for that overhang. */}
-        <div className="mx-auto w-[min(84vw,74svh)] sm:w-[min(90vw,80svh)]">
+        {/* Neptune's centre is at 49.2% and it is ~1.7% wide, so the system
+            paints out to ~50.9% — the box must leave room for that overhang.
+
+            The system is deliberately given less of the viewport than it can
+            take: at 72vw/64svh it clears a fifth of the width it used to fill,
+            and that margin is the composition. It should read as suspended in
+            space rather than fitted to the frame. A phone gives up less — the
+            viewport is already tight there, and the same cut would leave the
+            outer bodies too small to make out. */}
+        <div className="mx-auto w-[min(76vw,64svh)] sm:w-[min(72vw,64svh)]">
           <SolarSystem
             onTiltChange={(t, s) => {
               // one write per frame is plenty for a background layer

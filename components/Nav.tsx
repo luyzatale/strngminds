@@ -98,7 +98,7 @@ export default function Nav({ links = [] }: { links?: Link[] }) {
               phone it lives in the menu with everything else. */}
           <NextLink
             href={CONTACT}
-            className="hidden h-9 items-center rounded-full border border-line-strong px-5 text-[0.8rem] tracking-[0.04em] text-ink transition-[background-color,border-color] duration-500 hover:border-gold hover:bg-ivory/20 md:inline-flex"
+            className="hidden h-8 items-center rounded-full border border-line-strong/70 px-4 text-[0.74rem] tracking-[0.04em] text-ink-soft transition-[background-color,border-color,color] duration-500 hover:border-gold hover:bg-ivory/20 hover:text-ink md:inline-flex"
           >
             Contact
           </NextLink>
@@ -108,7 +108,7 @@ export default function Nav({ links = [] }: { links?: Link[] }) {
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
             aria-controls="mobile-menu"
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-line-strong text-ink transition-[background-color,border-color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-gold hover:bg-ivory/20 md:hidden"
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-line-strong/70 text-ink transition-[background-color,border-color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-gold hover:bg-ivory/20 md:hidden"
           >
             <span className="sr-only">{open ? "Close menu" : "Open menu"}</span>
             <span className="relative block h-3 w-4" aria-hidden="true">
@@ -144,16 +144,16 @@ export default function Nav({ links = [] }: { links?: Link[] }) {
                 href={t.href}
                 aria-current={pathname === t.href ? "page" : undefined}
                 className={clsx(
-                  "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-[0.66rem] uppercase tracking-[0.24em] transition-[background-color,border-color,color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                  "inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-[0.62rem] uppercase tracking-[0.2em] transition-[background-color,border-color,color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
                   pathname === t.href
-                    ? "border-gold/50 bg-ivory/10 text-ink"
-                    : "border-transparent text-ink-faint hover:text-ink",
+                    ? "border-gold/30 bg-ivory/[0.06] text-ink-soft"
+                    : "border-transparent text-ink-faint hover:text-ink-soft",
                 )}
               >
                 <span
                   aria-hidden="true"
                   className={clsx(
-                    "h-1 w-1 rounded-full transition-colors duration-500",
+                    "h-[3px] w-[3px] rounded-full transition-colors duration-500",
                     pathname === t.href ? "bg-gold-deep" : "bg-mute",
                   )}
                 />
@@ -165,10 +165,12 @@ export default function Nav({ links = [] }: { links?: Link[] }) {
       </div>
 
       {/* The rule the rest of the bar will hang from — full bleed, with a
-          second, fainter line beneath it. */}
+          second, fainter line beneath it. Both are pulled down: the bar is
+          fourth in the reading order and a hard edge across the full width is
+          the loudest thing it can do. */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0">
-        <div className="h-px w-full bg-line-strong/70" />
-        <div className="mt-[5px] h-px w-full bg-line/60" />
+        <div className="h-px w-full bg-line-strong/45" />
+        <div className="mt-[5px] h-px w-full bg-line/35" />
       </div>
 
       </header>

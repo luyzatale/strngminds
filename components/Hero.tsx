@@ -35,7 +35,11 @@ export default function Hero() {
           mounted directly rather than inside a wrapper. */}
       <Scene />
 
-      <p className="pointer-events-none absolute bottom-7 left-1/2 z-10 w-full -translate-x-1/2 whitespace-nowrap text-center text-[0.55rem] uppercase tracking-[0.22em] text-ink-faint sm:bottom-8 sm:text-[0.6rem] sm:tracking-[0.3em]">
+      {/* Lifted off the floor of the viewport and given back a little size and
+          a little less tracking. It stays quiet, but it is now legible at a
+          glance rather than on inspection — and it no longer sits level with
+          the music controls in the corner. */}
+      <p className="pointer-events-none absolute bottom-12 left-1/2 z-10 w-full -translate-x-1/2 whitespace-nowrap text-center text-[0.62rem] uppercase tracking-[0.2em] text-ink-faint sm:bottom-16 sm:text-[0.68rem] sm:tracking-[0.26em]">
         Drag to turn
         <span className="sm:hidden"> · tap a planet</span>
         <span className="hidden sm:inline"> · hover a planet</span>
@@ -46,10 +50,16 @@ export default function Hero() {
 
 /**
  * Galaxies are scattered from a fixed seed rather than placed by hand, so the
- * field reads as aleatory. Two rules keep it from fighting the centrepiece:
- * a galaxy's size grows with the square of its distance from the middle, and
- * so does its opacity — the ones that drift in among the orbits are small and
- * nearly transparent, the big ones stay out at the corners.
+ * field reads as aleatory. Distance from the sun is the depth axis, and three
+ * properties hang off it together — size, opacity and focus. What drifts in
+ * among the orbits is small, faint and slightly soft; what sits in the corners
+ * is larger and sharper, and still nowhere near bright enough to argue with
+ * the centre.
+ *
+ * The sizes are three fixed values rather than a continuum. A smooth ramp
+ * produces nine galaxies that all look like the same object at slightly
+ * different distances; three separated scales produce a near, a middle and a
+ * far population, which is what actually reads as depth.
  */
 type Galaxy = {
   x: number;
@@ -61,8 +71,23 @@ type Galaxy = {
   reverse: boolean;
   strength: number;
   opacity: number;
+  /** defocus in px — the far ones sit well behind the plane of focus */
+  blur: number;
+  /** 0 at the sun, 1 in the corners; the depth axis everything hangs off */
+  d: number;
   seed: number;
 };
+
+/** Small, medium, large. */
+const GALAXY_SCALE = [72, 124, 202];
+/**
+ * The far population is the least in focus, in the same order — but only just.
+ * A heavier hand here (1.4px on a 72px disc built from sub-pixel dots) erases
+ * the spiral entirely and leaves a grey smudge, which reads as a smear on the
+ * glass rather than as a distant object. Depth is carried by size and opacity;
+ * blur only confirms it.
+ */
+const GALAXY_BLUR = [0.9, 0.5, 0.2];
 
 const GALAXIES = (() => {
   const rnd = seeded(9137);
@@ -78,19 +103,47 @@ const GALAXIES = (() => {
     if (y < 0.17 || y > 0.9) continue; // clear of the bar and of the hint
     if (out.some((g) => Math.hypot(g.x / 100 - x, g.y / 100 - y) < 0.17)) continue;
 
+    /**
+     * Every `rnd()` below is drawn in the same order and the same number of
+     * times as before, deliberately: the scatter, the teal galaxy's place to
+     * the left of the system and the phone selection are all downstream of
+     * this sequence, and a single extra draw would reshuffle a composition
+     * that is already settled. Size and blur are assigned after the loop,
+     * from depth, without consuming any randomness.
+     */
     out.push({
       x: round(x * 100, 2),
       y: round(y * 100, 2),
-      size: Math.round(58 + d * d * 320),
+      size: 0, // assigned below
       tilt: Math.round(-60 + rnd() * 120),
       flatten: round(0.26 + rnd() * 0.28, 2),
-      duration: Math.round(520 + rnd() * 520),
+      // slow enough that catching it moving takes deliberate attention
+      duration: Math.round(900 + rnd() * 800),
       reverse: rnd() > 0.5,
-      strength: Math.round(4 + rnd() * 6),
-      opacity: round(0.26 + d * 0.74, 2),
+      strength: Math.round(3 + rnd() * 4),
+      // the corners top out at 45%; the near-centre ones sit at a third of that
+      opacity: round(0.12 + d * 0.33, 2),
+      blur: 0, // assigned below
+      d: round(d, 3),
       seed: 7 + Math.floor(rnd() * 900),
     });
   }
+
+  /**
+   * Three populations of three, split by rank rather than by a threshold on
+   * `d`. A threshold is the obvious way to do it and it does not work: this
+   * scatter's distances cluster in the middle, and cutting at 0.44/0.70 put
+   * seven of the nine in one band — nine galaxies at one size, which is
+   * exactly the flat field the three scales exist to break up. Ranking
+   * guarantees the near, middle and far groups all actually exist, and since
+   * the rank is on distance from the sun the large ones still land outside.
+   */
+  const byDepth = [...out].sort((a, b) => a.d - b.d);
+  byDepth.forEach((g, i) => {
+    const band = Math.min(2, Math.floor((i * 3) / byDepth.length));
+    g.size = GALAXY_SCALE[band];
+    g.blur = GALAXY_BLUR[band];
+  });
 
   out.sort((a, b) => b.size - a.size);
 
@@ -190,6 +243,12 @@ function HeroDecor() {
             left: `${g.x}%`,
             top: `${g.y}%`,
             transform: "translate(-50%, -50%)",
+            /* Defocus sits out here rather than inside Galaxy, which already
+               spends its own `filter` on the theme's brightness correction.
+               The four painted ones keep most of their edge — they are the
+               deliberate notes of colour in the field, and blurring them to
+               the same degree as the rest would grey them out. */
+            filter: `blur(${g.tinted ? round(g.blur * 0.4, 2) : g.blur}px)`,
           }}
         >
           <Parallax strength={g.strength} invert={i % 2 === 1}>
@@ -219,23 +278,27 @@ function HeroDecor() {
                       : undefined
               }
               style={{
-                opacity: g.tinted ? Math.min(1, g.opacity + 0.25) : g.opacity,
+                opacity: g.tinted
+                  ? Math.min(0.56, g.opacity + 0.14)
+                  : g.opacity,
               }}
             />
           </Parallax>
         </div>
       ))}
 
-      <Parallax strength={6} className="absolute right-[2%] top-[26vh] hidden lg:block">
-        <Constellation shape="cassiopeia" width={145} delay={2} />
+      {/* Hidden details. Small enough and faint enough that they are found on
+          a second look rather than seen on the first. */}
+      <Parallax strength={4} className="absolute right-[2%] top-[26vh] hidden lg:block">
+        <Constellation shape="cassiopeia" width={106} delay={2} />
       </Parallax>
 
       <Parallax
-        strength={5}
+        strength={4}
         invert
         className="absolute bottom-[8vh] left-[2%] hidden lg:block"
       >
-        <Constellation shape="ursa" width={160} delay={9} />
+        <Constellation shape="ursa" width={118} delay={9} />
       </Parallax>
     </div>
   );

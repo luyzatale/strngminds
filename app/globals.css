@@ -42,9 +42,11 @@
 @layer base {
   :root {
     color-scheme: light;
-    /* one bar everywhere: on a phone the pages sit behind a menu button */
-    --nav-row: 68px;
-    --nav-h: 68px;
+    /* one bar everywhere: on a phone the pages sit behind a menu button.
+       Kept deliberately short — the bar is the fourth thing the eye should
+       reach, not the first, and height is most of what gives it weight. */
+    --nav-row: 58px;
+    --nav-h: 58px;
     /* stars are barely there on paper, and must carry the night on their own */
     --star-scale: 1;
     /**
@@ -85,8 +87,8 @@
 
   @media (min-width: 768px) {
     :root {
-      --nav-row: 72px;
-      --nav-h: 72px;
+      --nav-row: 62px;
+      --nav-h: 62px;
     }
   }
 
@@ -235,14 +237,17 @@
   }
 }
 
+/* A constellation is a detail to be found, not an object to be read. It rests
+   near the floor of what is visible and its catch of light stops well short of
+   full. */
 @keyframes sm-constellation {
   0%,
   72%,
   100% {
-    opacity: 0.42;
+    opacity: 0.2;
   }
   86% {
-    opacity: 0.95;
+    opacity: 0.42;
   }
 }
 
@@ -334,8 +339,8 @@
     transform: scale(0.75);
   }
   74% {
-    opacity: min(1, var(--star-o, 0.4) * var(--star-scale, 1) * 2);
-    transform: scale(2.6);
+    opacity: min(0.85, var(--star-o, 0.4) * var(--star-scale, 1) * 1.9);
+    transform: scale(1.9);
   }
 }
 
