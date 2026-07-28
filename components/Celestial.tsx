@@ -285,7 +285,7 @@ export function Starfield({
       x: round(x * 100, 2),
       y: round(y * 100, 2),
       // (0.5 + 0.5 * random) * factor, as in the reference
-      s: round((0.5 + 0.5 * rnd()) * 3.1, 2),
+      s: round((0.5 + 0.5 * rnd()) * 2.4, 2),
       o: round(0.24 + rnd() * 0.5, 2),
       gold: rnd() > 0.62,
       // roughly one in six catches the light; the rest are fixed points
