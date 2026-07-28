@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { LogoLockup } from "@/components/Logo";
+import InstallButton from "@/components/InstallButton";
 import Music from "@/components/Music";
 import ThemeToggle from "@/components/ThemeToggle";
 import { clsx } from "@/lib/clsx";
@@ -17,7 +18,7 @@ export const SECTION_LINKS: Link[] = [
   { href: "#voices", label: "Voices" },
 ];
 
-const CONTACT = "mailto:hello@strngminds.com?subject=Beginning%20the%20practice";
+const CONTACT = "/contact";
 
 export default function Nav({ links = [] }: { links?: Link[] }) {
   const [scrolled, setScrolled] = useState(false);
@@ -74,6 +75,7 @@ export default function Nav({ links = [] }: { links?: Link[] }) {
         )}
 
         <div className="flex shrink-0 items-center gap-2 sm:gap-2.5">
+          <InstallButton />
           <Music />
           <ThemeToggle />
 
@@ -81,7 +83,7 @@ export default function Nav({ links = [] }: { links?: Link[] }) {
             href={CONTACT}
             className="inline-flex h-10 items-center rounded-full border border-line-strong px-3.5 text-[0.74rem] tracking-[0.04em] text-ink transition-[background-color,border-color] duration-500 hover:border-gold hover:bg-ivory/20 sm:h-9 sm:px-5 sm:text-[0.8rem]"
           >
-            Begin
+            Contact
           </a>
 
           {links.length > 0 && (

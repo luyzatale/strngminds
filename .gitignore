@@ -1,4 +1,7 @@
 .claude/
+
+# stray browser profiles from local tooling
+public/profile/
 node_modules/
 .next/
 out/

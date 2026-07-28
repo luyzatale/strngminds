@@ -1,6 +1,6 @@
 import Scene from "@/components/Scene";
 import { Constellation, Dust, Galaxy } from "@/components/Celestial";
-import { FadeIn, Parallax } from "@/components/Motion";
+import { Parallax } from "@/components/Motion";
 import { round, seeded } from "@/lib/rand";
 
 /**
@@ -21,9 +21,9 @@ export default function Hero() {
 
       <HeroDecor />
 
-      <FadeIn delay={0.2} y={18} className="relative z-10 w-full">
-        <Scene />
-      </FadeIn>
+      {/* Scene positions its own star layer against this section, so it is
+          mounted directly rather than inside a wrapper. */}
+      <Scene />
 
       <p className="pointer-events-none absolute bottom-7 left-1/2 z-10 w-full -translate-x-1/2 whitespace-nowrap text-center text-[0.55rem] uppercase tracking-[0.22em] text-ink-faint sm:bottom-8 sm:text-[0.6rem] sm:tracking-[0.3em]">
         Drag to turn

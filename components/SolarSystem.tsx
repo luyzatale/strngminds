@@ -349,45 +349,46 @@ export default function SolarSystem({
           );
         })}
 
-        {/* ── The sun, always facing us ─────────────────────── */}
-        <motion.div
-          className="pointer-events-none absolute left-1/2 top-1/2"
-          style={{ ...preserve, transform: billboard }}
-        >
-          <div
-            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
-            style={{
-              width: "34cqw",
-              height: "34cqw",
-              background:
-                "radial-gradient(circle, rgba(247,232,199,0.62) 0%, rgba(247,232,199,0.2) 38%, rgba(247,232,199,0) 70%)",
-              filter: "blur(6px)",
-              animation: "sm-breathe 13s ease-in-out infinite",
-            }}
-          />
-          <div
-            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
-            style={{
-              width: "13cqw",
-              height: "13cqw",
-              background:
-                "radial-gradient(circle, rgba(255,247,228,0.98) 0%, rgba(250,224,163,0.72) 26%, rgba(240,206,142,0.28) 52%, rgba(240,206,142,0) 74%)",
-              filter: "blur(1.5px)",
-              animation: "sm-breathe 9s ease-in-out infinite",
-            }}
-          />
-          <div
-            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
-            style={{
-              width: "4.6cqw",
-              height: "4.6cqw",
-              background:
-                "radial-gradient(circle at 50% 46%, #ffffff 0%, #fff6dd 38%, #fbe0a4 72%, #f2c977 100%)",
-              boxShadow: "0 0 22px 6px rgba(248,224,168,0.55)",
-            }}
-          />
-        </motion.div>
       </motion.div>
+
+      {/* ── The sun ───────────────────────────────────────────
+          Deliberately outside the plane. Billboarding it inside the 3D
+          context produced exactly the same image, but a blurred layer in a
+          preserve-3d subtree gets rasterised to its own texture and Chrome
+          leaves the seam of that texture visible as a faint square. Nothing
+          about the sun needs the plane's rotation, so it stays flat. */}
+      <div className="pointer-events-none absolute left-1/2 top-1/2">
+        <div
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
+          style={{
+            width: "34cqw",
+            height: "34cqw",
+            background:
+              "radial-gradient(circle, rgba(247,232,199,0.62) 0%, rgba(247,232,199,0.2) 38%, rgba(247,232,199,0) 70%)",
+            animation: "sm-breathe 13s ease-in-out infinite",
+          }}
+        />
+        <div
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
+          style={{
+            width: "13cqw",
+            height: "13cqw",
+            background:
+              "radial-gradient(circle, rgba(255,247,228,0.98) 0%, rgba(250,224,163,0.72) 26%, rgba(240,206,142,0.28) 52%, rgba(240,206,142,0) 74%)",
+            animation: "sm-breathe 9s ease-in-out infinite",
+          }}
+        />
+        <div
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
+          style={{
+            width: "4.6cqw",
+            height: "4.6cqw",
+            background:
+              "radial-gradient(circle at 50% 46%, #ffffff 0%, #fff6dd 38%, #fbe0a4 72%, #f2c977 100%)",
+            boxShadow: "0 0 22px 6px rgba(248,224,168,0.55)",
+          }}
+        />
+      </div>
     </div>
   );
 }

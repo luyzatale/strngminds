@@ -4,11 +4,17 @@ import { useRef } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import SolarSystem from "@/components/SolarSystem";
 import { Starfield } from "@/components/Celestial";
+import { FadeIn } from "@/components/Motion";
 
 /**
  * Holds the star field and the solar system together so that turning the
  * system moves the sky behind it — the same coupling the reference gets for
  * free from orbit controls moving the camera past a fixed star sphere.
+ *
+ * The two are returned as siblings so the star layer sizes itself against the
+ * hero section. Nested inside the system's own box it inherited that box's
+ * square, and the stars sat in an island in the middle of the page — obvious
+ * on a phone, where the system is a third of the viewport.
  */
 export default function Scene() {
   const tilt = useMotionValue(0);
@@ -28,11 +34,16 @@ export default function Scene() {
 
   return (
     <>
-      <motion.div className="pointer-events-none absolute inset-0 z-0" style={{ x, y }}>
-        <Starfield seed={21} count={300} clear={0.04} />
+      {/* Overhangs the section by 15% on every side, so the parallax can run
+          its full ±70px without dragging a bare edge into view. */}
+      <motion.div
+        className="pointer-events-none absolute -inset-[15%] z-0"
+        style={{ x, y }}
+      >
+        <Starfield seed={21} count={340} clear={0} />
       </motion.div>
 
-      <div className="relative z-10 w-full">
+      <FadeIn delay={0.2} y={18} className="relative z-10 w-full">
         {/* Neptune's centre is at 49.2% and it is ~2% wide, so the system
             paints out to ~51% — the box must leave room for that overhang. */}
         <div className="mx-auto w-[min(84vw,74svh)] sm:w-[min(90vw,80svh)]">
@@ -47,7 +58,7 @@ export default function Scene() {
             }}
           />
         </div>
-      </div>
+      </FadeIn>
     </>
   );
 }
