@@ -318,3 +318,23 @@
     transform: scale(2.6);
   }
 }
+
+/* A long, slow circuit of the page. Four corners of a lazy ellipse, never
+   crossing the middle where the system sits. */
+@keyframes sm-drift-wide {
+  0% {
+    transform: translate3d(-38vw, -20vh, 0);
+  }
+  25% {
+    transform: translate3d(-6vw, -31vh, 0);
+  }
+  50% {
+    transform: translate3d(38vw, 6vh, 0);
+  }
+  75% {
+    transform: translate3d(2vw, 31vh, 0);
+  }
+  100% {
+    transform: translate3d(-38vw, -20vh, 0);
+  }
+}

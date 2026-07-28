@@ -24,6 +24,7 @@ type Controller = {
   play: () => void;
   pause: () => void;
   togglePlay: () => void;
+  destroy?: () => void;
   addListener: (event: string, cb: (e: { data: { isPaused: boolean } }) => void) => void;
 };
 
@@ -81,6 +82,16 @@ export default function Music() {
       window.clearTimeout(giveUp);
       script.remove();
       delete window.onSpotifyIframeApiReady;
+
+      // Leaving the page has to silence it. Spotify replaces our mount point
+      // with its own iframe, so React's own removal cannot be relied on to
+      // take the player with it — stop it, tear it down, and empty the node.
+      try {
+        controller.current?.pause();
+        controller.current?.destroy?.();
+      } catch {}
+      controller.current = null;
+      if (holder.current) holder.current.innerHTML = "";
     };
   }, []);
 
@@ -107,6 +118,23 @@ export default function Music() {
     events.forEach((e) => window.addEventListener(e, start, { passive: true }));
     return () => events.forEach((e) => window.removeEventListener(e, start));
   }, [ready]);
+
+  /**
+   * An episode has to win over the background track. We cannot read playback
+   * out of a cross-origin embed, but we do not need to: clicking inside one
+   * moves focus to that iframe and blurs the window, which is exactly the
+   * moment to get out of the way.
+   */
+  useEffect(() => {
+    const onBlur = () => {
+      const el = document.activeElement as HTMLIFrameElement | null;
+      if (el?.tagName === "IFRAME" && el.src?.includes("/embed/episode/")) {
+        controller.current?.pause();
+      }
+    };
+    window.addEventListener("blur", onBlur);
+    return () => window.removeEventListener("blur", onBlur);
+  }, []);
 
   const toggle = () => controller.current?.togglePlay();
 

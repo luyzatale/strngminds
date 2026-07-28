@@ -379,3 +379,92 @@ export function Dust({
     </div>
   );
 }
+
+/* ────────────────────────────────────────────────────────────
+   A supermassive black hole, taking its time.
+   ──────────────────────────────────────────────────────────── */
+
+/**
+ * Four layers, smallest to largest: the lensing halo, the accretion disc
+ * seen nearly edge-on, the event horizon, and the arc of the disc that
+ * passes in front of it. The last one is what stops it reading as a
+ * bead on a wire.
+ */
+export function BlackHole({
+  size = 54,
+  duration = 320,
+  className,
+}: {
+  size?: number;
+  duration?: number;
+  className?: string;
+}) {
+  return (
+    <div
+      className={`pointer-events-none absolute left-1/2 top-1/2 ${className ?? ""}`}
+      aria-hidden="true"
+      style={{
+        animationName: "sm-drift-wide",
+        animationDuration: `${duration}s`,
+        animationTimingFunction: "ease-in-out",
+        animationIterationCount: "infinite",
+      }}
+    >
+      <div className="relative" style={{ width: size, height: size }}>
+        {/* light bent around it */}
+        <div
+          className="absolute rounded-full"
+          style={{
+            inset: `-${size * 1.15}px`,
+            background:
+              "radial-gradient(circle, rgba(216,194,154,0.15) 0%, rgba(216,194,154,0.05) 38%, rgba(216,194,154,0) 68%)",
+          }}
+        />
+
+        {/* the disc, behind */}
+        <div
+          className="absolute left-1/2 top-1/2 rounded-[50%]"
+          style={{
+            width: size * 2.05,
+            height: size * 0.5,
+            transform: "translate(-50%, -50%) rotate(-17deg)",
+            background:
+              "linear-gradient(90deg, rgba(255,214,150,0) 0%, rgba(255,205,132,0.75) 16%, rgba(255,247,226,0.95) 50%, rgba(255,205,132,0.75) 84%, rgba(255,214,150,0) 100%)",
+            filter: "blur(0.6px)",
+          }}
+        />
+
+        {/* the horizon itself, with the photon ring on its edge */}
+        <div
+          className="absolute rounded-full"
+          style={{
+            inset: size * 0.17,
+            background: "#03030a",
+            boxShadow:
+              "0 0 0 1px rgba(255,238,205,0.6), 0 0 14px 3px rgba(255,214,150,0.22)",
+          }}
+        />
+
+        {/* and the near side of the disc, crossing in front */}
+        <div
+          className="absolute left-1/2 top-1/2 overflow-hidden"
+          style={{
+            width: size * 2.05,
+            height: size * 0.5,
+            transform: "translate(-50%, -50%) rotate(-17deg)",
+            clipPath: "inset(50% 0 0 0)",
+          }}
+        >
+          <div
+            className="h-full w-full rounded-[50%]"
+            style={{
+              background:
+                "linear-gradient(90deg, rgba(255,214,150,0) 0%, rgba(255,205,132,0.8) 16%, rgba(255,247,226,0.98) 50%, rgba(255,205,132,0.8) 84%, rgba(255,214,150,0) 100%)",
+              filter: "blur(0.6px)",
+            }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -3,12 +3,35 @@ import Image from "next/image";
 import Nav from "@/components/Nav";
 import { Constellation, Galaxy, Starfield } from "@/components/Celestial";
 import { FadeIn, Parallax, PointerField } from "@/components/Motion";
+import { FadedRule } from "@/components/ui";
 
 const SHOW_ID = "1RiUyEr5E585brB4cuq2X9";
 const SHOW_URL = `https://open.spotify.com/show/${SHOW_ID}`;
 /** 640px cover from Spotify's CDN — the show art, host included. */
 const COVER =
   "https://image-cdn-ak.spotifycdn.com/image/ab6765630000ba8a4f41f6c32e5179ec8e15beaf";
+
+/** The About text as it stands on Spotify. */
+const ABOUT =
+  "STRNG MINDS is the podcast for soul-driven rebels ready to break internal " +
+  "limits and rise into their higher self. Hosted by psychological and " +
+  "transformational life coach Isabel Vanessa, each episode explores mindset " +
+  "mastery, subconscious reprogramming, universal laws, energy work, spiritual " +
+  "psychology and soul-led leadership. This is where transformation meets " +
+  "purpose, helping you to connect with your soul, transform your habits, " +
+  "master your mind and lead your life.";
+
+/**
+ * Spotify's show embed only ever renders the newest episode, whatever size it
+ * is given — so each episode gets its own compact player instead. The ids come
+ * from the public show page; add a line here when a new episode lands.
+ */
+const EPISODES = [
+  { id: "5Mgr3vhGIlLLqNT1RnKzem", n: "04", title: "Self-Sabotage: why we do it & how to stop it" },
+  { id: "5w8OF4hncsDqMFzaUWvJDa", n: "03", title: "Becoming your Higher Self" },
+  { id: "0phFg9T4kohROnXpifWita", n: "02", title: "Soul-led Leadership: leading from inner power, not performance" },
+  { id: "3IyLgdt0pEysei6csJL5m2", n: "01", title: "Ego vs Soul — who is leading your life?" },
+];
 
 export const metadata: Metadata = {
   title: "Meditation",
@@ -17,11 +40,8 @@ export const metadata: Metadata = {
 };
 
 /**
- * The episode list is Spotify's own embed rather than a copy of it. Listing
- * the episodes ourselves would need the Web API and credentials, and any list
- * we hard-coded would be wrong the day a new episode lands. The embed always
- * carries every episode and plays them: a preview for listeners without a
- * Spotify session, the whole thing for those with one.
+ * Every episode, each in its own Spotify player: a preview for listeners
+ * without a Spotify session, the whole episode for those with one.
  */
 export default function MeditationPage() {
   return (
@@ -68,29 +88,44 @@ export default function MeditationPage() {
           </FadeIn>
 
           <FadeIn delay={0.24}>
-            <p className="mt-12 max-w-[54ch] text-[1rem] leading-[1.95] text-ink-soft">
-              Long-form conversations on the mind and how to live with it. Sit
-              with one at a time; they are not built to be finished in an
-              afternoon.
+            <p className="mt-12 max-w-[62ch] text-[0.98rem] leading-[1.95] text-ink-soft">
+              {ABOUT}
             </p>
           </FadeIn>
 
-          <FadeIn delay={0.36} className="mt-14">
-            <div className="overflow-hidden rounded-[1.5rem] border border-line bg-paper-50/40 p-2 shadow-lift backdrop-blur-[3px] sm:p-3">
-              <iframe
-                title="Strng Minds — every episode"
-                src={`https://open.spotify.com/embed/show/${SHOW_ID}?theme=0`}
-                width="100%"
-                height="560"
-                loading="lazy"
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                style={{ border: 0, borderRadius: "1.1rem", display: "block" }}
-              />
+          <FadeIn delay={0.36} className="mt-16">
+            <div className="flex items-baseline justify-between gap-6">
+              <h2 className="text-[0.62rem] uppercase tracking-[0.26em] text-ink-faint">
+                Episodes
+              </h2>
+              <span className="text-[0.62rem] uppercase tracking-[0.26em] text-ink-faint">
+                {EPISODES.length}
+              </span>
             </div>
+            <FadedRule className="mt-5" />
 
-            <p className="mt-6 text-[0.72rem] leading-[1.8] tracking-[0.02em] text-ink-faint">
-              Episodes play here. With a Spotify session you hear them in full;
-              without one, Spotify offers a preview.{" "}
+            <ul className="mt-8 flex flex-col gap-4">
+              {EPISODES.map((ep) => (
+                <li
+                  key={ep.id}
+                  className="overflow-hidden rounded-[1.25rem] border border-line bg-paper-50/40 p-1.5 shadow-lift backdrop-blur-[3px] transition-[border-color] duration-500 hover:border-line-strong"
+                >
+                  <iframe
+                    title={`${ep.n} — ${ep.title}`}
+                    src={`https://open.spotify.com/embed/episode/${ep.id}?theme=0`}
+                    width="100%"
+                    height="152"
+                    loading="lazy"
+                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                    style={{ border: 0, borderRadius: "0.95rem", display: "block" }}
+                  />
+                </li>
+              ))}
+            </ul>
+
+            <p className="mt-8 text-[0.72rem] leading-[1.8] tracking-[0.02em] text-ink-faint">
+              With a Spotify session you hear each episode in full; without one,
+              Spotify offers a preview.{" "}
               <a
                 href={SHOW_URL}
                 target="_blank"
