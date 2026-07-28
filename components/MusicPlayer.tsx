@@ -44,9 +44,12 @@ export default function MusicPlayer() {
         (c) => {
           if (cancelled) return;
           musicStore.controller = c;
-          c.addListener("playback_update", (e) =>
-            musicStore.set({ playing: !e.data.isPaused }),
-          );
+          c.addListener("playback_update", (e) => {
+            if (typeof e.data.position === "number") {
+              musicStore.reportPosition(e.data.position);
+            }
+            musicStore.set({ playing: !e.data.isPaused });
+          });
           musicStore.set({ ready: true });
           start();
         },
