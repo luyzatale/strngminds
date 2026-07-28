@@ -31,8 +31,7 @@ declare global {
 export default function MusicPlayer() {
   const holder = useRef<HTMLDivElement>(null);
   const armed = useRef(false);
-  /** true once we have actually heard it start */
-  const sounding = useRef(false);
+  const retry = useRef(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -45,10 +44,9 @@ export default function MusicPlayer() {
         (c) => {
           if (cancelled) return;
           musicStore.controller = c;
-          c.addListener("playback_update", (e) => {
-            if (!e.data.isPaused) sounding.current = true;
-            musicStore.set({ playing: !e.data.isPaused });
-          });
+          c.addListener("playback_update", (e) =>
+            musicStore.set({ playing: !e.data.isPaused }),
+          );
           musicStore.set({ ready: true });
           start();
         },
@@ -83,9 +81,34 @@ export default function MusicPlayer() {
 
     const events = ["pointerdown", "keydown", "touchstart"] as const;
     const onGesture = () => {
-      events.forEach((e) => window.removeEventListener(e, onGesture));
-      // if the first attempt was allowed through, leave it playing
-      if (!sounding.current) fromTheTop();
+      events.forEach((e) =>
+        window.removeEventListener(e, onGesture, { capture: true }),
+      );
+      /**
+       * Only start it if it is not already going. The embed reports one
+       * transient `isPaused: false` with `duration: 0` while it is still
+       * warming up, so a flag set from that event wrongly concludes the track
+       * is under way and the first tap does nothing — the state the store
+       * holds by now is the settled one.
+       */
+      if (musicStore.get().playing) return;
+
+      /**
+       * Ask more than once. The embed can still be settling when the tap
+       * lands, and a single request at exactly the wrong moment is quietly
+       * dropped — so try again a few times while the gesture's activation is
+       * still good, and stop the moment it takes.
+       */
+      fromTheTop();
+      let tries = 0;
+      retry.current = window.setInterval(() => {
+        if (musicStore.get().playing || ++tries > 5) {
+          window.clearInterval(retry.current);
+          retry.current = 0;
+          return;
+        }
+        fromTheTop();
+      }, 450);
     };
 
     function start() {
@@ -93,8 +116,10 @@ export default function MusicPlayer() {
       armed.current = true;
       // ask once, in case this visitor has already earned the privilege
       fromTheTop();
+      // Capture phase: tapping a planet stops propagation so the drag does not
+      // start, which would otherwise swallow the very first gesture on a phone.
       events.forEach((e) =>
-        window.addEventListener(e, onGesture, { passive: true }),
+        window.addEventListener(e, onGesture, { passive: true, capture: true }),
       );
     }
 
@@ -115,8 +140,11 @@ export default function MusicPlayer() {
     return () => {
       cancelled = true;
       window.clearTimeout(giveUp);
+      if (retry.current) window.clearInterval(retry.current);
       window.removeEventListener("blur", onBlur);
-      events.forEach((e) => window.removeEventListener(e, onGesture));
+      events.forEach((e) =>
+        window.removeEventListener(e, onGesture, { capture: true }),
+      );
       script.remove();
       delete window.onSpotifyIframeApiReady;
     };
