@@ -31,6 +31,8 @@ declare global {
 export default function MusicPlayer() {
   const holder = useRef<HTMLDivElement>(null);
   const armed = useRef(false);
+  /** true once we have actually heard it start */
+  const sounding = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -43,9 +45,10 @@ export default function MusicPlayer() {
         (c) => {
           if (cancelled) return;
           musicStore.controller = c;
-          c.addListener("playback_update", (e) =>
-            musicStore.set({ playing: !e.data.isPaused }),
-          );
+          c.addListener("playback_update", (e) => {
+            if (!e.data.isPaused) sounding.current = true;
+            musicStore.set({ playing: !e.data.isPaused });
+          });
           musicStore.set({ ready: true });
           start();
         },
@@ -63,17 +66,33 @@ export default function MusicPlayer() {
       if (!musicStore.controller) musicStore.set({ failed: true });
     }, 8000);
 
+    /**
+     * From the top, every time. `play()` alone resumes wherever the embed
+     * left its playhead, and Spotify remembers that across visits — so the
+     * track would start somewhere in the middle.
+     */
+    const fromTheTop = () => {
+      const c = musicStore.controller;
+      if (!c) return;
+      if (typeof c.playFromStart === "function") c.playFromStart();
+      else {
+        c.seek?.(0);
+        c.play();
+      }
+    };
+
     const events = ["pointerdown", "keydown", "touchstart"] as const;
     const onGesture = () => {
-      musicStore.controller?.play();
       events.forEach((e) => window.removeEventListener(e, onGesture));
+      // if the first attempt was allowed through, leave it playing
+      if (!sounding.current) fromTheTop();
     };
 
     function start() {
       if (armed.current) return;
       armed.current = true;
       // ask once, in case this visitor has already earned the privilege
-      musicStore.controller?.play();
+      fromTheTop();
       events.forEach((e) =>
         window.addEventListener(e, onGesture, { passive: true }),
       );

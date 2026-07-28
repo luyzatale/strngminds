@@ -9,6 +9,9 @@ export type MusicController = {
   play: () => void;
   pause: () => void;
   togglePlay: () => void;
+  /** Spotify's own rewind-and-play; the name has no "At" on it. */
+  playFromStart?: () => void;
+  seek?: (seconds: number) => void;
   destroy?: () => void;
   addListener: (
     event: string,
