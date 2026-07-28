@@ -1,0 +1,93 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
+type Theme = "light" | "dark";
+
+export const THEME_KEY = "sm-theme";
+
+/**
+ * The script that runs before paint, so the page never flashes the wrong
+ * theme. Kept here so the storage key and the toggle can never drift apart.
+ */
+export const themeScript = `(function(){try{var s=localStorage.getItem("${THEME_KEY}");var d=s||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.dataset.theme=d;}catch(e){}})();`;
+
+export default function ThemeToggle() {
+  const [theme, setTheme] = useState<Theme>("light");
+
+  useEffect(() => {
+    const current = (document.documentElement.dataset.theme as Theme) ?? "light";
+    setTheme(current);
+
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+    const follow = () => {
+      if (localStorage.getItem(THEME_KEY)) return; // they have chosen
+      const next: Theme = media.matches ? "dark" : "light";
+      document.documentElement.dataset.theme = next;
+      setTheme(next);
+    };
+    media.addEventListener("change", follow);
+    return () => media.removeEventListener("change", follow);
+  }, []);
+
+  const toggle = () => {
+    const next: Theme = theme === "dark" ? "light" : "dark";
+    document.documentElement.dataset.theme = next;
+    try {
+      localStorage.setItem(THEME_KEY, next);
+    } catch {}
+    setTheme(next);
+  };
+
+  const dark = theme === "dark";
+
+  return (
+    <button
+      type="button"
+      onClick={toggle}
+      aria-label={dark ? "Switch to light" : "Switch to dark"}
+      title={dark ? "Switch to light" : "Switch to dark"}
+      className="group relative flex h-9 w-9 items-center justify-center rounded-full border border-line-strong text-ink transition-[background-color,border-color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-gold hover:bg-ivory/20"
+    >
+      {/* the glyph shows what you will get, not where you are */}
+      <span className="relative block h-4 w-4">
+        <svg
+          viewBox="0 0 16 16"
+          className="absolute inset-0 h-4 w-4 transition-[opacity,transform] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
+          style={{
+            opacity: dark ? 1 : 0,
+            transform: dark ? "none" : "rotate(-45deg) scale(0.7)",
+          }}
+          aria-hidden="true"
+        >
+          <circle cx="8" cy="8" r="3.1" fill="currentColor" />
+          <circle
+            cx="8"
+            cy="8"
+            r="6.2"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1"
+            strokeDasharray="1 3.2"
+            strokeLinecap="round"
+            opacity="0.7"
+          />
+        </svg>
+        <svg
+          viewBox="0 0 16 16"
+          className="absolute inset-0 h-4 w-4 transition-[opacity,transform] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
+          style={{
+            opacity: dark ? 0 : 1,
+            transform: dark ? "rotate(45deg) scale(0.7)" : "none",
+          }}
+          aria-hidden="true"
+        >
+          <path
+            d="M10.9 1.6A7 7 0 1 0 10.9 14.4 8.2 8.2 0 0 1 10.9 1.6Z"
+            fill="currentColor"
+          />
+        </svg>
+      </span>
+    </button>
+  );
+}

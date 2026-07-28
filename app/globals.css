@@ -1,0 +1,293 @@
+/* `source(none)` turns off Tailwind's project-wide file scan; the two @source
+   lines below are the only places class names live. Keeps builds light. */
+@import "tailwindcss" source(none);
+@source "../app";
+@source "../components";
+
+@theme {
+  /* ── Surfaces ─────────────────────────────────────────── */
+  --color-paper: #ffffff;
+  --color-paper-50: #fcfcfc;
+  --color-paper-100: #fafafa;
+  --color-paper-200: #f7f7f5;
+
+  /* ── Lines & neutrals ─────────────────────────────────── */
+  --color-line: #eaeaea;
+  --color-line-strong: #dadada;
+  --color-mute: #bdbdbd;
+
+  /* ── Ink ──────────────────────────────────────────────── */
+  --color-ink: #191919;
+  --color-ink-soft: #4a4a4a;
+  --color-ink-faint: #767676;
+
+  /* ── Celestial accents (used sparingly) ───────────────── */
+  --color-gold: #d8c29a;
+  --color-gold-deep: #bfa477;
+  --color-ivory: #f7e8c7;
+  --color-cosmos: #325e91;
+  --color-earth: #4d8fc8;
+  --color-terra: #a56b44;
+
+  --font-serif: var(--font-cormorant), "EB Garamond", Georgia, serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  --shadow-lift: 0 1px 2px rgba(25, 25, 25, 0.02), 0 12px 32px -18px rgba(25, 25, 25, 0.14);
+  --shadow-lift-hover: 0 1px 2px rgba(25, 25, 25, 0.03), 0 22px 48px -22px rgba(25, 25, 25, 0.18);
+  --shadow-orb: 0 6px 14px -6px rgba(25, 25, 25, 0.35);
+
+  --ease-calm: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+    --nav-h: 72px;
+    /* stars are barely there on paper, and must carry the night on their own */
+    --star-scale: 1;
+    --galaxy-filter: brightness(0.82) saturate(1.15);
+  }
+
+  /* Dark is a real theme, not an inversion: the same palette, re-lit. Every
+     utility compiles to var(--color-*), so re-pointing the tokens is enough. */
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+
+    --color-paper: #08080d;
+    --color-paper-50: #0b0b12;
+    --color-paper-100: #0f0f18;
+    --color-paper-200: #14141f;
+
+    --color-line: #20202c;
+    --color-line-strong: #2e2e3d;
+    --color-mute: #4d4d5f;
+
+    --color-ink: #f1efec;
+    --color-ink-soft: #b4b1ac;
+    --color-ink-faint: #8b8894;
+
+    --color-gold: #d8c29a;
+    --color-gold-deep: #e4d1ac;
+
+    --star-scale: 2.2;
+    --galaxy-filter: none;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+  }
+
+  /* Lenis takes over scrolling; native smooth would fight it. */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+    scroll-behavior: auto;
+  }
+
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    transition:
+      background-color 700ms cubic-bezier(0.22, 1, 0.36, 1),
+      color 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  ::selection {
+    background: var(--color-ivory);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 1px solid var(--color-gold-deep);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-serif);
+    font-weight: 300;
+    letter-spacing: -0.015em;
+    line-height: 1.08;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+}
+
+@utility eyebrow {
+  font-size: 0.6875rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--color-ink-faint);
+  font-weight: 400;
+}
+
+@utility rule-soft {
+  border-top: 1px solid var(--color-line);
+}
+
+/* ── Motion ─────────────────────────────────────────────── */
+
+@keyframes sm-orbit {
+  from {
+    transform: rotate(var(--orbit-start, 0deg));
+  }
+  to {
+    transform: rotate(calc(var(--orbit-start, 0deg) + 360deg));
+  }
+}
+
+@keyframes sm-orbit-counter {
+  from {
+    transform: rotate(calc(var(--orbit-start, 0deg) * -1));
+  }
+  to {
+    transform: rotate(calc((var(--orbit-start, 0deg) + 360deg) * -1));
+  }
+}
+
+@keyframes sm-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, calc(var(--float-d, 4px) * -1), 0);
+  }
+}
+
+@keyframes sm-breathe {
+  0%,
+  100% {
+    opacity: 0.72;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.045);
+  }
+}
+
+/* drei's <Stars> drives every point's size from one shared clock —
+   gl_PointSize *= (3.0 + sin(time)) — so the whole field breathes in unison
+   rather than each star blinking on its own schedule. */
+@keyframes sm-star-pulse {
+  0%,
+  100% {
+    transform: scale(0.66);
+  }
+  50% {
+    transform: scale(1.34);
+  }
+}
+
+@keyframes sm-spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes sm-constellation {
+  0%,
+  72%,
+  100% {
+    opacity: 0.42;
+  }
+  86% {
+    opacity: 0.95;
+  }
+}
+
+@keyframes sm-drift {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0;
+  }
+  12%,
+  84% {
+    opacity: var(--dust-o, 0.5);
+  }
+  100% {
+    transform: translate3d(var(--dust-x, 14px), var(--dust-y, -34px), 0);
+    opacity: 0;
+  }
+}
+
+@keyframes sm-path {
+  from {
+    offset-distance: 0%;
+  }
+  to {
+    offset-distance: 100%;
+  }
+}
+
+@keyframes sm-scroll-hint {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.35;
+  }
+  50% {
+    transform: translateY(6px);
+    opacity: 0.9;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@keyframes sm-eq {
+  0%,
+  100% {
+    transform: scaleY(0.35);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+/* A planet's surface scrolls inside its own disc while the lighting stays put,
+   which reads as the body turning on its axis. The layer is two copies of the
+   surface side by side at 200% width, so translating exactly -50% lands the
+   second copy where the first began — a seamless loop with one full set of
+   features across the visible face. */
+@keyframes sm-surface {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
