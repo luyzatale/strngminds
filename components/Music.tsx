@@ -45,6 +45,7 @@ export default function Music() {
   const [ready, setReady] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [failed, setFailed] = useState(false);
+  const armed = useRef(false);
   const reduced = useReducedMotion();
 
   useEffect(() => {
@@ -82,6 +83,30 @@ export default function Music() {
       delete window.onSpotifyIframeApiReady;
     };
   }, []);
+
+  /**
+   * Autoplay.
+   *
+   * No browser will start audio on load without a gesture, and Spotify's embed
+   * is no exception — so we ask once in case this visitor's engagement with the
+   * origin has earned the privilege, and otherwise start on the very first
+   * thing they do: a tap, a key, or a drag of the solar system. In practice the
+   * music begins the moment they touch the page.
+   */
+  useEffect(() => {
+    if (!ready || armed.current) return;
+    armed.current = true;
+
+    controller.current?.play();
+
+    const events = ["pointerdown", "keydown", "touchstart"] as const;
+    const start = () => {
+      controller.current?.play();
+      events.forEach((e) => window.removeEventListener(e, start));
+    };
+    events.forEach((e) => window.addEventListener(e, start, { passive: true }));
+    return () => events.forEach((e) => window.removeEventListener(e, start));
+  }, [ready]);
 
   const toggle = () => controller.current?.togglePlay();
 

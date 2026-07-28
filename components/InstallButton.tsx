@@ -23,6 +23,13 @@ export default function InstallButton() {
   const [open, setOpen] = useState(false);
   const reduced = useReducedMotion();
 
+  // Chromium only offers the install prompt to a page controlled by a service
+  // worker with a fetch handler, and only over https (or localhost).
+  useEffect(() => {
+    if (!("serviceWorker" in navigator)) return;
+    navigator.serviceWorker.register("/sw.js").catch(() => {});
+  }, []);
+
   useEffect(() => {
     const onPrompt = (e: Event) => {
       e.preventDefault();

@@ -4,6 +4,12 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   images: {
     formats: ["image/avif", "image/webp"],
+    // the podcast artwork, served from Spotify's CDN so it tracks their cover
+    remotePatterns: [
+      { protocol: "https", hostname: "image-cdn-ak.spotifycdn.com" },
+      { protocol: "https", hostname: "image-cdn-fa.spotifycdn.com" },
+      { protocol: "https", hostname: "i.scdn.co" },
+    ],
   },
   experimental: {
     optimizePackageImports: ["framer-motion"],

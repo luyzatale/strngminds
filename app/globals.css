@@ -42,7 +42,9 @@
 @layer base {
   :root {
     color-scheme: light;
-    --nav-h: 72px;
+    /* one bar on a phone plus a row of tabs beneath it; a single row from md up */
+    --nav-row: 68px;
+    --nav-h: 108px;
     /* stars are barely there on paper, and must carry the night on their own */
     --star-scale: 1;
     --galaxy-filter: brightness(0.82) saturate(1.15);
@@ -71,6 +73,13 @@
 
     --star-scale: 2.2;
     --galaxy-filter: none;
+  }
+
+  @media (min-width: 768px) {
+    :root {
+      --nav-row: 72px;
+      --nav-h: 72px;
+    }
   }
 
   html {

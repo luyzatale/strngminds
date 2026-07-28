@@ -80,23 +80,27 @@ function Backdrop() {
       className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
       aria-hidden="true"
     >
-      <Starfield seed={404} count={120} clear={0} />
+      <Starfield seed={404} count={140} mobileCount={55} clear={0} />
 
-      {/* below the bar, never behind the wordmark */}
-      <Parallax strength={8} className="absolute -left-32 top-[26vh]">
-        <Galaxy seed={41} size={340} tilt={-18} flatten={0.34} duration={720} />
+      {/* The form is a column of reading matter, so the galaxies are pushed
+          into the far corners and off the edge — never behind the text. */}
+      <Parallax
+        strength={7}
+        className="absolute -bottom-44 -left-44 hidden sm:block"
+      >
+        <Galaxy seed={41} size={330} tilt={-18} flatten={0.32} duration={720} />
       </Parallax>
 
       <Parallax
         strength={6}
         invert
-        className="absolute -bottom-28 -right-28 hidden sm:block"
+        className="absolute -right-40 top-[8vh] hidden lg:block"
       >
-        <Galaxy seed={88} size={300} tilt={24} flatten={0.3} duration={880} reverse />
+        <Galaxy seed={88} size={290} tilt={24} flatten={0.3} duration={880} reverse />
       </Parallax>
 
-      <Parallax strength={5} className="absolute right-[4%] top-[16vh] hidden lg:block">
-        <Constellation shape="cassiopeia" width={170} delay={5} />
+      <Parallax strength={5} className="absolute bottom-[6vh] right-[4%] hidden xl:block">
+        <Constellation shape="cassiopeia" width={160} delay={5} />
       </Parallax>
     </div>
   );

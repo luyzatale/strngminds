@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { LogoLockup } from "@/components/Logo";
 import InstallButton from "@/components/InstallButton";
@@ -20,7 +21,14 @@ export const SECTION_LINKS: Link[] = [
 
 const CONTACT = "/contact";
 
+/** The centred tabs, in the manner of the reference. */
+const TABS: Link[] = [
+  { href: "/", label: "Home" },
+  { href: "/meditation", label: "Meditation" },
+];
+
 export default function Nav({ links = [] }: { links?: Link[] }) {
+  const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const reduced = useReducedMotion();
@@ -52,7 +60,7 @@ export default function Nav({ links = [] }: { links?: Link[] }) {
     >
       <nav
         aria-label="Primary"
-        className="mx-auto flex h-[var(--nav-h)] w-full max-w-[110rem] items-center justify-between gap-3 px-5 sm:px-10 lg:px-14"
+        className="relative mx-auto flex h-[var(--nav-row)] w-full max-w-[110rem] items-center justify-between gap-3 px-5 sm:px-10 lg:px-14"
       >
         <a href="/" className="relative -m-2 p-2" aria-label="Strng Minds — home">
           <LogoLockup />
@@ -113,6 +121,39 @@ export default function Nav({ links = [] }: { links?: Link[] }) {
           )}
         </div>
       </nav>
+
+      {/* Centred over the bar from md up; a row of its own on a phone, where
+          the logo and the controls already fill the width. */}
+      <div className="pointer-events-none md:absolute md:inset-x-0 md:top-0 md:flex md:h-[var(--nav-row)] md:items-center md:justify-center">
+        <ul className="pointer-events-auto flex items-center justify-center gap-1.5 pb-2.5 md:gap-2 md:pb-0">
+          {TABS.map((t) => {
+            const active = pathname === t.href;
+            return (
+              <li key={t.href}>
+                <a
+                  href={t.href}
+                  aria-current={active ? "page" : undefined}
+                  className={clsx(
+                    "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-[0.62rem] uppercase tracking-[0.2em] transition-[background-color,border-color,color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:text-[0.66rem] sm:tracking-[0.24em]",
+                    active
+                      ? "border-gold/50 bg-ivory/10 text-ink"
+                      : "border-transparent text-ink-faint hover:text-ink",
+                  )}
+                >
+                  <span
+                    aria-hidden="true"
+                    className={clsx(
+                      "h-1 w-1 rounded-full transition-colors duration-500",
+                      active ? "bg-gold-deep" : "bg-mute",
+                    )}
+                  />
+                  {t.label}
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
 
       {/* The rule the rest of the bar will hang from — full bleed, with a
           second, fainter line beneath it. */}

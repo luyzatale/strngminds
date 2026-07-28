@@ -245,15 +245,19 @@ export function Constellation({
 export function Starfield({
   seed = 21,
   count = 260,
+  /** how many survive on a phone; the rest are hidden below `sm` */
+  mobileCount,
   /** normalised radius around the centre kept clear of stars */
   clear = 0.05,
   className,
 }: {
   seed?: number;
   count?: number;
+  mobileCount?: number;
   clear?: number;
   className?: string;
 }) {
+  const onPhone = mobileCount ?? count;
   const rnd = seeded(seed);
   const stars: {
     x: number;
@@ -293,7 +297,7 @@ export function Starfield({
       {stars.map((st, i) => (
         <span
           key={i}
-          className="absolute rounded-full"
+          className={`absolute rounded-full ${i < onPhone ? "" : "hidden sm:block"}`}
           style={{
             left: `${st.x}%`,
             top: `${st.y}%`,
