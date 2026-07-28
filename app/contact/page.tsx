@@ -81,7 +81,7 @@ function Backdrop() {
       className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
       aria-hidden="true"
     >
-      <Starfield seed={404} count={140} mobileCount={55} clear={0} drift={260} />
+      <Starfield seed={404} count={140} mobileCount={55} clear={0} drift />
 
       {/* The form is a column of reading matter, so the galaxies are pushed
           into the far corners and off the edge — never behind the text. */}

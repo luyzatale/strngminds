@@ -252,15 +252,15 @@ export function Starfield({
   mobileCount,
   /** normalised radius around the centre kept clear of stars */
   clear = 0.05,
-  /** seconds for the field to travel its own width, rightwards */
-  drift,
+  /** whether the field travels rightwards; the pace is --star-drift */
+  drift = false,
   className,
 }: {
   seed?: number;
   count?: number;
   mobileCount?: number;
   clear?: number;
-  drift?: number;
+  drift?: boolean;
   className?: string;
 }) {
   const onPhone = mobileCount ?? count;
@@ -361,7 +361,7 @@ export function Starfield({
         className="absolute inset-y-0 left-0 flex w-[200%]"
         style={{
           animationName: "sm-drift-right",
-          animationDuration: `${drift}s`,
+          animationDuration: "var(--star-drift)",
           animationTimingFunction: "linear",
           animationIterationCount: "infinite",
         }}

@@ -40,7 +40,7 @@ export default function Scene() {
         className="pointer-events-none absolute -inset-[15%] z-0"
         style={{ x, y }}
       >
-        <Starfield seed={21} count={340} mobileCount={130} clear={0} drift={260} />
+        <Starfield seed={21} count={340} mobileCount={130} clear={0} drift />
       </motion.div>
 
       {/* Nudged up a touch on phones: a mobile browser's own bar overlays the

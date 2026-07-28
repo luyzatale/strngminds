@@ -47,6 +47,14 @@
     --nav-h: 68px;
     /* stars are barely there on paper, and must carry the night on their own */
     --star-scale: 1;
+    /**
+     * How long the star field takes to travel its own width. That width grows
+     * with the viewport, so a single duration would drift at a quarter of the
+     * speed on a phone that it does on a desktop — measured at 2px/s against
+     * 7px/s, which reads as not moving at all. These three keep it near 7px/s
+     * at every size.
+     */
+    --star-drift: 75s;
     --galaxy-filter: brightness(0.82) saturate(1.15);
   }
 
@@ -79,6 +87,18 @@
     :root {
       --nav-row: 72px;
       --nav-h: 72px;
+    }
+  }
+
+  @media (min-width: 640px) {
+    :root {
+      --star-drift: 140s;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    :root {
+      --star-drift: 270s;
     }
   }
 

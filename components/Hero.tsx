@@ -150,7 +150,7 @@ function HeroDecor() {
       ))}
 
       <Parallax strength={6} className="absolute right-[2%] top-[26vh] hidden lg:block">
-        <Constellation shape="cassiopeia" width={215} delay={2} />
+        <Constellation shape="cassiopeia" width={145} delay={2} />
       </Parallax>
 
       <Parallax
@@ -158,7 +158,7 @@ function HeroDecor() {
         invert
         className="absolute bottom-[8vh] left-[2%] hidden lg:block"
       >
-        <Constellation shape="ursa" width={240} delay={9} />
+        <Constellation shape="ursa" width={160} delay={9} />
       </Parallax>
     </div>
   );
