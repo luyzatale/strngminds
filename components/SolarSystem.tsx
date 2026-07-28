@@ -223,7 +223,10 @@ export default function SolarSystem({
   const onPointerDown = (e: PointerEvent<HTMLDivElement>) => {
     drag.current = { x: e.clientX, y: e.clientY };
     setDragging(true);
-    scene.current?.setPointerCapture(e.pointerId);
+    // synthetic pointers (tests, scripted input) have no capture target
+    try {
+      scene.current?.setPointerCapture(e.pointerId);
+    } catch {}
   };
 
   const onPointerMove = (e: PointerEvent<HTMLDivElement>) => {
@@ -242,7 +245,9 @@ export default function SolarSystem({
   const endDrag = (e: PointerEvent<HTMLDivElement>) => {
     drag.current = null;
     setDragging(false);
-    scene.current?.releasePointerCapture?.(e.pointerId);
+    try {
+      scene.current?.releasePointerCapture?.(e.pointerId);
+    } catch {}
   };
 
   return (
