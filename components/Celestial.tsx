@@ -25,6 +25,21 @@ export const NEBULA_INK = [
 
 export const NEBULA_CORE = ["#fff6e0", "#f0d9a4", "#a186dd"];
 
+/**
+ * And one from the second photograph: icy blue-white arms threaded with rust
+ * dust lanes, around a core that burns amber.
+ */
+export const FROST_INK = [
+  "#cfe3f6",
+  "#a7cae9",
+  "#8fb6dc",
+  "#d9a367",
+  "#bd7c42",
+  "#f3e2c0",
+];
+
+export const FROST_CORE = ["#fffaf0", "#f7d693", "#d98f3f"];
+
 function galaxyDots(seed: number, count = 460, ink = GALAXY_INK): Dot[] {
   const rnd = seeded(seed);
   const dots: Dot[] = [];

@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Inter } from "next/font/google";
 import MusicControls from "@/components/MusicControls";
-import MusicPlayer from "@/components/MusicPlayer";
 import SmoothScroll from "@/components/SmoothScroll";
 import { themeScript } from "@/components/ThemeToggle";
 import "./globals.css";
@@ -87,7 +86,6 @@ export default function RootLayout({
       </head>
       <body className="bg-paper text-ink antialiased">
         <SmoothScroll />
-        <MusicPlayer />
         <MusicControls />
         <a
           href="#main"

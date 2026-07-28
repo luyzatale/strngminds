@@ -1,6 +1,6 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { useReducedMotion } from "framer-motion";
 import { musicStore } from "@/components/music-store";
 
@@ -20,6 +20,23 @@ export default function MusicControls() {
     musicStore.getServer,
   );
   const reduced = useReducedMotion();
+
+  /**
+   * An episode has to win over the background sound. Playback inside a
+   * cross-origin embed cannot be read, but clicking into one moves focus to
+   * that iframe and blurs the window, which is the moment to get out of the
+   * way. Navigating to the page does nothing; only pressing play does.
+   */
+  useEffect(() => {
+    const onBlur = () => {
+      const el = document.activeElement as HTMLIFrameElement | null;
+      if (el?.tagName === "IFRAME" && el.src?.includes("/embed/episode/")) {
+        musicStore.pause();
+      }
+    };
+    window.addEventListener("blur", onBlur);
+    return () => window.removeEventListener("blur", onBlur);
+  }, []);
 
   if (failed) return null;
 

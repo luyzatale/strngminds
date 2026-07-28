@@ -2,6 +2,8 @@ import Scene from "@/components/Scene";
 import {
   Constellation,
   Dust,
+  FROST_CORE,
+  FROST_INK,
   Galaxy,
   NEBULA_CORE,
   NEBULA_INK,
@@ -110,21 +112,28 @@ const GALAXIES = (() => {
   }
 
   /**
-   * The violet one has to be a galaxy that sits fully in frame — the biggest
-   * are pushed into the corners and bleed off the edge, where a colour barely
-   * registers. So: the largest that clears every edge by a fifth.
+   * Three are painted from photographs — two violet, one blue-and-amber — and
+   * each has to sit fully in frame: the biggest are pushed into the corners
+   * and bleed off the edge, where a colour barely registers. They are also
+   * kept apart, so a pair does not read as one patch of colour.
    */
-  const violet = out.findIndex(
-    (g) =>
-      g.x / 100 > 0.2 &&
-      g.x / 100 < 0.8 &&
-      g.y / 100 > 0.22 &&
-      g.y / 100 < 0.78,
-  );
+  const tint = new Map<number, "nebula" | "frost">();
+  const taken: { x: number; y: number }[] = [];
+  for (let i = 0; i < out.length && tint.size < 3; i++) {
+    const g = out[i];
+    const x = g.x / 100;
+    const y = g.y / 100;
+    if (x < 0.14 || x > 0.86 || y < 0.18 || y > 0.82) continue;
+    // the scatter already keeps them 0.17 apart, so this only stops a pair
+    // landing shoulder to shoulder
+    if (taken.some((t) => Math.hypot(t.x - x, t.y - y) < 0.18)) continue;
+    tint.set(i, tint.size < 2 ? "nebula" : "frost");
+    taken.push({ x, y });
+  }
 
   let extra = 0;
   return out.map((g, i) => {
-    const tinted = i === violet;
+    const tinted = tint.get(i) ?? null;
     if (onPhone.has(i)) return { ...g, tinted, tier: "phone" as const };
     extra += 1;
     return { ...g, tinted, tier: extra <= 3 ? ("sm" as const) : ("lg" as const) };
@@ -163,8 +172,20 @@ function HeroDecor() {
               flatten={g.flatten}
               duration={g.duration}
               reverse={g.reverse}
-              ink={g.tinted ? NEBULA_INK : undefined}
-              core={g.tinted ? NEBULA_CORE : undefined}
+              ink={
+                g.tinted === "nebula"
+                  ? NEBULA_INK
+                  : g.tinted === "frost"
+                    ? FROST_INK
+                    : undefined
+              }
+              core={
+                g.tinted === "nebula"
+                  ? NEBULA_CORE
+                  : g.tinted === "frost"
+                    ? FROST_CORE
+                    : undefined
+              }
               style={{
                 opacity: g.tinted ? Math.min(1, g.opacity + 0.25) : g.opacity,
               }}
