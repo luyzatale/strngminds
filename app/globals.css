@@ -163,6 +163,16 @@
      */
     --on-gold: #33302a;
 
+    /**
+     * The wordmark carries a little more weight on paper. Warm ink on ivory
+     * is a gentler contrast than pale ink on near-black, and at this size
+     * the mark was reading lighter by day than by night for no reason other
+     * than the ground it sits on. The ring comes up with it so the two stay
+     * in balance.
+     */
+    --logo-weight: 600;
+    --logo-ring-o: 0.72;
+
     /** Light runs slower. Sunrise is not in a hurry. */
     --motion-scale: 1.35;
   }
@@ -223,6 +233,8 @@
     --control-shadow: none;
     --page-wash: none;
     --on-gold: #191919;
+    --logo-weight: 500;
+    --logo-ring-o: 0.55;
     --motion-scale: 1;
   }
 

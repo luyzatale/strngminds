@@ -19,7 +19,10 @@ export function LogoMark({
       style={{ width: size, height: size }}
       aria-hidden="true"
     >
-      <span className="absolute inset-0 rounded-full border-[1.5px] border-ink/55" />
+      <span
+        className="absolute inset-0 rounded-full border-[1.5px] border-ink"
+        style={{ opacity: "var(--logo-ring-o, 0.55)" }}
+      />
       <span
         className="absolute inset-0"
         style={
@@ -58,10 +61,12 @@ export function Wordmark({ className }: { className?: string }) {
   return (
     <span
       className={clsx(
-        "flex flex-col whitespace-nowrap font-serif text-[0.7rem] font-medium uppercase leading-[1.06] tracking-[0.13em] text-ink",
+        "flex flex-col whitespace-nowrap font-serif text-[0.7rem] uppercase leading-[1.06] tracking-[0.13em] text-ink",
         "sm:flex-row sm:gap-[0.32em] sm:text-[0.95rem] sm:leading-none sm:tracking-[0.2em]",
         className,
       )}
+      /* 500 at night, 600 by day — see --logo-weight. */
+      style={{ fontWeight: "var(--logo-weight, 500)" }}
     >
       <span>Strng</span>
       <span>Minds</span>
