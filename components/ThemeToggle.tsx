@@ -38,7 +38,7 @@ export default function ThemeToggle() {
       onClick={toggle}
       aria-label={dark ? "Switch to light" : "Switch to dark"}
       title={dark ? "Switch to light" : "Switch to dark"}
-      className="group relative flex h-9 w-9 sm:h-8 sm:w-8 items-center justify-center rounded-full border border-line-strong/70 text-ink transition-[background-color,border-color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-gold hover:bg-ivory/20"
+      className="group relative flex h-9 w-9 sm:h-8 sm:w-8 items-center justify-center rounded-full border border-line-strong/50 text-ink transition-[background-color,border-color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-gold hover:bg-ivory/20"
     >
       {/* the glyph shows what you will get, not where you are */}
       <span className="relative block h-4 w-4">

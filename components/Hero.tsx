@@ -43,12 +43,11 @@ export default function Hero() {
           a little less tracking. It stays quiet, but it is now legible at a
           glance rather than on inspection.
 
-          4.5rem, not less: the corner controls reach 56px up from the bottom,
-          and on anything narrower than about 430px this line is wide enough to
-          run underneath them. Clearing them vertically is the only fix that
-          holds at every width, since the line is centred and the controls are
-          not. */}
-      <p className="pointer-events-none absolute bottom-[4.5rem] left-1/2 z-10 w-full -translate-x-1/2 whitespace-nowrap text-center text-[0.62rem] uppercase tracking-[0.2em] text-ink-faint sm:bottom-16 sm:text-[0.68rem] sm:tracking-[0.26em]">
+          Now raised another 24px, which draws it up out of the floor of the
+          viewport and into the composition — it belongs to the system above it
+          rather than to the edge below it. Well clear of the corner controls,
+          which reach only 56px up. */}
+      <p className="pointer-events-none absolute bottom-24 left-1/2 z-10 w-full -translate-x-1/2 whitespace-nowrap text-center text-[0.62rem] uppercase tracking-[0.24em] text-ink-faint sm:bottom-[5.5rem] sm:text-[0.68rem] sm:tracking-[0.3em]">
         Drag to turn
         <span className="sm:hidden"> · tap a planet</span>
         <span className="hidden sm:inline"> · hover a planet</span>
@@ -107,6 +106,7 @@ type Soft = Common & {
   kind: "soft";
   ink: string;
   core: string;
+  blur: number;
   /** whether it survives onto a phone, where the field is thinned out */
   phone: boolean;
 };
@@ -178,11 +178,17 @@ function scatter(
  * to stop that diagonal reading as a rule. They also carry three of the four
  * painted palettes, the teal one keeping its standing place at the left of the
  * system.
+ *
+ * The three are not on the same focus plane, and that is deliberate: the first
+ * is fully sharp, the second slightly off, the third softer again. Anchors at
+ * identical sharpness read as three stickers on one sheet of glass no matter
+ * how their sizes vary, because focus is the cue the eye actually uses for
+ * distance. Positions are fixed; only weight and focus move.
  */
 const HEROES: Spiral[] = [
-  { kind: "spiral", x: 83, y: 23, size: 232, tilt: -28, flatten: 0.4, opacity: 0.66, blur: 0.15, duration: 21600, reverse: false, tinted: "nebula", seed: 4101 },
-  { kind: "spiral", x: 10, y: 50, size: 214, tilt: 16, flatten: 0.34, opacity: 0.62, blur: 0.15, duration: 25200, reverse: true, tinted: "verdant", seed: 4207 },
-  { kind: "spiral", x: 86, y: 73, size: 190, tilt: -52, flatten: 0.44, opacity: 0.57, blur: 0.2, duration: 28800, reverse: false, tinted: "frost", seed: 4313 },
+  { kind: "spiral", x: 83, y: 23, size: 193, tilt: -28, flatten: 0.4, opacity: 0.57, blur: 0, duration: 21600, reverse: false, tinted: "nebula", seed: 4101 },
+  { kind: "spiral", x: 10, y: 50, size: 178, tilt: 16, flatten: 0.34, opacity: 0.54, blur: 0.3, duration: 25200, reverse: true, tinted: "verdant", seed: 4207 },
+  { kind: "spiral", x: 86, y: 73, size: 158, tilt: -52, flatten: 0.44, opacity: 0.49, blur: 0.65, duration: 28800, reverse: false, tinted: "frost", seed: 4313 },
 ];
 
 const { MEDIUM, SMALL, TINY } = (() => {
@@ -198,21 +204,25 @@ const { MEDIUM, SMALL, TINY } = (() => {
    * they register as structure rather than as objects. One of them carries the
    * second violet palette.
    */
-  const MEDIUM: Spiral[] = mediumAt.map((s, i) => ({
-    kind: "spiral",
-    x: round(s.x * 100, 2),
-    y: round(s.y * 100, 2),
-    size: Math.round(122 + rnd() * 56),
-    tilt: Math.round(-70 + rnd() * 140),
-    flatten: round(0.24 + rnd() * 0.28, 2),
-    opacity: round(0.31 + rnd() * 0.13, 2),
-    blur: 0.5,
-    // an order of magnitude slower than the heroes, which are already slow
-    duration: Math.round(32400 + rnd() * 12600),
-    reverse: rnd() > 0.5,
-    tinted: i === 0 ? "nebula" : null,
-    seed: 5000 + i * 37,
-  }));
+  const MEDIUM: Spiral[] = mediumAt.map((s, i) => {
+    const size = Math.round(122 + rnd() * 56);
+    return {
+      kind: "spiral" as const,
+      x: round(s.x * 100, 2),
+      y: round(s.y * 100, 2),
+      size,
+      tilt: Math.round(-70 + rnd() * 140),
+      flatten: round(0.24 + rnd() * 0.28, 2),
+      opacity: round(0.31 + rnd() * 0.13, 2),
+      // focus follows size within the band too, not just between bands
+      blur: round(1.6 - ((size - 122) / 56) * 0.8, 2),
+      // an order of magnitude slower than the heroes, which are already slow
+      duration: Math.round(32400 + rnd() * 12600),
+      reverse: rnd() > 0.5,
+      tinted: i === 0 ? ("nebula" as const) : null,
+      seed: 5000 + i * 37,
+    };
+  });
 
   /**
    * Layer 3, near half — present, but only as much as a distant thing is.
@@ -222,38 +232,47 @@ const { MEDIUM, SMALL, TINY } = (() => {
    * on the lens, not an object in space. Held between 0.45 and 0.85 they stay
    * round enough to read as things rather than as marks.
    */
-  const SMALL: Soft[] = smallAt.map((s, i) => ({
-    kind: "soft",
-    x: round(s.x * 100, 2),
-    y: round(s.y * 100, 2),
-    size: Math.round(58 + rnd() * 50),
-    tilt: Math.round(-80 + rnd() * 160),
-    flatten: round(0.45 + rnd() * 0.4, 2),
-    opacity: round(0.13 + rnd() * 0.08, 2),
-    ink: SOFT_INK[Math.floor(rnd() * SOFT_INK.length)],
-    core: SOFT_CORE[Math.floor(rnd() * SOFT_CORE.length)],
-    phone: i < 5,
-    seed: 6000 + i * 41,
-  }));
+  const SMALL: Soft[] = smallAt.map((s, i) => {
+    const size = Math.round(58 + rnd() * 50);
+    return {
+      kind: "soft" as const,
+      x: round(s.x * 100, 2),
+      y: round(s.y * 100, 2),
+      size,
+      tilt: Math.round(-80 + rnd() * 160),
+      flatten: round(0.45 + rnd() * 0.4, 2),
+      opacity: round(0.13 + rnd() * 0.08, 2),
+      blur: round(2.2 - ((size - 58) / 50) * 1.0, 2),
+      ink: SOFT_INK[Math.floor(rnd() * SOFT_INK.length)],
+      core: SOFT_CORE[Math.floor(rnd() * SOFT_CORE.length)],
+      phone: i < 5,
+      seed: 6000 + i * 41,
+    };
+  });
 
   /**
    * Layer 3, far half — the ones that are only ever seen by accident. At this
    * size and this opacity none of them is legible on its own; what they do is
    * make the count of things out there feel unbounded, which is the whole job.
    */
-  const TINY: Soft[] = tinyAt.map((s, i) => ({
-    kind: "soft",
-    x: round(s.x * 100, 2),
-    y: round(s.y * 100, 2),
-    size: Math.round(18 + rnd() * 30),
-    tilt: Math.round(-90 + rnd() * 180),
-    flatten: round(0.55 + rnd() * 0.35, 2),
-    opacity: round(0.055 + rnd() * 0.055, 2),
-    ink: SOFT_INK[Math.floor(rnd() * SOFT_INK.length)],
-    core: SOFT_CORE[Math.floor(rnd() * SOFT_CORE.length)],
-    phone: i < 16,
-    seed: 7000 + i * 43,
-  }));
+  const TINY: Soft[] = tinyAt.map((s, i) => {
+    const size = Math.round(18 + rnd() * 30);
+    return {
+      kind: "soft" as const,
+      x: round(s.x * 100, 2),
+      y: round(s.y * 100, 2),
+      size,
+      tilt: Math.round(-90 + rnd() * 180),
+      flatten: round(0.55 + rnd() * 0.35, 2),
+      opacity: round(0.055 + rnd() * 0.055, 2),
+      // the deepest plane: blurred past the point of having a shape at all
+      blur: round(3.0 - ((size - 18) / 30) * 1.2, 2),
+      ink: SOFT_INK[Math.floor(rnd() * SOFT_INK.length)],
+      core: SOFT_CORE[Math.floor(rnd() * SOFT_CORE.length)],
+      phone: i < 16,
+      seed: 7000 + i * 43,
+    };
+  });
 
   return { MEDIUM, SMALL, TINY };
 })();
@@ -276,13 +295,15 @@ const { MEDIUM, SMALL, TINY } = (() => {
  * hint.
  */
 const PHONE: Body[] = [
-  { kind: "soft", x: 24, y: 17, size: 74, tilt: -34, flatten: 0.36, opacity: 0.2, ink: SOFT_INK[1], core: SOFT_CORE[0], phone: true, seed: 8101 },
-  { kind: "spiral", x: 79, y: 25, size: 128, tilt: 22, flatten: 0.42, opacity: 0.44, blur: 0.3, duration: 25200, reverse: true, tinted: "nebula", seed: 8207 },
+  { kind: "soft", x: 24, y: 17, size: 70, tilt: -34, flatten: 0.5, opacity: 0.18, blur: 2.1, ink: SOFT_INK[1], core: SOFT_CORE[0], phone: true, seed: 8101 },
+  { kind: "spiral", x: 79, y: 25, size: 116, tilt: 22, flatten: 0.42, opacity: 0.4, blur: 0.55, duration: 25200, reverse: true, tinted: "nebula", seed: 8207 },
   // left of the system, at the height of the sun
-  { kind: "spiral", x: 15, y: 47, size: 132, tilt: -18, flatten: 0.38, opacity: 0.46, blur: 0.3, duration: 28800, reverse: false, tinted: "verdant", seed: 8313 },
+  { kind: "spiral", x: 15, y: 47, size: 120, tilt: -18, flatten: 0.38, opacity: 0.42, blur: 0.3, duration: 28800, reverse: false, tinted: "verdant", seed: 8313 },
   // the nearest and largest, set against the two on the left below it
-  { kind: "spiral", x: 74, y: 69, size: 174, tilt: 41, flatten: 0.34, opacity: 0.5, blur: 0.25, duration: 21600, reverse: true, tinted: "frost", seed: 8419 },
-  { kind: "soft", x: 26, y: 76, size: 112, tilt: -52, flatten: 0.3, opacity: 0.28, ink: SOFT_INK[2], core: SOFT_CORE[3], phone: true, seed: 8525 },
+  { kind: "spiral", x: 74, y: 69, size: 156, tilt: 41, flatten: 0.34, opacity: 0.45, blur: 0, duration: 21600, reverse: true, tinted: "frost", seed: 8419 },
+  // pulled up from 76%: the hint moved closer to the system, and on a short
+  // screen this was the one object with room to be crossed by it
+  { kind: "soft", x: 26, y: 73, size: 100, tilt: -52, flatten: 0.42, opacity: 0.25, blur: 1.5, ink: SOFT_INK[2], core: SOFT_CORE[3], phone: true, seed: 8525 },
 ];
 
 function HeroDecor() {
@@ -304,7 +325,7 @@ function HeroDecor() {
         className="absolute inset-0"
         style={{
           animationName: "sm-layer-far",
-          animationDuration: "340s",
+          animationDuration: "460s",
           animationTimingFunction: "ease-in-out",
           animationIterationCount: "infinite",
         }}
@@ -323,7 +344,7 @@ function HeroDecor() {
         className="absolute inset-0"
         style={{
           animationName: "sm-layer-mid",
-          animationDuration: "260s",
+          animationDuration: "370s",
           animationTimingFunction: "ease-in-out",
           animationIterationCount: "infinite",
         }}
@@ -347,7 +368,7 @@ function HeroDecor() {
         className="absolute inset-0"
         style={{
           animationName: "sm-layer-near",
-          animationDuration: "200s",
+          animationDuration: "290s",
           animationTimingFunction: "ease-in-out",
           animationIterationCount: "infinite",
         }}
@@ -426,10 +447,16 @@ function GalaxyAt({
         top: `${b.y}%`,
         transform: "translate(-50%, -50%)",
         /* Defocus sits out here rather than inside Galaxy, which already
-           spends its own `filter` on the theme's brightness correction. Only
-           the spirals get one at all — the soft ones have their softness in
-           the paint, which costs nothing. */
-        ...(b.kind === "spiral" ? { filter: `blur(${b.blur}px)` } : null),
+           spends its own `filter` on the theme's brightness correction.
+
+           Everything carries a blur now, graduated across five planes from
+           the sharp foreground anchor down to the deep field. Focus is the
+           cue the eye reads distance from, more than size is, and a field
+           where everything is equally sharp stays flat however its sizes
+           vary. The cost is bounded: these are small elements, static, and
+           the drift lives on their parent, so each rasterises once and is
+           then only translated. */
+        ...(b.blur > 0 ? { filter: `blur(${b.blur}px)` } : null),
       }}
     >
       {parallax ? <Parallax {...parallax}>{inner}</Parallax> : inner}

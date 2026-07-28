@@ -486,28 +486,50 @@ export function Starfield({
 
   /**
    * Space is not evenly sprinkled, and an even sprinkle is the one thing that
-   * reads instantly as generated. Seven loose centres take a little over half
-   * the field between them, each draw pulled toward its centre by a power
-   * curve so the density falls off smoothly and never draws an edge you could
-   * point at; the remainder land anywhere at all.
+   * reads instantly as generated. Five centres take two thirds of the field
+   * between them, each draw pulled toward its centre by a power curve so the
+   * density falls off smoothly and never draws an edge you could point at.
    *
-   * What this leaves out matters as much as what it puts down. The gaps
-   * between clusters are the empty regions — they are not carved, they are
-   * simply where the clusters are not.
+   * Two details do most of the work. The radii vary widely — a tight knot and
+   * a loose drift are different objects, and a row of equal-sized clusters is
+   * just a coarser grid. And the centres are weighted, so some are markedly
+   * richer than others; picking between them uniformly gave five clusters of
+   * the same brightness, which reads as deliberate placement.
    */
-  const clusters = Array.from({ length: 7 }, () => ({
+  const clusters = Array.from({ length: 5 }, () => ({
     x: rnd(),
     y: rnd(),
-    r: 0.11 + rnd() * 0.17,
+    r: 0.07 + rnd() * 0.21,
+    w: 0.45 + rnd() * 1.55,
   }));
+  const totalWeight = clusters.reduce((s, c) => s + c.w, 0);
+
+  /**
+   * And three regions nothing is allowed into at all. The gaps between
+   * clusters give small irregularities; these give the sky somewhere to be
+   * properly empty, which is what makes the populated parts feel populated.
+   */
+  const voids = [
+    { x: 0.21, y: 0.71, r: 0.16 },
+    { x: 0.79, y: 0.29, r: 0.14 },
+    { x: 0.47, y: 0.08, r: 0.12 },
+  ];
 
   let guard = 0;
-  while (stars.length < count && guard++ < count * 40) {
+  while (stars.length < count && guard++ < count * 60) {
     let x: number;
     let y: number;
 
-    if (rnd() < 0.56) {
-      const c = clusters[Math.floor(rnd() * clusters.length)];
+    if (rnd() < 0.68) {
+      let pick = rnd() * totalWeight;
+      let c = clusters[0];
+      for (const k of clusters) {
+        pick -= k.w;
+        if (pick <= 0) {
+          c = k;
+          break;
+        }
+      }
       const rad = c.r * Math.pow(rnd(), 1.9);
       const a = rnd() * Math.PI * 2;
       x = c.x + Math.cos(a) * rad;
@@ -519,6 +541,7 @@ export function Starfield({
       y = rnd();
     }
 
+    if (voids.some((v) => Math.hypot(v.x - x, v.y - y) < v.r)) continue;
     if (Math.hypot(x - 0.5, y - 0.5) < clear) continue;
     /**
      * How near the star is: 0 is far back in the field, 1 is close. Size and
@@ -535,8 +558,8 @@ export function Starfield({
       s: round((0.42 + 0.58 * near) * 1.6, 2),
       o: round(0.05 + near * 0.2, 2),
       gold: rnd() > 0.62,
-      // roughly one in ten catches the light; the rest are fixed points
-      sparkle: rnd() > 0.9,
+      // roughly one in fourteen catches the light; the rest are fixed points
+      sparkle: rnd() > 0.93,
       dur: round(6 + rnd() * 9, 2),
       delay: round(rnd() * 18, 2),
     });

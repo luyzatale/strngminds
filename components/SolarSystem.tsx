@@ -63,9 +63,9 @@ const BODIES: Body[] = [
     name: "Mercury",
     r: 11,
     d: 1.88,
-    period: 96,
+    period: 154,
     start: 130,
-    spin: 64,
+    spin: 102,
     surface:
       "radial-gradient(circle at 38% 32%, #b9b3ac 0%, #8e8781 46%, #5f5952 100%)",
     detail: CRATERED,
@@ -74,9 +74,9 @@ const BODIES: Body[] = [
     name: "Venus",
     r: 15.5,
     d: 2.72,
-    period: 148,
+    period: 237,
     start: 40,
-    spin: 90,
+    spin: 144,
     retrograde: true,
     surface:
       "radial-gradient(circle at 36% 30%, #f2e2c2 0%, #dcc094 48%, #a98354 100%)",
@@ -88,9 +88,9 @@ const BODIES: Body[] = [
     name: "Earth",
     r: 20.5,
     d: 3.2,
-    period: 210,
+    period: 336,
     start: 200,
-    spin: 30,
+    spin: 48,
     surface:
       "radial-gradient(circle at 36% 30%, #8fc0e6 0%, #4d8fc8 52%, #2b5a86 100%)",
     detail:
@@ -104,9 +104,9 @@ const BODIES: Body[] = [
     name: "Mars",
     r: 26,
     d: 2.44,
-    period: 268,
+    period: 429,
     start: 118,
-    spin: 33,
+    spin: 53,
     surface:
       "radial-gradient(circle at 36% 30%, #c98a5e 0%, #a56b44 50%, #6f4127 100%)",
     detail: CRATERED,
@@ -115,9 +115,9 @@ const BODIES: Body[] = [
     name: "Jupiter",
     r: 32,
     d: 5.28,
-    period: 348,
+    period: 557,
     start: 85,
-    spin: 18,
+    spin: 29,
     surface:
       "repeating-linear-gradient(178deg," +
       "rgba(255,255,255,0.10) 0 6%," +
@@ -135,9 +135,9 @@ const BODIES: Body[] = [
     name: "Saturn",
     r: 38.2,
     d: 4.4,
-    period: 452,
+    period: 723,
     start: 200,
-    spin: 21,
+    spin: 34,
     ring: true,
     surface:
       "repeating-linear-gradient(179deg," +
@@ -153,9 +153,9 @@ const BODIES: Body[] = [
     name: "Uranus",
     r: 43.8,
     d: 3.6,
-    period: 580,
+    period: 928,
     start: 255,
-    spin: 26,
+    spin: 42,
     surface:
       "radial-gradient(circle at 36% 30%, #cdeaea 0%, #86c6c9 48%, #4b8f97 100%)",
     detail:
@@ -167,9 +167,9 @@ const BODIES: Body[] = [
     name: "Neptune",
     r: 49.2,
     d: 3.4,
-    period: 720,
+    period: 1152,
     start: 105,
-    spin: 24,
+    spin: 38,
     surface:
       "radial-gradient(circle at 36% 30%, #8fb2dc 0%, #4a76ab 46%, #2a4c76 100%)",
     detail:
@@ -181,11 +181,11 @@ const BODIES: Body[] = [
 
 /** Tiny bodies drifting between the giants — the grit that sells the scale. */
 const MINOR = [
-  { r: 28.9, d: 0.34, period: 300, start: 340, o: 0.42 },
-  { r: 29.4, d: 0.27, period: 262, start: 96, o: 0.34 },
-  { r: 29.9, d: 0.24, period: 330, start: 188, o: 0.27 },
-  { r: 41.2, d: 0.29, period: 520, start: 128, o: 0.25 },
-  { r: 46.4, d: 0.24, period: 640, start: 22, o: 0.22 },
+  { r: 28.9, d: 0.34, period: 480, start: 340, o: 0.42 },
+  { r: 29.4, d: 0.27, period: 419, start: 96, o: 0.34 },
+  { r: 29.9, d: 0.24, period: 528, start: 188, o: 0.27 },
+  { r: 41.2, d: 0.29, period: 832, start: 128, o: 0.25 },
+  { r: 46.4, d: 0.24, period: 1024, start: 22, o: 0.22 },
 ];
 
 /** Orbits share a slightly displaced focus, as real ellipses do. */
@@ -293,7 +293,7 @@ export default function SolarSystem({
                   <div
                     style={{
                       animationName: "sm-float",
-                      animationDuration: `${18 + i * 3}s`,
+                      animationDuration: `${29 + i * 5}s`,
                       animationTimingFunction: "ease-in-out",
                       animationIterationCount: "infinite",
                       ["--float-d" as string]: `${b.float ?? 3}px`,
@@ -369,31 +369,31 @@ export default function SolarSystem({
         <div
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
           style={{
-            width: "96cqw",
-            height: "96cqw",
+            width: "144cqw",
+            height: "144cqw",
             background:
-              "radial-gradient(circle, rgba(247,232,199,0.11) 0%, rgba(247,232,199,0.055) 32%, rgba(247,232,199,0.018) 56%, rgba(247,232,199,0) 76%)",
+              "radial-gradient(circle, rgba(247,232,199,0.07) 0%, rgba(247,232,199,0.048) 18%, rgba(247,232,199,0.029) 34%, rgba(247,232,199,0.014) 52%, rgba(247,232,199,0.005) 68%, rgba(247,232,199,0) 84%)",
+            animation: "sm-breathe 37s ease-in-out infinite",
+          }}
+        />
+        <div
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
+          style={{
+            width: "74cqw",
+            height: "74cqw",
+            background:
+              "radial-gradient(circle, rgba(247,232,199,0.2) 0%, rgba(247,232,199,0.125) 26%, rgba(247,232,199,0.062) 46%, rgba(247,232,199,0.022) 64%, rgba(247,232,199,0) 82%)",
             animation: "sm-breathe 29s ease-in-out infinite",
           }}
         />
         <div
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
           style={{
-            width: "58cqw",
-            height: "58cqw",
+            width: "21cqw",
+            height: "21cqw",
             background:
-              "radial-gradient(circle, rgba(247,232,199,0.26) 0%, rgba(247,232,199,0.11) 38%, rgba(247,232,199,0) 74%)",
+              "radial-gradient(circle, rgba(255,247,228,0.88) 0%, rgba(250,224,163,0.48) 26%, rgba(240,206,142,0.21) 48%, rgba(240,206,142,0.07) 66%, rgba(240,206,142,0) 82%)",
             animation: "sm-breathe 21s ease-in-out infinite",
-          }}
-        />
-        <div
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
-          style={{
-            width: "19cqw",
-            height: "19cqw",
-            background:
-              "radial-gradient(circle, rgba(255,247,228,0.92) 0%, rgba(250,224,163,0.5) 28%, rgba(240,206,142,0.2) 54%, rgba(240,206,142,0) 76%)",
-            animation: "sm-breathe 15s ease-in-out infinite",
           }}
         />
         <div
@@ -441,9 +441,17 @@ function Orbit({
     <>
       {/* The ring should be discovered rather than announced: a hairline at the
           very bottom of the brightness scale, below the stars and well below
-          the bodies it carries. */}
+          the bodies it carries.
+
+          The 0.5px stroke is a progressive refinement, not the mechanism.
+          Measured: at a device pixel ratio of 1 the used border width is
+          rounded back up to 1px, so only retina screens actually get a
+          thinner line — which is most phones and most current laptops, but
+          not all of them. The reduction that everybody sees is the 9% alpha.
+          Where the ring reads at all it is because the sun's glow is behind
+          it, which is the intended relationship. */}
       <div
-        className="pointer-events-none absolute rounded-full border border-gold/10"
+        className="pointer-events-none absolute rounded-full border-[0.5px] border-gold/[0.09]"
         style={{ ...box, ...preserve }}
       />
       <div
