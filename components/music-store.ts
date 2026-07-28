@@ -5,6 +5,8 @@
  * re-render every consumer each time playback ticks.
  */
 
+export const TRACK = "spotify:track:3h7nfJ5PIzaHqaEIzrIHsK";
+
 export type MusicController = {
   play: () => void;
   pause: () => void;
@@ -12,6 +14,7 @@ export type MusicController = {
   /** Spotify's own rewind-and-play; the name has no "At" on it. */
   playFromStart?: () => void;
   seek?: (seconds: number) => void;
+  loadUri?: (uri: string, preferVideo?: boolean, timestampInSeconds?: number) => void;
   destroy?: () => void;
   addListener: (
     event: string,
@@ -71,27 +74,44 @@ export const musicStore = {
    * seek to zero ourselves. Watching the real playhead is the only way to be
    * certain, because which command wins varies by device and by session.
    */
-  playFromTop() {
+  playFromTop(uri?: string) {
     const c = this.controller;
     if (!c) return;
 
     position = 0;
     startedAt = Date.now();
 
+    /**
+     * All three synchronously, inside the gesture that asked for it. A phone
+     * only grants playback while the user's activation is live, so nothing
+     * here may wait for a timer: rewind, start, and rewind again in case the
+     * start command carried its own position with it.
+     */
+    c.seek?.(0);
     if (typeof c.playFromStart === "function") c.playFromStart();
     else c.play();
     c.seek?.(0);
 
+    let corrections = 0;
     if (watchdog) window.clearInterval(watchdog);
     watchdog = window.setInterval(() => {
       const elapsed = Date.now() - startedAt;
-      if (elapsed > 5000) {
+      if (elapsed > 6000) {
         window.clearInterval(watchdog);
         watchdog = 0;
         return;
       }
+      // further along than we have been listening: it resumed, so pull it back
       if (state.playing && position > elapsed + 1200) {
-        c.seek?.(0);
+        corrections += 1;
+        if (corrections <= 2) {
+          c.seek?.(0);
+        } else if (uri && typeof c.loadUri === "function") {
+          // last resort: reload the track at zero. Allowed to keep sounding
+          // because it is already playing by this point.
+          c.loadUri(uri, false, 0);
+          c.play();
+        }
         position = 0;
       }
     }, 400);

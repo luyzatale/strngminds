@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { musicStore, type MusicController } from "@/components/music-store";
+import { musicStore, TRACK, type MusicController } from "@/components/music-store";
 
 /**
  * The background track, mounted once in the root layout so that moving between
@@ -13,7 +13,6 @@ import { musicStore, type MusicController } from "@/components/music-store";
  * at the visitor's first tap, key or drag.
  */
 
-const TRACK = "spotify:track:3h7nfJ5PIzaHqaEIzrIHsK";
 const API = "https://open.spotify.com/embed/iframe-api/v1";
 
 declare global {
@@ -68,7 +67,7 @@ export default function MusicPlayer() {
     }, 8000);
 
     /** every route into playback rewinds first; the store owns that */
-    const fromTheTop = () => musicStore.playFromTop();
+    const fromTheTop = () => musicStore.playFromTop(TRACK);
 
     const events = ["pointerdown", "keydown", "touchstart"] as const;
     const onGesture = () => {

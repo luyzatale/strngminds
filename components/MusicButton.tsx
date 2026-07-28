@@ -2,7 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 import { useReducedMotion } from "framer-motion";
-import { musicStore } from "@/components/music-store";
+import { musicStore, TRACK } from "@/components/music-store";
 
 /** Drives the player that lives in the root layout. */
 export default function MusicButton() {
@@ -18,7 +18,7 @@ export default function MusicButton() {
   return (
     <button
       type="button"
-      onClick={() => (playing ? musicStore.pause() : musicStore.playFromTop())}
+      onClick={() => (playing ? musicStore.pause() : musicStore.playFromTop(TRACK))}
       disabled={!ready}
       aria-pressed={playing}
       aria-label={playing ? "Pause the music" : "Play the music"}
