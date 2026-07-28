@@ -44,7 +44,7 @@
     color-scheme: light;
     /* one bar on a phone plus a row of tabs beneath it; a single row from md up */
     --nav-row: 68px;
-    --nav-h: 108px;
+    --nav-h: 100px;
     /* stars are barely there on paper, and must carry the night on their own */
     --star-scale: 1;
     --galaxy-filter: brightness(0.82) saturate(1.15);
@@ -319,22 +319,3 @@
   }
 }
 
-/* A long, slow circuit of the page. Four corners of a lazy ellipse, never
-   crossing the middle where the system sits. */
-@keyframes sm-drift-wide {
-  0% {
-    transform: translate3d(-38vw, -20vh, 0);
-  }
-  25% {
-    transform: translate3d(-6vw, -31vh, 0);
-  }
-  50% {
-    transform: translate3d(38vw, 6vh, 0);
-  }
-  75% {
-    transform: translate3d(2vw, 31vh, 0);
-  }
-  100% {
-    transform: translate3d(-38vw, -20vh, 0);
-  }
-}

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Inter } from "next/font/google";
+import MusicPlayer from "@/components/MusicPlayer";
 import SmoothScroll from "@/components/SmoothScroll";
 import { themeScript } from "@/components/ThemeToggle";
 import "./globals.css";
@@ -85,6 +86,7 @@ export default function RootLayout({
       </head>
       <body className="bg-paper text-ink antialiased">
         <SmoothScroll />
+        <MusicPlayer />
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:left-6 focus:top-6 focus:z-[100] focus:rounded-full focus:border focus:border-line focus:bg-paper focus:px-5 focus:py-2.5 focus:text-sm focus:shadow-lift"

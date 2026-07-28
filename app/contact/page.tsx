@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import Nav from "@/components/Nav";
 import ContactForm from "@/components/ContactForm";
 import { Constellation, Galaxy, Starfield } from "@/components/Celestial";
@@ -38,7 +39,7 @@ export default function ContactPage() {
                 </p>
               </div>
 
-              <a
+              <Link
                 href="/"
                 aria-label="Close and return to the front page"
                 title="Close"
@@ -52,7 +53,7 @@ export default function ContactPage() {
                     strokeLinecap="round"
                   />
                 </svg>
-              </a>
+              </Link>
             </div>
 
             <h1 className="mt-8 max-w-[15ch] text-[clamp(2.2rem,5.4vw,3.6rem)] leading-[1.08] text-ink">

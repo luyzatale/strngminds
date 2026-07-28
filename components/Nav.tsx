@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { LogoLockup } from "@/components/Logo";
 import InstallButton from "@/components/InstallButton";
-import Music from "@/components/Music";
+import MusicButton from "@/components/MusicButton";
 import ThemeToggle from "@/components/ThemeToggle";
 import { clsx } from "@/lib/clsx";
 
@@ -62,9 +63,9 @@ export default function Nav({ links = [] }: { links?: Link[] }) {
         aria-label="Primary"
         className="relative mx-auto flex h-[var(--nav-row)] w-full max-w-[110rem] items-center justify-between gap-3 px-5 sm:px-10 lg:px-14"
       >
-        <a href="/" className="relative -m-2 p-2" aria-label="Strng Minds — home">
+        <Link href="/" className="relative -m-2 p-2" aria-label="Strng Minds — home">
           <LogoLockup />
-        </a>
+        </Link>
 
         {links.length > 0 && (
           <ul className="hidden items-center gap-9 md:flex">
@@ -84,15 +85,15 @@ export default function Nav({ links = [] }: { links?: Link[] }) {
 
         <div className="flex shrink-0 items-center gap-2 sm:gap-2.5">
           <InstallButton />
-          <Music />
+          <MusicButton />
           <ThemeToggle />
 
-          <a
+          <Link
             href={CONTACT}
             className="inline-flex h-10 items-center rounded-full border border-line-strong px-3.5 text-[0.74rem] tracking-[0.04em] text-ink transition-[background-color,border-color] duration-500 hover:border-gold hover:bg-ivory/20 sm:h-9 sm:px-5 sm:text-[0.8rem]"
           >
             Contact
-          </a>
+          </Link>
 
           {links.length > 0 && (
             <button
@@ -125,16 +126,16 @@ export default function Nav({ links = [] }: { links?: Link[] }) {
       {/* Centred over the bar from md up; a row of its own on a phone, where
           the logo and the controls already fill the width. */}
       <div className="pointer-events-none md:absolute md:inset-x-0 md:top-0 md:flex md:h-[var(--nav-row)] md:items-center md:justify-center">
-        <ul className="pointer-events-auto flex items-center justify-center gap-1.5 pb-2.5 md:gap-2 md:pb-0">
+        <ul className="pointer-events-auto flex items-center justify-center gap-1 pb-2 md:gap-2 md:pb-0">
           {TABS.map((t) => {
             const active = pathname === t.href;
             return (
               <li key={t.href}>
-                <a
+                <Link
                   href={t.href}
                   aria-current={active ? "page" : undefined}
                   className={clsx(
-                    "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-[0.62rem] uppercase tracking-[0.2em] transition-[background-color,border-color,color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:text-[0.66rem] sm:tracking-[0.24em]",
+                    "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[0.56rem] uppercase tracking-[0.14em] transition-[background-color,border-color,color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:gap-2 sm:px-4 sm:py-2 sm:text-[0.66rem] sm:tracking-[0.24em]",
                     active
                       ? "border-gold/50 bg-ivory/10 text-ink"
                       : "border-transparent text-ink-faint hover:text-ink",
@@ -143,12 +144,12 @@ export default function Nav({ links = [] }: { links?: Link[] }) {
                   <span
                     aria-hidden="true"
                     className={clsx(
-                      "h-1 w-1 rounded-full transition-colors duration-500",
+                      "h-[3px] w-[3px] rounded-full transition-colors duration-500 sm:h-1 sm:w-1",
                       active ? "bg-gold-deep" : "bg-mute",
                     )}
                   />
                   {t.label}
-                </a>
+                </Link>
               </li>
             );
           })}
