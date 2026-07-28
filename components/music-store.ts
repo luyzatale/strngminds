@@ -50,6 +50,25 @@ export const musicStore = {
     listeners.forEach((fn) => fn());
   },
 
+  /**
+   * Always from the top. `play()` and `togglePlay()` both resume wherever the
+   * embed left its playhead, and Spotify remembers that between visits — so
+   * every route into playback goes through here instead.
+   */
+  playFromTop() {
+    const c = this.controller;
+    if (!c) return;
+    if (typeof c.playFromStart === "function") c.playFromStart();
+    else {
+      c.seek?.(0);
+      c.play();
+    }
+  },
+
+  pause() {
+    this.controller?.pause();
+  },
+
   subscribe(fn: () => void) {
     listeners.add(fn);
     return () => {

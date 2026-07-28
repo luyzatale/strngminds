@@ -18,7 +18,7 @@ export default function MusicButton() {
   return (
     <button
       type="button"
-      onClick={() => musicStore.controller?.togglePlay()}
+      onClick={() => (playing ? musicStore.pause() : musicStore.playFromTop())}
       disabled={!ready}
       aria-pressed={playing}
       aria-label={playing ? "Pause the music" : "Play the music"}

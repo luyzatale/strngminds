@@ -64,20 +64,8 @@ export default function MusicPlayer() {
       if (!musicStore.controller) musicStore.set({ failed: true });
     }, 8000);
 
-    /**
-     * From the top, every time. `play()` alone resumes wherever the embed
-     * left its playhead, and Spotify remembers that across visits — so the
-     * track would start somewhere in the middle.
-     */
-    const fromTheTop = () => {
-      const c = musicStore.controller;
-      if (!c) return;
-      if (typeof c.playFromStart === "function") c.playFromStart();
-      else {
-        c.seek?.(0);
-        c.play();
-      }
-    };
+    /** every route into playback rewinds first; the store owns that */
+    const fromTheTop = () => musicStore.playFromTop();
 
     const events = ["pointerdown", "keydown", "touchstart"] as const;
     const onGesture = () => {
