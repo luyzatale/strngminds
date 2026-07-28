@@ -278,18 +278,21 @@ type Cloud = { x: number; y: number; w: number; h: number; c: string; o: number;
 
 /**
  * Four clouds, and the whole intent is that you cannot quite tell they are
- * there. They are not blurred either — at 5–9% alpha over 600–900px, the
+ * there. They are not blurred either — at 3–6% alpha over 600–1000px, the
  * gradient's own falloff is far softer than any filter would make it, and
  * layers this large are exactly where a `blur()` gets expensive.
  *
- * Colours are the existing tokens and nothing else: paper white, the warm
- * ivory, and the earth blue pulled right down.
+ * The colours are tokens, because this layer needs to be a different
+ * substance in each theme. At night it is nebula — ivory and the cosmic
+ * blues, light emitted against black. By day it is haze — sand, greige and
+ * the palest lavender, a little deeper than the paper rather than brighter,
+ * because on a light ground anything paler than the page is simply not there.
  */
 const CLOUDS: Cloud[] = [
-  { x: 74, y: 18, w: 940, h: 580, c: "247,232,199", o: 0.05, tilt: -18 },
-  { x: 16, y: 62, w: 860, h: 700, c: "77,143,200", o: 0.034, tilt: 24 },
-  { x: 58, y: 88, w: 980, h: 520, c: "255,255,255", o: 0.03, tilt: -8 },
-  { x: 30, y: 12, w: 700, h: 540, c: "50,94,145", o: 0.038, tilt: 32 },
+  { x: 74, y: 18, w: 940, h: 580, c: "--neb-1", o: 0.05, tilt: -18 },
+  { x: 16, y: 62, w: 860, h: 700, c: "--neb-2", o: 0.034, tilt: 24 },
+  { x: 58, y: 88, w: 980, h: 520, c: "--neb-3", o: 0.03, tilt: -8 },
+  { x: 30, y: 12, w: 700, h: 540, c: "--neb-4", o: 0.038, tilt: 32 },
 ];
 
 export function Nebulae({ phone = false }: { phone?: boolean }) {
@@ -312,12 +315,12 @@ export function Nebulae({ phone = false }: { phone?: boolean }) {
             height: c.h,
             marginLeft: -c.w / 2,
             marginTop: -c.h / 2,
-            background: `radial-gradient(closest-side ellipse at 50% 50%, rgba(${c.c},${c.o}) 0%, rgba(${c.c},${c.o * 0.45}) 38%, rgba(${c.c},0) 76%)`,
+            background: `radial-gradient(closest-side ellipse at 50% 50%, rgba(var(${c.c}), calc(${c.o} * var(--neb-a, 1))) 0%, rgba(var(${c.c}), calc(${c.o * 0.45} * var(--neb-a, 1))) 38%, rgba(var(${c.c}), 0) 76%)`,
             // the tilt lives on an inner property-free element's own transform,
             // and the drift keyframe below owns the wrapper's
             rotate: `${c.tilt}deg`,
             animationName: "sm-nebula-drift",
-            animationDuration: `${420 + i * 90}s`,
+            animationDuration: `calc(${420 + i * 90}s * var(--motion-scale, 1))`,
             animationTimingFunction: "ease-in-out",
             animationIterationCount: "infinite",
             animationDirection: "alternate",
@@ -402,19 +405,29 @@ export function Constellation({
   return (
     <div
       className={className}
-      style={{
-        width,
-        animationName: "sm-constellation",
-        animationDuration: "17s",
-        animationTimingFunction: "ease-in-out",
-        animationIterationCount: "infinite",
-        animationDelay: `${delay}s`,
-        ...style,
-      }}
+      /* The keyframe is authored at the light theme's level and this wrapper
+         scales it back down for dark. Two nested opacities multiply, which
+         is the only way to give a single keyframe two resting levels without
+         duplicating it per theme. */
+      style={{ width, opacity: "var(--constellation-boost, 1)", ...style }}
       aria-hidden="true"
     >
+      <div
+        style={{
+          animationName: "sm-constellation",
+          animationDuration: "calc(17s * var(--motion-scale, 1))",
+          animationTimingFunction: "ease-in-out",
+          animationIterationCount: "infinite",
+          animationDelay: `${delay}s`,
+        }}
+      >
       <svg viewBox="0 0 100 72" width="100%" role="presentation">
-        <g stroke="#d8c29a" strokeWidth="0.28" opacity="0.45" fill="none">
+        <g
+          stroke="var(--constellation-ink, #d8c29a)"
+          strokeWidth="0.28"
+          opacity="0.45"
+          fill="none"
+        >
           {edges.map(([a, b], i) => (
             <line
               key={i}
@@ -431,12 +444,13 @@ export function Constellation({
             <path
               key={i}
               d={sparklePath(x, y, s)}
-              fill="#d8c29a"
+              fill="var(--constellation-ink, #d8c29a)"
               opacity={round(0.34 + rnd() * 0.3, 2)}
             />
           );
         })}
       </svg>
+      </div>
     </div>
   );
 }
@@ -591,9 +605,12 @@ export function Starfield({
         className="block h-full w-full rounded-full"
         style={{
           opacity: `calc(${st.o} * var(--star-scale, 1))`,
+          /* A star is light in the dark and a particle on paper — a luminous
+             dot cannot exist over ivory, but a grain of warm dust can. The
+             two tokens carry that switch; the shape stays identical. */
           background: st.gold
-            ? "radial-gradient(circle, #e6d3ab 0%, rgba(230,211,171,0.55) 45%, rgba(230,211,171,0) 100%)"
-            : "radial-gradient(circle, #c3c0d8 0%, rgba(195,192,216,0.5) 45%, rgba(195,192,216,0) 100%)",
+            ? "radial-gradient(circle, var(--star-warm) 0%, color-mix(in srgb, var(--star-warm) 55%, transparent) 45%, transparent 100%)"
+            : "radial-gradient(circle, var(--star-cool) 0%, color-mix(in srgb, var(--star-cool) 50%, transparent) 45%, transparent 100%)",
           ...(st.sparkle
             ? {
                 ["--star-o" as string]: st.o,
@@ -631,7 +648,7 @@ export function Starfield({
         className="absolute inset-y-0 left-0 flex w-[200%]"
         style={{
           animationName: "sm-drift-right",
-          animationDuration: "var(--star-drift)",
+          animationDuration: "calc(var(--star-drift) * var(--motion-scale, 1))",
           animationTimingFunction: "linear",
           animationIterationCount: "infinite",
         }}

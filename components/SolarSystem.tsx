@@ -283,7 +283,7 @@ export default function SolarSystem({
                   ...preserve,
                   transform: `rotate(${-b.start}deg)`,
                   animationName: "sm-orbit-counter",
-                  animationDuration: `${b.period}s`,
+                  animationDuration: `calc(${b.period}s * var(--motion-scale, 1))`,
                   animationTimingFunction: "linear",
                   animationIterationCount: "infinite",
                   ["--orbit-start" as string]: `${b.start}deg`,
@@ -293,7 +293,7 @@ export default function SolarSystem({
                   <div
                     style={{
                       animationName: "sm-float",
-                      animationDuration: `${29 + i * 5}s`,
+                      animationDuration: `calc(${29 + i * 5}s * var(--motion-scale, 1))`,
                       animationTimingFunction: "ease-in-out",
                       animationIterationCount: "infinite",
                       ["--float-d" as string]: `${b.float ?? 3}px`,
@@ -329,7 +329,7 @@ export default function SolarSystem({
                   top: `calc(50% + ${f.y}% - ${m.r}%)`,
                   transform: `rotate(${m.start}deg)`,
                   animationName: "sm-orbit",
-                  animationDuration: `${m.period}s`,
+                  animationDuration: `calc(${m.period}s * var(--motion-scale, 1))`,
                   animationTimingFunction: "linear",
                   animationIterationCount: "infinite",
                   ["--orbit-start" as string]: `${m.start}deg`,
@@ -372,8 +372,11 @@ export default function SolarSystem({
             width: "144cqw",
             height: "144cqw",
             background:
-              "radial-gradient(circle, rgba(247,232,199,0.07) 0%, rgba(247,232,199,0.048) 18%, rgba(247,232,199,0.029) 34%, rgba(247,232,199,0.014) 52%, rgba(247,232,199,0.005) 68%, rgba(247,232,199,0) 84%)",
-            animation: "sm-breathe 37s ease-in-out infinite",
+              "radial-gradient(circle, rgba(var(--sun-rgb), calc(0.07 * var(--sun-a))) 0%, rgba(var(--sun-rgb), calc(0.048 * var(--sun-a))) 18%, rgba(var(--sun-rgb), calc(0.029 * var(--sun-a))) 34%, rgba(var(--sun-rgb), calc(0.014 * var(--sun-a))) 52%, rgba(var(--sun-rgb), calc(0.005 * var(--sun-a))) 68%, rgba(var(--sun-rgb), 0) 84%)",
+            animationName: "sm-breathe",
+            animationDuration: "calc(37s * var(--motion-scale, 1))",
+            animationTimingFunction: "ease-in-out",
+            animationIterationCount: "infinite",
           }}
         />
         <div
@@ -382,8 +385,11 @@ export default function SolarSystem({
             width: "74cqw",
             height: "74cqw",
             background:
-              "radial-gradient(circle, rgba(247,232,199,0.2) 0%, rgba(247,232,199,0.125) 26%, rgba(247,232,199,0.062) 46%, rgba(247,232,199,0.022) 64%, rgba(247,232,199,0) 82%)",
-            animation: "sm-breathe 29s ease-in-out infinite",
+              "radial-gradient(circle, rgba(var(--sun-rgb), calc(0.2 * var(--sun-a))) 0%, rgba(var(--sun-rgb), calc(0.125 * var(--sun-a))) 26%, rgba(var(--sun-rgb), calc(0.062 * var(--sun-a))) 46%, rgba(var(--sun-rgb), calc(0.022 * var(--sun-a))) 64%, rgba(var(--sun-rgb), 0) 82%)",
+            animationName: "sm-breathe",
+            animationDuration: "calc(29s * var(--motion-scale, 1))",
+            animationTimingFunction: "ease-in-out",
+            animationIterationCount: "infinite",
           }}
         />
         <div
@@ -393,7 +399,10 @@ export default function SolarSystem({
             height: "21cqw",
             background:
               "radial-gradient(circle, rgba(255,247,228,0.88) 0%, rgba(250,224,163,0.48) 26%, rgba(240,206,142,0.21) 48%, rgba(240,206,142,0.07) 66%, rgba(240,206,142,0) 82%)",
-            animation: "sm-breathe 21s ease-in-out infinite",
+            animationName: "sm-breathe",
+            animationDuration: "calc(21s * var(--motion-scale, 1))",
+            animationTimingFunction: "ease-in-out",
+            animationIterationCount: "infinite",
           }}
         />
         <div
@@ -451,8 +460,8 @@ function Orbit({
           Where the ring reads at all it is because the sun's glow is behind
           it, which is the intended relationship. */}
       <div
-        className="pointer-events-none absolute rounded-full border-[0.5px] border-gold/[0.09]"
-        style={{ ...box, ...preserve }}
+        className="pointer-events-none absolute rounded-full border-[0.5px]"
+        style={{ ...box, ...preserve, borderColor: "var(--orbit-line)" }}
       />
       <div
         className="pointer-events-none absolute rounded-full"
@@ -464,7 +473,7 @@ function Orbit({
             // the resting position, used when animation is suppressed
             transform: `rotate(${start}deg)`,
             animationName: "sm-orbit",
-            animationDuration: `${period}s`,
+            animationDuration: `calc(${period}s * var(--motion-scale, 1))`,
             animationTimingFunction: "linear",
             animationIterationCount: "infinite",
           } as CSSProperties
@@ -510,6 +519,12 @@ function Planet({
           width: `${body.d}cqw`,
           height: `${body.d}cqw`,
           backgroundImage: body.surface,
+          /* Safe here, and only here: the billboard's preserve-3d chain ends
+             above this element, so a filter cannot flatten the scene. On
+             paper the spheres need to sit down into the page rather than
+             glow off it — the same colours, a little deeper and a little
+             more separated. `none` in dark. */
+          filter: "var(--planet-filter, none)",
           boxShadow: active
             ? "inset -2px -3px 6px rgba(20,16,12,0.28), 0 0 0 6px color-mix(in oklab, var(--color-gold) 22%, transparent), 0 6px 16px -6px rgba(25,25,25,0.45)"
             : "inset -2px -3px 6px rgba(20,16,12,0.28), 0 4px 10px -4px rgba(25,25,25,0.4)",
@@ -522,7 +537,7 @@ function Planet({
             className="absolute inset-y-0 left-0 flex w-[200%]"
             style={{
               animationName: "sm-surface",
-              animationDuration: `${body.spin}s`,
+              animationDuration: `calc(${body.spin}s * var(--motion-scale, 1))`,
               animationTimingFunction: "linear",
               animationIterationCount: "infinite",
               animationDirection: body.retrograde ? "reverse" : "normal",

@@ -325,7 +325,7 @@ function HeroDecor() {
         className="absolute inset-0"
         style={{
           animationName: "sm-layer-far",
-          animationDuration: "460s",
+          animationDuration: "calc(460s * var(--motion-scale, 1))",
           animationTimingFunction: "ease-in-out",
           animationIterationCount: "infinite",
         }}
@@ -344,7 +344,7 @@ function HeroDecor() {
         className="absolute inset-0"
         style={{
           animationName: "sm-layer-mid",
-          animationDuration: "370s",
+          animationDuration: "calc(370s * var(--motion-scale, 1))",
           animationTimingFunction: "ease-in-out",
           animationIterationCount: "infinite",
         }}
@@ -368,7 +368,7 @@ function HeroDecor() {
         className="absolute inset-0"
         style={{
           animationName: "sm-layer-near",
-          animationDuration: "290s",
+          animationDuration: "calc(290s * var(--motion-scale, 1))",
           animationTimingFunction: "ease-in-out",
           animationIterationCount: "infinite",
         }}
@@ -455,8 +455,13 @@ function GalaxyAt({
            where everything is equally sharp stays flat however its sizes
            vary. The cost is bounded: these are small elements, static, and
            the drift lives on their parent, so each rasterises once and is
-           then only translated. */
-        ...(b.blur > 0 ? { filter: `blur(${b.blur}px)` } : null),
+           then only translated.
+
+           The extra term is the light theme's, where galaxies stop being
+           luminous and become watercolour — every plane softened by the
+           same amount, so the relative ordering of the five is untouched
+           and the whole field simply sits further back. Zero in dark. */
+        filter: `blur(calc(${b.blur}px + var(--galaxy-blur-extra, 0px)))`,
       }}
     >
       {parallax ? <Parallax {...parallax}>{inner}</Parallax> : inner}

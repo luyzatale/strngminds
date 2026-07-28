@@ -131,7 +131,7 @@ export default function ContactForm() {
         </p>
         <button
           type="submit"
-          className="inline-flex h-[3.1rem] shrink-0 items-center gap-2.5 rounded-full bg-gold px-8 text-[0.82rem] tracking-[0.06em] text-[#191919] transition-[background-color,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:bg-[#e2cfae] hover:shadow-lift"
+          className="inline-flex h-[3.1rem] shrink-0 items-center gap-2.5 rounded-full bg-gold px-8 text-[0.82rem] tracking-[0.06em] text-[var(--on-gold)] transition-[background-color,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:bg-[#e2cfae] hover:shadow-lift"
         >
           Request the hour
           <span aria-hidden="true">→</span>

@@ -5,21 +5,35 @@
 @source "../components";
 
 @theme {
-  /* ── Surfaces ─────────────────────────────────────────── */
-  --color-paper: #ffffff;
-  --color-paper-50: #fcfcfc;
-  --color-paper-100: #fafafa;
-  --color-paper-200: #f7f7f5;
+  /**
+   * ── Surfaces ───────────────────────────────────────────
+   * No pure white anywhere. The page is softly lit paper, not a screen
+   * turned all the way up: four ivories a shade apart, so a card or a bar
+   * separates from the page by tone rather than by a line.
+   */
+  --color-paper: #faf9f6;
+  --color-paper-50: #f8f7f4;
+  --color-paper-100: #f6f4ef;
+  --color-paper-200: #f2efe8;
+
+  /** The one filled surface: buttons sit on ivory, never on white. */
+  --color-surface: #f3f0e8;
 
   /* ── Lines & neutrals ─────────────────────────────────── */
-  --color-line: #eaeaea;
-  --color-line-strong: #dadada;
-  --color-mute: #bdbdbd;
+  --color-line: #e7e2d9;
+  --color-line-strong: #ddd8cf;
+  --color-mute: #b8b2a6;
 
-  /* ── Ink ──────────────────────────────────────────────── */
-  --color-ink: #191919;
-  --color-ink-soft: #4a4a4a;
-  --color-ink-faint: #767676;
+  /**
+   * ── Ink ───────────────────────────────────────────────
+   * Warm greys, never black. `ink-faint` is set at #736f67 rather than the
+   * lighter warm grey the palette would suggest: it carries the hint line
+   * and the inactive tabs, and anything lighter drops below 4.5:1 against
+   * the ivory. Measured at 4.83:1.
+   */
+  --color-ink: #3a3936;
+  --color-ink-soft: #6d6a64;
+  --color-ink-faint: #736f67;
 
   /* ── Celestial accents (used sparingly) ───────────────── */
   --color-gold: #d8c29a;
@@ -57,15 +71,100 @@
      * at every size.
      */
     --star-drift: 75s;
-    --galaxy-filter: brightness(0.82) saturate(1.15);
+
     /**
-     * Nebulae are a dark-sky effect and only a dark-sky effect. The same pale
-     * blue that reads as atmosphere over #08080d reads as a grey stain over
-     * white paper — a large soft wash on light ground looks like dirt on the
-     * page, not like light in space. A keyword token switches the whole layer
-     * off rather than fading it, so light mode pays nothing to composite it.
+     * ── The same universe, at a different hour ──────────────────
+     *
+     * Everything below exists because the two themes need genuinely
+     * different physics, not inverted colours. In the dark the eye reads
+     * depth from luminance: far things are dimmer, closer to black. On
+     * paper that is backwards — a faint pale galaxy over ivory is not
+     * distant, it is absent. So in light mode distance runs the other way,
+     * toward the paper tone rather than away from it, and everything that
+     * used to emit light now absorbs a little instead.
+     *
+     * Each of these has a counterpart under [data-theme="dark"] holding the
+     * value that was previously hard-coded in the component, so the dark
+     * theme renders byte for byte as it did.
      */
-    --nebula-show: none;
+
+    /**
+     * Galaxies become watercolour: desaturated and softened, but only
+     * gently dimmed. Darkening them is the obvious move and it is wrong —
+     * at brightness(0.74) with a sepia warm-up they stopped being pale
+     * objects and became mid-tone brown-grey, which on ivory reads as a
+     * stain on the paper rather than as something suspended in light. The
+     * saturation does the quieting; the brightness stays close to 1.
+     */
+    --galaxy-filter: brightness(0.88) saturate(0.45);
+    --galaxy-blur-extra: 1px;
+
+    /**
+     * Nebulae are back, and this is the fix for why they were removed. The
+     * problem was never the clouds, it was pale blue at 3% over pure white,
+     * which reads as a grey stain rather than as air. Over ivory, in sand
+     * and greige and the palest lavender, the same shapes read as haze.
+     */
+    --nebula-show: block;
+    --neb-1: 228, 208, 170;
+    --neb-2: 213, 206, 216;
+    --neb-3: 232, 224, 208;
+    --neb-4: 202, 212, 224;
+    --neb-a: 1;
+
+    /**
+     * Stars stop being light and become particles — warm grey and pale gold
+     * grains sitting on the paper. A luminous dot cannot exist on a light
+     * ground; a speck of dust can.
+     */
+    --star-warm: #b89a68;
+    --star-cool: #8f887c;
+    --star-scale: 0.8;
+
+    /* Sunlight through morning mist: warmer, and carried further. */
+    --sun-rgb: 232, 198, 138;
+    --sun-a: 1.7;
+
+    /* Warm beige rather than gold, and brought up where dark hides it. */
+    --orbit-line: rgba(178, 152, 108, 0.16);
+
+    /* Planets have to sit down onto paper rather than glow off it. */
+    --planet-filter: brightness(0.94) contrast(1.07);
+
+    /* Pencil lines, and a touch more present than they are at night. */
+    --constellation-ink: #8f887a;
+    --constellation-boost: 1;
+
+    /* Controls are lifted by shadow, not outlined by contrast. */
+    --control-shadow: 0 1px 2px rgba(94, 86, 70, 0.05),
+      0 8px 20px -10px rgba(94, 86, 70, 0.16);
+
+    /**
+     * Two enormous, almost invisible washes fixed behind the whole page, so
+     * that no part of it is ever a flat field of one colour. This is the
+     * "filled with air" requirement: on paper, evenness reads as emptiness.
+     */
+    --page-wash: radial-gradient(
+        120% 90% at 72% 8%,
+        rgba(240, 226, 196, 0.5) 0%,
+        rgba(240, 226, 196, 0) 62%
+      ),
+      radial-gradient(
+        110% 80% at 12% 92%,
+        rgba(214, 210, 220, 0.4) 0%,
+        rgba(214, 210, 220, 0) 58%
+      );
+
+    /**
+     * The one filled button in the site sits on gold and carried a hard
+     * #191919. Strictly this is the contact page rather than the homepage,
+     * but a near-black label is the single most out-of-place thing left in
+     * the warm palette, and it is one token. 6.4:1 on gold.
+     */
+    --on-gold: #33302a;
+
+    /** Light runs slower. Sunrise is not in a hurry. */
+    --motion-scale: 1.35;
   }
 
   /* Dark is a real theme, not an inversion: the same palette, re-lit. Every
@@ -89,9 +188,42 @@
     --color-gold: #d8c29a;
     --color-gold-deep: #e4d1ac;
 
+    --color-surface: transparent;
+
+    /**
+     * The dark half of every token introduced for the light redesign. Each
+     * value here is the one that used to be hard-coded in the component, so
+     * nothing about this theme changed.
+     */
     --star-scale: 2.2;
     --galaxy-filter: none;
+    --galaxy-blur-extra: 0px;
+
     --nebula-show: block;
+    --neb-1: 247, 232, 199;
+    --neb-2: 77, 143, 200;
+    --neb-3: 255, 255, 255;
+    --neb-4: 50, 94, 145;
+    --neb-a: 1;
+
+    --star-warm: #e6d3ab;
+    --star-cool: #c3c0d8;
+
+    --sun-rgb: 247, 232, 199;
+    --sun-a: 1;
+
+    --orbit-line: rgba(216, 194, 154, 0.09);
+
+    --planet-filter: none;
+
+    --constellation-ink: #d8c29a;
+    /* 0.2 and 0.4 in the keyframe, scaled back to the 0.11/0.22 it was */
+    --constellation-boost: 0.55;
+
+    --control-shadow: none;
+    --page-wash: none;
+    --on-gold: #191919;
+    --motion-scale: 1;
   }
 
   @media (min-width: 768px) {
@@ -132,6 +264,10 @@
 
   body {
     background-color: var(--color-paper);
+    /* fixed, so the haze belongs to the room rather than to the document */
+    background-image: var(--page-wash, none);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
     color: var(--color-ink);
     font-family: var(--font-sans);
     font-synthesis-weight: none;
@@ -249,14 +385,17 @@
 /* A constellation is a detail to be found, not an object to be read. It rests
    near the floor of what is visible and its catch of light stops well short of
    full. */
+/* Authored at the light theme's level; --constellation-boost on the wrapper
+   scales the whole thing back to 0.11/0.22 for dark. Two nested opacities
+   multiply, which is the only way to give one keyframe two resting levels. */
 @keyframes sm-constellation {
   0%,
   72%,
   100% {
-    opacity: 0.11;
+    opacity: 0.2;
   }
   86% {
-    opacity: 0.22;
+    opacity: 0.4;
   }
 }
 

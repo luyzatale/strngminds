@@ -16,8 +16,15 @@ import { musicStore } from "@/components/music-store";
  * phone — the one place where the diameter is also the tap target — and take
  * the full reduction from `sm` up, where a cursor makes 32px ample.
  */
+/**
+ * On paper these are held by a soft shadow rather than by an outline — a
+ * dark ring on ivory is the one thing that would read as drawn on rather
+ * than resting there. `none` in dark, where the border does the work.
+ */
+const LIFT = { boxShadow: "var(--control-shadow, none)" };
+
 const BUTTON =
-  "flex h-9 w-9 sm:h-8 sm:w-8 items-center justify-center rounded-full border border-line-strong/70 bg-paper/60 text-ink-soft opacity-70 backdrop-blur-md transition-[background-color,border-color,opacity,color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-gold hover:bg-ivory/20 hover:text-ink hover:opacity-100 focus-visible:opacity-100 disabled:opacity-40";
+  "flex h-9 w-9 sm:h-8 sm:w-8 items-center justify-center rounded-full border border-line-strong/45 bg-paper/60 text-ink-soft opacity-70 backdrop-blur-md transition-[background-color,border-color,opacity,color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-gold hover:bg-ivory/25 hover:text-ink hover:opacity-100 focus-visible:opacity-100 disabled:opacity-40";
 
 export default function MusicControls() {
   const { ready, playing, failed } = useSyncExternalStore(
@@ -55,6 +62,7 @@ export default function MusicControls() {
         aria-label="Start the music again"
         title="Start again"
         className={BUTTON}
+        style={LIFT}
       >
         <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" aria-hidden="true">
           <path
@@ -81,6 +89,7 @@ export default function MusicControls() {
         aria-label={playing ? "Pause the music" : "Play the music"}
         title={playing ? "Pause the music" : "Play the music"}
         className={BUTTON}
+        style={LIFT}
       >
         {/* three bars, moving only while something is actually playing */}
         <span className="flex h-3 w-3 items-end justify-center gap-[2px]">
