@@ -27,7 +27,28 @@ export default function InstallButton() {
   // worker with a fetch handler, and only over https (or localhost).
   useEffect(() => {
     if (!("serviceWorker" in navigator)) return;
-    navigator.serviceWorker.register("/sw.js").catch(() => {});
+
+    navigator.serviceWorker
+      // `updateViaCache: none` keeps the worker script itself out of the HTTP
+      // cache, so a new one is picked up rather than the copy from install day
+      .register("/sw.js", { updateViaCache: "none" })
+      .then((reg) => {
+        reg.update();
+        // a home-screen copy is often resumed rather than launched
+        const recheck = () => {
+          if (document.visibilityState === "visible") reg.update();
+        };
+        document.addEventListener("visibilitychange", recheck);
+        // and step aside for a newer worker the moment one is ready
+        reg.addEventListener("updatefound", () => {
+          reg.installing?.addEventListener("statechange", function () {
+            if (this.state === "installed" && navigator.serviceWorker.controller) {
+              this.postMessage("skip-waiting");
+            }
+          });
+        });
+      })
+      .catch(() => {});
   }, []);
 
   useEffect(() => {

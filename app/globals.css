@@ -42,9 +42,9 @@
 @layer base {
   :root {
     color-scheme: light;
-    /* one bar on a phone plus a row of tabs beneath it; a single row from md up */
+    /* one bar everywhere: on a phone the pages sit behind a menu button */
     --nav-row: 68px;
-    --nav-h: 100px;
+    --nav-h: 68px;
     /* stars are barely there on paper, and must carry the night on their own */
     --star-scale: 1;
     --galaxy-filter: brightness(0.82) saturate(1.15);

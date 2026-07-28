@@ -11,6 +11,30 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "i.scdn.co" },
     ],
   },
+  /**
+   * Pages, the manifest and the worker are always revalidated, so a copy
+   * launched from a phone's home screen cannot show an older build. Build
+   * assets under /_next/static are content-hashed and left alone.
+   */
+  async headers() {
+    const fresh = {
+      key: "Cache-Control",
+      value: "public, max-age=0, must-revalidate",
+    };
+    return [
+      { source: "/", headers: [fresh] },
+      { source: "/contact", headers: [fresh] },
+      { source: "/meditation", headers: [fresh] },
+      { source: "/manifest.webmanifest", headers: [fresh] },
+      {
+        source: "/sw.js",
+        headers: [
+          { key: "Cache-Control", value: "no-cache, no-store, must-revalidate" },
+          { key: "Service-Worker-Allowed", value: "/" },
+        ],
+      },
+    ];
+  },
   experimental: {
     optimizePackageImports: ["framer-motion"],
     // TypeScript 7 no longer exposes the legacy compiler API Next.js expects.

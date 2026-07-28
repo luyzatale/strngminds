@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import NextLink from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { LogoLockup } from "@/components/Logo";
@@ -22,11 +22,13 @@ export const SECTION_LINKS: Link[] = [
 
 const CONTACT = "/contact";
 
-/** The centred tabs, in the manner of the reference. */
+/** Centred tabs from md up; the same list behind one button on a phone. */
 const TABS: Link[] = [
   { href: "/", label: "Home" },
   { href: "/meditation", label: "Meditation" },
 ];
+
+const MENU: Link[] = [...TABS, { href: CONTACT, label: "Contact" }];
 
 export default function Nav({ links = [] }: { links?: Link[] }) {
   const pathname = usePathname();
@@ -52,20 +54,26 @@ export default function Nav({ links = [] }: { links?: Link[] }) {
     };
   }, [open]);
 
+  // never leave the drawer open behind a new page
+  useEffect(() => setOpen(false), [pathname]);
+
   return (
-    <header
-      className={clsx(
+    <>
+      <header
+        className={clsx(
         "fixed inset-x-0 top-0 z-50 transition-[background-color,backdrop-filter] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]",
-        scrolled ? "bg-paper/72 backdrop-blur-xl backdrop-saturate-150" : "bg-transparent",
+        scrolled || open
+          ? "bg-paper/72 backdrop-blur-xl backdrop-saturate-150"
+          : "bg-transparent",
       )}
     >
       <nav
         aria-label="Primary"
         className="relative mx-auto flex h-[var(--nav-row)] w-full max-w-[110rem] items-center justify-between gap-3 px-5 sm:px-10 lg:px-14"
       >
-        <Link href="/" className="relative -m-2 p-2" aria-label="Strng Minds — home">
+        <NextLink href="/" className="relative -m-2 p-2" aria-label="Strng Minds — home">
           <LogoLockup />
-        </Link>
+        </NextLink>
 
         {links.length > 0 && (
           <ul className="hidden items-center gap-9 md:flex">
@@ -88,71 +96,73 @@ export default function Nav({ links = [] }: { links?: Link[] }) {
           <MusicButton />
           <ThemeToggle />
 
-          <Link
+          {/* The contact pill is a phone's worth of width on its own, so on a
+              phone it lives in the menu with everything else. */}
+          <NextLink
             href={CONTACT}
-            className="inline-flex h-10 items-center rounded-full border border-line-strong px-3.5 text-[0.74rem] tracking-[0.04em] text-ink transition-[background-color,border-color] duration-500 hover:border-gold hover:bg-ivory/20 sm:h-9 sm:px-5 sm:text-[0.8rem]"
+            className="hidden h-9 items-center rounded-full border border-line-strong px-5 text-[0.8rem] tracking-[0.04em] text-ink transition-[background-color,border-color] duration-500 hover:border-gold hover:bg-ivory/20 md:inline-flex"
           >
             Contact
-          </Link>
+          </NextLink>
 
-          {links.length > 0 && (
-            <button
-              type="button"
-              onClick={() => setOpen((v) => !v)}
-              aria-expanded={open}
-              aria-controls="mobile-menu"
-              className="-mr-2 ml-1 flex h-10 w-10 items-center justify-center md:hidden"
-            >
-              <span className="sr-only">{open ? "Close menu" : "Open menu"}</span>
-              <span className="relative block h-3 w-5" aria-hidden="true">
-                <span
-                  className={clsx(
-                    "absolute left-0 block h-px w-full bg-ink transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
-                    open ? "top-1.5 rotate-45" : "top-0",
-                  )}
-                />
-                <span
-                  className={clsx(
-                    "absolute left-0 block h-px w-full bg-ink transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
-                    open ? "top-1.5 -rotate-45" : "top-3",
-                  )}
-                />
-              </span>
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            aria-expanded={open}
+            aria-controls="mobile-menu"
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-line-strong text-ink transition-[background-color,border-color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-gold hover:bg-ivory/20 md:hidden"
+          >
+            <span className="sr-only">{open ? "Close menu" : "Open menu"}</span>
+            <span className="relative block h-3 w-4" aria-hidden="true">
+              <span
+                className={clsx(
+                  "absolute left-0 block h-px w-full bg-current transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                  open ? "top-1.5 rotate-45" : "top-0",
+                )}
+              />
+              <span
+                className={clsx(
+                  "absolute left-0 block h-px w-full bg-current transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                  open ? "top-1.5 opacity-0" : "top-1.5",
+                )}
+              />
+              <span
+                className={clsx(
+                  "absolute left-0 block h-px w-full bg-current transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                  open ? "top-1.5 -rotate-45" : "top-3",
+                )}
+              />
+            </span>
+          </button>
         </div>
       </nav>
 
-      {/* Centred over the bar from md up; a row of its own on a phone, where
-          the logo and the controls already fill the width. */}
-      <div className="pointer-events-none md:absolute md:inset-x-0 md:top-0 md:flex md:h-[var(--nav-row)] md:items-center md:justify-center">
-        <ul className="pointer-events-auto flex items-center justify-center gap-1 pb-2 md:gap-2 md:pb-0">
-          {TABS.map((t) => {
-            const active = pathname === t.href;
-            return (
-              <li key={t.href}>
-                <Link
-                  href={t.href}
-                  aria-current={active ? "page" : undefined}
+      {/* Centred over the bar, from md up only. */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 hidden h-[var(--nav-row)] items-center justify-center md:flex">
+        <ul className="pointer-events-auto flex items-center justify-center gap-2">
+          {TABS.map((t) => (
+            <li key={t.href}>
+              <NextLink
+                href={t.href}
+                aria-current={pathname === t.href ? "page" : undefined}
+                className={clsx(
+                  "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-[0.66rem] uppercase tracking-[0.24em] transition-[background-color,border-color,color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                  pathname === t.href
+                    ? "border-gold/50 bg-ivory/10 text-ink"
+                    : "border-transparent text-ink-faint hover:text-ink",
+                )}
+              >
+                <span
+                  aria-hidden="true"
                   className={clsx(
-                    "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[0.56rem] uppercase tracking-[0.14em] transition-[background-color,border-color,color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:gap-2 sm:px-4 sm:py-2 sm:text-[0.66rem] sm:tracking-[0.24em]",
-                    active
-                      ? "border-gold/50 bg-ivory/10 text-ink"
-                      : "border-transparent text-ink-faint hover:text-ink",
+                    "h-1 w-1 rounded-full transition-colors duration-500",
+                    pathname === t.href ? "bg-gold-deep" : "bg-mute",
                   )}
-                >
-                  <span
-                    aria-hidden="true"
-                    className={clsx(
-                      "h-[3px] w-[3px] rounded-full transition-colors duration-500 sm:h-1 sm:w-1",
-                      active ? "bg-gold-deep" : "bg-mute",
-                    )}
-                  />
-                  {t.label}
-                </Link>
-              </li>
-            );
-          })}
+                />
+                {t.label}
+              </NextLink>
+            </li>
+          ))}
         </ul>
       </div>
 
@@ -163,6 +173,12 @@ export default function Nav({ links = [] }: { links?: Link[] }) {
         <div className="mt-[5px] h-px w-full bg-line/60" />
       </div>
 
+      </header>
+
+      {/* Outside the header on purpose. The bar carries a backdrop-filter once
+          it is scrolled or open, and that makes it the containing block for
+          any fixed child — which left this panel resolving `bottom: 0` against
+          a 68px bar, and painting nothing at all. */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -170,34 +186,56 @@ export default function Nav({ links = [] }: { links?: Link[] }) {
             initial={reduced ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-0 top-[var(--nav-h)] z-40 bg-paper/95 backdrop-blur-xl md:hidden"
+            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+            /* explicit edges: `inset-0` plus a `top` override left the panel
+               with no height at all, so it painted nothing while its links
+               spilled out and floated over the page */
+            className="fixed bottom-0 left-0 right-0 top-[var(--nav-row)] z-40 overflow-y-auto md:hidden"
+            style={{ backgroundColor: "var(--color-paper)" }}
           >
-            <ul className="flex flex-col gap-1 px-6 pt-10 sm:px-10">
-              {links.map((l, i) => (
-                <motion.li
-                  key={l.href}
-                  initial={reduced ? false : { opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    duration: 0.8,
-                    delay: 0.06 * i,
-                    ease: [0.22, 1, 0.36, 1],
-                  }}
-                >
-                  <a
-                    href={l.href}
-                    onClick={() => setOpen(false)}
-                    className="block border-b border-line py-5 font-serif text-3xl font-light text-ink"
+            <ul className="flex flex-col px-5 pt-6">
+              {MENU.map((l, i) => {
+                const active = pathname === l.href;
+                return (
+                  <motion.li
+                    key={l.href}
+                    initial={reduced ? false : { opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      duration: 0.7,
+                      delay: 0.05 * i,
+                      ease: [0.22, 1, 0.36, 1],
+                    }}
                   >
-                    {l.label}
-                  </a>
-                </motion.li>
-              ))}
+                    <NextLink
+                      href={l.href}
+                      onClick={() => setOpen(false)}
+                      aria-current={active ? "page" : undefined}
+                      className="flex items-center gap-4 border-b border-line py-5"
+                    >
+                      <span
+                        aria-hidden="true"
+                        className={clsx(
+                          "h-1.5 w-1.5 shrink-0 rounded-full transition-colors duration-500",
+                          active ? "bg-gold-deep" : "bg-mute/60",
+                        )}
+                      />
+                      <span
+                        className={clsx(
+                          "font-serif text-[1.9rem] font-light leading-none",
+                          active ? "text-ink" : "text-ink-soft",
+                        )}
+                      >
+                        {l.label}
+                      </span>
+                    </NextLink>
+                  </motion.li>
+                );
+              })}
             </ul>
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+    </>
   );
 }
