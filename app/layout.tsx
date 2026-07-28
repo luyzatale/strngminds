@@ -24,7 +24,7 @@ const site = "https://strngminds.com";
 export const metadata: Metadata = {
   metadataBase: new URL(site),
   title: {
-    default: "Strng Minds — Guidance through philosophy, astronomy & the self",
+    default: "Strng Minds",
     template: "%s · Strng Minds",
   },
   description:
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     type: "website",
     url: site,
     siteName: "Strng Minds",
-    title: "Strng Minds — Guidance through philosophy, astronomy & the self",
+    title: "Strng Minds",
     description:
       "A contemplative guidance practice where philosophy, astronomy, psychology and symbolism meet.",
   },
