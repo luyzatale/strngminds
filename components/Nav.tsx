@@ -222,7 +222,7 @@ export default function Nav({ links = [] }: { links?: Link[] }) {
                       />
                       <span
                         className={clsx(
-                          "font-serif text-[1.9rem] font-light leading-none",
+                          "font-serif text-[1.4rem] font-light leading-none",
                           active ? "text-ink" : "text-ink-soft",
                         )}
                       >
