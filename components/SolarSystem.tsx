@@ -62,7 +62,7 @@ const BODIES: Body[] = [
   {
     name: "Mercury",
     r: 11,
-    d: 2.0,
+    d: 2.35,
     period: 96,
     start: 130,
     spin: 64,
@@ -73,7 +73,7 @@ const BODIES: Body[] = [
   {
     name: "Venus",
     r: 15.5,
-    d: 2.9,
+    d: 3.4,
     period: 148,
     start: 40,
     spin: 90,
@@ -87,7 +87,7 @@ const BODIES: Body[] = [
   {
     name: "Earth",
     r: 20.5,
-    d: 3.4,
+    d: 4.0,
     period: 210,
     start: 200,
     spin: 30,
@@ -103,7 +103,7 @@ const BODIES: Body[] = [
   {
     name: "Mars",
     r: 26,
-    d: 2.6,
+    d: 3.05,
     period: 268,
     start: 118,
     spin: 33,
@@ -114,7 +114,7 @@ const BODIES: Body[] = [
   {
     name: "Jupiter",
     r: 32,
-    d: 5.6,
+    d: 6.6,
     period: 348,
     start: 85,
     spin: 18,
@@ -134,7 +134,7 @@ const BODIES: Body[] = [
   {
     name: "Saturn",
     r: 38.2,
-    d: 4.7,
+    d: 5.5,
     period: 452,
     start: 200,
     spin: 21,
@@ -152,7 +152,7 @@ const BODIES: Body[] = [
   {
     name: "Uranus",
     r: 43.8,
-    d: 3.8,
+    d: 4.5,
     period: 580,
     start: 255,
     spin: 26,
@@ -166,7 +166,7 @@ const BODIES: Body[] = [
   {
     name: "Neptune",
     r: 49.2,
-    d: 3.6,
+    d: 4.25,
     period: 720,
     start: 105,
     spin: 24,
