@@ -319,3 +319,30 @@
   }
 }
 
+
+/* The reference's star field, in two parts.
+   drei's <Stars> animates nothing but point size, from one shared clock:
+   gl_PointSize = size * (30/-z) * (3 + sin(time)) — so the whole field
+   breathes in unison between 2x and 4x, never each star on its own. At their
+   speed of 0.3 the cycle is 2*PI/0.3, about 21 seconds. */
+@keyframes sm-star-breath {
+  0%,
+  100% {
+    transform: scale(0.67);
+  }
+  50% {
+    transform: scale(1.33);
+  }
+}
+
+/* The drift across the view is the camera there, orbiting a fixed sphere of
+   stars. Here it is the field itself that travels, over two copies laid side
+   by side so the wrap is seamless. */
+@keyframes sm-drift-right {
+  from {
+    transform: translate3d(-50%, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}

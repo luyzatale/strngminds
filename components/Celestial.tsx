@@ -242,6 +242,9 @@ export function Constellation({
    ──────────────────────────────────────────────────────────── */
 
 
+/** 2*PI / 0.3, the reference's cycle at its own speed setting. */
+const BREATH = 21;
+
 export function Starfield({
   seed = 21,
   count = 260,
@@ -249,12 +252,15 @@ export function Starfield({
   mobileCount,
   /** normalised radius around the centre kept clear of stars */
   clear = 0.05,
+  /** seconds for the field to travel its own width, rightwards */
+  drift,
   className,
 }: {
   seed?: number;
   count?: number;
   mobileCount?: number;
   clear?: number;
+  drift?: number;
   className?: string;
 }) {
   const onPhone = mobileCount ?? count;
@@ -289,37 +295,80 @@ export function Starfield({
     });
   }
 
+  /**
+   * Every star breathes on the same clock, as the reference does — its shader
+   * scales point size by (3 + sin(time)) from a single uniform, so the field
+   * pulses together rather than each star blinking on its own schedule. The
+   * breath lives on the outer element and any sparkle on the inner one, since
+   * two animations cannot both own `transform`.
+   */
+  const field = stars.map((st, i) => (
+    <span
+      key={i}
+      className={`absolute ${i < onPhone ? "" : "hidden sm:block"}`}
+      style={{
+        left: `${st.x}%`,
+        top: `${st.y}%`,
+        width: st.s,
+        height: st.s,
+        animationName: "sm-star-breath",
+        animationDuration: `${BREATH}s`,
+        animationTimingFunction: "ease-in-out",
+        animationIterationCount: "infinite",
+      }}
+    >
+      <span
+        className="block h-full w-full rounded-full"
+        style={{
+          opacity: `calc(${st.o} * var(--star-scale, 1))`,
+          background: st.gold
+            ? "radial-gradient(circle, #e6d3ab 0%, rgba(230,211,171,0.55) 45%, rgba(230,211,171,0) 100%)"
+            : "radial-gradient(circle, #c3c0d8 0%, rgba(195,192,216,0.5) 45%, rgba(195,192,216,0) 100%)",
+          ...(st.sparkle
+            ? {
+                ["--star-o" as string]: st.o,
+                animationName: "sm-sparkle",
+                animationDuration: `${st.dur}s`,
+                animationTimingFunction: "ease-in-out",
+                animationIterationCount: "infinite",
+                animationDelay: `${st.delay}s`,
+              }
+            : null),
+        }}
+      />
+    </span>
+  ));
+
+  if (!drift) {
+    return (
+      <div
+        className={`pointer-events-none absolute inset-0 ${className ?? ""}`}
+        aria-hidden="true"
+      >
+        {field}
+      </div>
+    );
+  }
+
+  // Two copies side by side, travelling from -50% to 0: as the first slides
+  // out to the right the second takes its place, and the loop cannot be seen.
   return (
     <div
-      className={`pointer-events-none absolute inset-0 ${className ?? ""}`}
+      className={`pointer-events-none absolute inset-0 overflow-hidden ${className ?? ""}`}
       aria-hidden="true"
     >
-      {stars.map((st, i) => (
-        <span
-          key={i}
-          className={`absolute rounded-full ${i < onPhone ? "" : "hidden sm:block"}`}
-          style={{
-            left: `${st.x}%`,
-            top: `${st.y}%`,
-            width: st.s,
-            height: st.s,
-            opacity: `calc(${st.o} * var(--star-scale, 1))`,
-            background: st.gold
-              ? "radial-gradient(circle, #e6d3ab 0%, rgba(230,211,171,0.55) 45%, rgba(230,211,171,0) 100%)"
-              : "radial-gradient(circle, #c3c0d8 0%, rgba(195,192,216,0.5) 45%, rgba(195,192,216,0) 100%)",
-            ...(st.sparkle
-              ? {
-                  ["--star-o" as string]: st.o,
-                  animationName: "sm-sparkle",
-                  animationDuration: `${st.dur}s`,
-                  animationTimingFunction: "ease-in-out",
-                  animationIterationCount: "infinite",
-                  animationDelay: `${st.delay}s`,
-                }
-              : null),
-          }}
-        />
-      ))}
+      <div
+        className="absolute inset-y-0 left-0 flex w-[200%]"
+        style={{
+          animationName: "sm-drift-right",
+          animationDuration: `${drift}s`,
+          animationTimingFunction: "linear",
+          animationIterationCount: "infinite",
+        }}
+      >
+        <div className="relative h-full w-1/2">{field}</div>
+        <div className="relative h-full w-1/2">{field}</div>
+      </div>
     </div>
   );
 }

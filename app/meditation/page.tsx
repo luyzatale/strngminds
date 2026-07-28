@@ -149,7 +149,7 @@ function Backdrop() {
       className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
       aria-hidden="true"
     >
-      <Starfield seed={77} count={150} mobileCount={60} clear={0} />
+      <Starfield seed={77} count={150} mobileCount={60} clear={0} drift={260} />
 
       {/* far corners only: everything between them is reading matter */}
       <Parallax strength={7} className="absolute -right-40 top-[12vh] hidden sm:block">
