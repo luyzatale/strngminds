@@ -7,6 +7,8 @@ import {
   Galaxy,
   NEBULA_CORE,
   NEBULA_INK,
+  VERDANT_CORE,
+  VERDANT_INK,
 } from "@/components/Celestial";
 import { Parallax } from "@/components/Motion";
 import { round, seeded } from "@/lib/rand";
@@ -112,14 +114,39 @@ const GALAXIES = (() => {
   }
 
   /**
-   * Three are painted from photographs — two violet, one blue-and-amber — and
-   * each has to sit fully in frame: the biggest are pushed into the corners
+   * Four are painted from photographs — two violet, one blue-and-amber, one
+   * teal — and each has to sit fully in frame: the biggest are pushed into the corners
    * and bleed off the edge, where a colour barely registers. They are also
    * kept apart, so a pair does not read as one patch of colour.
    */
-  const tint = new Map<number, "nebula" | "frost">();
+  const tint = new Map<number, "nebula" | "frost" | "verdant">();
   const taken: { x: number; y: number }[] = [];
-  for (let i = 0; i < out.length && tint.size < 3; i++) {
+
+  /**
+   * The teal one is placed rather than picked: it belongs to the left of the
+   * system, so it takes the leftmost galaxy sitting at roughly the height of
+   * the sun. It is forced into the phone set too, so it does not vanish on a
+   * small screen along with the other large ones.
+   */
+  const verdant = out
+    .map((g, i) => ({ g, i }))
+    .filter(
+      ({ g }) =>
+        g.x / 100 >= 0.06 &&
+        g.x / 100 <= 0.3 &&
+        g.y / 100 >= 0.3 &&
+        g.y / 100 <= 0.72,
+    )
+    .sort((a, b) => a.g.x - b.g.x)[0];
+
+  if (verdant) {
+    tint.set(verdant.i, "verdant");
+    taken.push({ x: verdant.g.x / 100, y: verdant.g.y / 100 });
+    onPhone.add(verdant.i);
+  }
+
+  for (let i = 0; i < out.length && tint.size < 4; i++) {
+    if (tint.has(i)) continue;
     const g = out[i];
     const x = g.x / 100;
     const y = g.y / 100;
@@ -127,7 +154,8 @@ const GALAXIES = (() => {
     // the scatter already keeps them 0.17 apart, so this only stops a pair
     // landing shoulder to shoulder
     if (taken.some((t) => Math.hypot(t.x - x, t.y - y) < 0.18)) continue;
-    tint.set(i, tint.size < 2 ? "nebula" : "frost");
+    const nebulas = [...tint.values()].filter((t) => t === "nebula").length;
+    tint.set(i, nebulas < 2 ? "nebula" : "frost");
     taken.push({ x, y });
   }
 
@@ -177,14 +205,18 @@ function HeroDecor() {
                   ? NEBULA_INK
                   : g.tinted === "frost"
                     ? FROST_INK
-                    : undefined
+                    : g.tinted === "verdant"
+                      ? VERDANT_INK
+                      : undefined
               }
               core={
                 g.tinted === "nebula"
                   ? NEBULA_CORE
                   : g.tinted === "frost"
                     ? FROST_CORE
-                    : undefined
+                    : g.tinted === "verdant"
+                      ? VERDANT_CORE
+                      : undefined
               }
               style={{
                 opacity: g.tinted ? Math.min(1, g.opacity + 0.25) : g.opacity,

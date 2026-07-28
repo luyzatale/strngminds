@@ -40,6 +40,20 @@ export const FROST_INK = [
 
 export const FROST_CORE = ["#fffaf0", "#f7d693", "#d98f3f"];
 
+/**
+ * And a third: teal arms lit with cyan knots, around a core of pale cream.
+ */
+export const VERDANT_INK = [
+  "#6fbfa8",
+  "#8fd6bd",
+  "#bfeae0",
+  "#3f9184",
+  "#e9dcb4",
+  "#a7dcd0",
+];
+
+export const VERDANT_CORE = ["#fdf6dd", "#e9dcae", "#5fae9a"];
+
 function galaxyDots(seed: number, count = 460, ink = GALAXY_INK): Dot[] {
   const rnd = seeded(seed);
   const dots: Dot[] = [];
