@@ -64,7 +64,8 @@ export function LogoMark({
  * The weight is a token rather than a utility because the two themes need
  * different ones. A serif at 500 has enough presence against a dark ground;
  * on parchment the same strokes thin out, and the mark reads lighter than it
- * did at night for no reason the eye can name. 600 by day restores it.
+ * did at night for no reason the eye can name. 700 by day — the heaviest
+ * Cormorant Garamond ships — restores it. Night stays at 500.
  */
 export function Wordmark({ className }: { className?: string }) {
   return (

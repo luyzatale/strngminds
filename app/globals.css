@@ -329,9 +329,10 @@
     --planet-contrast: 1.24;
     --planet-fade: 1;
 
-    /* The serif needs more body on parchment than it does against black. */
-    --logo-weight: 600;
-    --logo-ring-o: 0.72;
+    /* The serif needs more body on parchment than it does against black.
+       700 is the ceiling for this face; the night theme keeps 500. */
+    --logo-weight: 700;
+    --logo-ring-o: 0.85;
 
     /* Pencil on textured paper. */
     --constellation-ink: #8d867a;

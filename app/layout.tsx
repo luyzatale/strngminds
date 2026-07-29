@@ -6,15 +6,17 @@ import { themeScript } from "@/components/ThemeToggle";
 import "./globals.css";
 
 /**
- * 600 exists only for the wordmark in the light theme, and it has to be a
+ * 700 exists only for the wordmark in the light theme, and it has to be a
  * really loaded weight rather than a heavier `font-weight` value: `body` sets
  * `font-synthesis-weight: none`, so asking for a weight that was never
  * fetched silently renders at the nearest one that was. Without this line the
- * logo would simply stay at 500 and the change would appear to do nothing.
+ * logo would simply stay where it is and the change would appear to do
+ * nothing. 700 is also the heaviest Cormorant Garamond ships — past this the
+ * mark cannot get bolder without changing the face.
  */
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
+  weight: ["300", "400", "500", "600", "700"],
   style: ["normal", "italic"],
   variable: "--font-cormorant",
   display: "swap",
