@@ -36,30 +36,25 @@ export default function Hero() {
       <HeroDecor />
 
       {/* Scene positions its own star layer against this section, so it is
-          mounted directly rather than inside a wrapper. */}
-      <Scene />
+          mounted directly rather than inside a wrapper.
 
-      {/* Lifted off the floor of the viewport and given back a little size and
-          a little less tracking. It stays quiet, but it is now legible at a
-          glance rather than on inspection.
-
-          Now raised another 24px, which draws it up out of the floor of the
-          viewport and into the composition — it belongs to the system above it
-          rather than to the edge below it. Well clear of the corner controls,
-          which reach only 56px up. */}
-      {/* Raised another 20px, so it belongs to the system above it rather
-          than to the edge below it, and the tracking opens a touch further.
-
-          Its colour does not move. `ink-faint` is already sitting on the
-          4.5:1 floor against the ivory, and this line is 10px uppercase —
-          normal text by every measure that matters. The contrast cannot come
-          down without failing AA, so the extra quiet comes from the spacing
-          and the position instead. */}
-      <p className="pointer-events-none absolute bottom-[8.75rem] left-1/2 z-10 w-full -translate-x-1/2 whitespace-nowrap text-center text-[0.54rem] uppercase tracking-[0.26em] text-ink-faint sm:bottom-[6.75rem] sm:text-[0.6rem] sm:tracking-[0.32em]">
-        Drag to turn
-        <span className="sm:hidden"> · tap a planet</span>
-        <span className="hidden sm:inline"> · hover a planet</span>
-      </p>
+          The caption is handed to Scene rather than positioned here, so it
+          sits in the flow directly beneath the system. Anchored to the
+          section's bottom edge — which is what it was — it drifted away from
+          the system on a tall window and crowded it on a short one, because
+          the system is centred and sized from the viewport while the caption
+          was measured from the floor. Its colour stays put: `ink-faint` is
+          already on the 4.5:1 floor against the ivory, so the quiet comes
+          from size, spacing and position instead. */}
+      <Scene
+        caption={
+          <p className="pointer-events-none mt-7 w-full whitespace-nowrap text-center text-[0.54rem] uppercase tracking-[0.26em] text-ink-faint sm:mt-8 sm:text-[0.6rem] sm:tracking-[0.32em]">
+            Drag to turn
+            <span className="sm:hidden"> · tap a planet</span>
+            <span className="hidden sm:inline"> · hover a planet</span>
+          </p>
+        }
+      />
     </section>
   );
 }

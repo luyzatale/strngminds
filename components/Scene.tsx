@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, type ReactNode } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import SolarSystem from "@/components/SolarSystem";
 import { Starfield } from "@/components/Celestial";
@@ -15,8 +15,14 @@ import { FadeIn } from "@/components/Motion";
  * hero section. Nested inside the system's own box it inherited that box's
  * square, and the stars sat in an island in the middle of the page — obvious
  * on a phone, where the system is a third of the viewport.
+ *
+ * `caption` sits in the flow directly beneath the system rather than being
+ * positioned against the section. That is the whole point of it living here:
+ * the system is centred and sized from the viewport, so a caption anchored to
+ * the section's bottom edge drifted away from it on a tall window and crowded
+ * it on a short one. Below the system, it is below the system at every size.
  */
-export default function Scene() {
+export default function Scene({ caption }: { caption?: ReactNode }) {
   const tilt = useMotionValue(0);
   const spin = useMotionValue(0);
   const soft = { stiffness: 38, damping: 20, mass: 1.1 };
@@ -68,6 +74,7 @@ export default function Scene() {
             }}
           />
         </div>
+        {caption}
       </FadeIn>
     </>
   );

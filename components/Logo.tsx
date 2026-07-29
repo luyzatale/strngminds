@@ -38,11 +38,19 @@ export function LogoMark({
             : undefined
         }
       >
+        {/* The travelling point. Both the diameter and the colour are scaled
+            per theme rather than raised outright: on parchment `gold-deep` is
+            a hairline token and sat too close to the paper to be seen going
+            round, but against black the old 2.5px in pale gold already read
+            perfectly well, and that theme is the reference. Light gets a
+            third again the size and a deeper gold; night keeps exactly what
+            it had. */}
         <span
-          className="absolute left-1/2 top-0 rounded-full bg-gold-deep"
+          className="absolute left-1/2 top-0 rounded-full"
           style={{
-            width: Math.max(2.5, size * 0.105),
-            height: Math.max(2.5, size * 0.105),
+            width: `calc(${Math.max(2.5, size * 0.105)}px * var(--logo-dot-scale, 1))`,
+            height: `calc(${Math.max(2.5, size * 0.105)}px * var(--logo-dot-scale, 1))`,
+            backgroundColor: "var(--logo-dot, #e4d1ac)",
             transform: "translate(-50%, -50%)",
           }}
         />
@@ -75,7 +83,19 @@ export function Wordmark({ className }: { className?: string }) {
         "sm:flex-row sm:gap-[0.32em] sm:text-[0.95rem] sm:leading-none sm:tracking-[0.2em]",
         className,
       )}
-      style={{ fontWeight: "var(--logo-weight, 500)" }}
+      /**
+       * The stroke is here because 700 is the end of the road for this face —
+       * Cormorant Garamond ships nothing heavier, so `font-weight` has no
+       * further to go. Painting a hairline outline in the text's own colour
+       * thickens every stem without swapping the typeface, which is the one
+       * thing that must not change. Kept to a third of a pixel: past about
+       * 0.5px the counters in S and G start to silt up at this size.
+       */
+      style={{
+        fontWeight: "var(--logo-weight, 500)",
+        WebkitTextStrokeWidth: "var(--logo-stroke, 0px)",
+        WebkitTextStrokeColor: "currentColor",
+      }}
     >
       <span>Strng</span>
       <span>Minds</span>
