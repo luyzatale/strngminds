@@ -242,47 +242,62 @@ function Backdrop() {
         />
       </Parallax>
 
-      {/* ── the phone's only clear ground ── */}
-      <Parallax strength={3} invert className="absolute -top-16 right-[4%] sm:hidden">
+      {/* ── the phone ───────────────────────────────────────
+             Same treatment as the contact page: no margins exist at this
+             width, so each one hangs half outside the viewport. The bright
+             core stays off-screen and only the outer arm crosses the text,
+             which is what makes 0.85 affordable here. Anchored to `top`
+             throughout — this page is several screens tall, and anything on
+             `bottom` would sit below all of them. ── */}
+      <Parallax strength={4} invert className="absolute -right-28 top-[8vh] sm:hidden">
         <Galaxy
           seed={191}
-          size={165}
+          size={210}
           tilt={34}
           flatten={0.34}
           duration={1120}
           ink={FROST_INK}
           core={FROST_CORE}
-          style={{ opacity: 0.5 }}
+          style={{ opacity: 0.85 }}
         />
       </Parallax>
 
-      {/* anchored to the top, not the bottom: on a page this tall a phone
-          would otherwise scroll past the whole first screen before meeting
-          its second galaxy */}
-      <Parallax strength={3} className="absolute -left-20 top-[68vh] sm:hidden">
+      <Parallax strength={3} className="absolute -left-28 top-[36vh] sm:hidden">
         <Galaxy
           seed={806}
-          size={170}
+          size={205}
           tilt={-44}
           flatten={0.32}
           duration={1200}
           ink={VERDANT_INK}
           core={VERDANT_CORE}
-          style={{ opacity: 0.45 }}
+          style={{ opacity: 0.84 }}
         />
       </Parallax>
 
-      <Parallax strength={3} className="absolute -bottom-24 left-[5%] sm:hidden">
+      <Parallax strength={4} className="absolute -left-24 top-[90vh] sm:hidden">
+        <Galaxy
+          seed={559}
+          size={190}
+          tilt={22}
+          flatten={0.34}
+          duration={1320}
+          reverse
+          style={{ opacity: 0.83 }}
+        />
+      </Parallax>
+
+      <Parallax strength={3} invert className="absolute -right-24 top-[64vh] sm:hidden">
         <Galaxy
           seed={244}
-          size={185}
+          size={195}
           tilt={-26}
           flatten={0.3}
           duration={1260}
           reverse
           ink={NEBULA_INK}
           core={NEBULA_CORE}
-          style={{ opacity: 0.5 }}
+          style={{ opacity: 0.85 }}
         />
       </Parallax>
 

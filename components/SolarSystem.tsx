@@ -463,9 +463,19 @@ function Orbit({
           not all of them. The reduction that everybody sees is the 9% alpha.
           Where the ring reads at all it is because the sun's glow is behind
           it, which is the intended relationship. */}
+      {/* Width is a token as well as colour. Tailwind's preflight already
+          sets `border: 0 solid` on everything, so an inline width is all
+          this needs — and by day the ring wants both: a 0.5px hairline at
+          low alpha is anti-aliased down to almost nothing against paper,
+          where against black the same line reads perfectly well. */}
       <div
-        className="pointer-events-none absolute rounded-full border-[0.5px]"
-        style={{ ...box, ...preserve, borderColor: "var(--orbit-line)" }}
+        className="pointer-events-none absolute rounded-full"
+        style={{
+          ...box,
+          ...preserve,
+          borderColor: "var(--orbit-line)",
+          borderWidth: "var(--orbit-width, 0.5px)",
+        }}
       />
       <div
         className="pointer-events-none absolute rounded-full"

@@ -117,6 +117,7 @@
 @property --color-gold-deep { syntax: "<color>"; inherits: true; initial-value: #bfa477; }
 @property --on-gold { syntax: "<color>"; inherits: true; initial-value: #33302a; }
 @property --orbit-line { syntax: "<color>"; inherits: true; initial-value: rgba(183, 158, 116, 0.14); }
+@property --orbit-width { syntax: "<length>"; inherits: true; initial-value: 0.5px; }
 @property --constellation-ink { syntax: "<color>"; inherits: true; initial-value: #8d867a; }
 @property --star-warm { syntax: "<color>"; inherits: true; initial-value: #bda772; }
 @property --star-cool { syntax: "<color>"; inherits: true; initial-value: #97907f; }
@@ -321,8 +322,10 @@
     --sun-a: 1.75;
     --sun-spread: 1.16;
 
-    /* Engraved into paper: soft beige, never grey, never sharp. */
-    --orbit-line: rgba(172, 145, 99, 0.175);
+    /* Engraved into paper: soft beige, never grey, never sharp — but drawn
+       with enough of a line to actually be engraved. */
+    --orbit-line: rgba(168, 140, 92, 0.24);
+    --orbit-width: 0.8px;
 
     /* Local contrast goes up only at the centre — the planets, the sun and
        the rings. Saturation is deliberately untouched: this is for focus,
@@ -418,6 +421,7 @@
     --sun-spread: 1;
 
     --orbit-line: rgba(216, 194, 154, 0.09);
+    --orbit-width: 0.5px;
 
     --planet-bright: 1;
     --planet-contrast: 1;
@@ -512,7 +516,7 @@
       --color-line-strong, --color-mute, --color-surface, --color-gold-deep, --on-gold,
       --logo-weight, --logo-ring-o, --logo-stroke, --logo-dot, --logo-dot-scale,
       /* 7 — the engraving appears */
-      --orbit-line, --constellation-ink, --constellation-boost,
+      --orbit-line, --orbit-width, --constellation-ink, --constellation-boost,
       --planet-bright, --planet-contrast, --planet-fade;
     transition-duration:
       4.2s, 4.2s, 4.2s, 4.2s, 4.2s, 4.2s,
@@ -522,7 +526,7 @@
       3.4s, 3.4s, 3.4s, 3.4s, 3.4s, 3.4s,
       3.2s, 3.2s, 3.2s, 3.2s, 3.2s, 3.2s, 3.2s, 3.2s, 3.2s, 3.2s, 3.2s, 3.2s, 3.2s,
       3.2s,
-      3.4s, 3.4s, 3.4s, 3.4s, 3.4s, 3.4s;
+      3.4s, 3.4s, 3.4s, 3.4s, 3.4s, 3.4s, 3.4s;
     transition-delay:
       0s, 0s, 0s, 0s, 0s, 0s,
       0.5s, 0.5s, 0.5s,
@@ -531,7 +535,7 @@
       2.3s, 2.3s, 2.3s, 2.3s, 2.3s, 2.3s,
       2.7s, 2.7s, 2.7s, 2.7s, 2.7s, 2.7s, 2.7s, 2.7s, 2.7s, 2.7s, 2.7s, 2.7s, 2.7s,
       2.7s,
-      3.2s, 3.2s, 3.2s, 3.2s, 3.2s, 3.2s;
+      3.2s, 3.2s, 3.2s, 3.2s, 3.2s, 3.2s, 3.2s;
   }
 
   body {
