@@ -2,7 +2,17 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import ContactForm from "@/components/ContactForm";
-import { Constellation, Galaxy, Starfield } from "@/components/Celestial";
+import {
+  Constellation,
+  FROST_CORE,
+  FROST_INK,
+  Galaxy,
+  NEBULA_CORE,
+  NEBULA_INK,
+  Starfield,
+  VERDANT_CORE,
+  VERDANT_INK,
+} from "@/components/Celestial";
 import { FadeIn, Parallax, PointerField } from "@/components/Motion";
 import { LogoMark } from "@/components/Logo";
 
@@ -75,29 +85,138 @@ export default function ContactPage() {
   );
 }
 
+/**
+ * The sky behind the form.
+ *
+ * The one rule everything here obeys: the form is a column of reading matter
+ * capped at 52rem and centred, so every galaxy is placed with its *core*
+ * outside that column — in the margins beside it, or above and below it.
+ * Only the faint outer halo is ever allowed to reach the text. That is why
+ * each one is gated to the breakpoint at which its margin actually exists:
+ * below `lg` there is no room beside the column, so the mid-sized ones are
+ * simply not there, and a phone gets two at the top and bottom edges instead,
+ * where the page's own padding leaves the text clear.
+ */
 function Backdrop() {
   return (
     <div
       className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
       aria-hidden="true"
     >
-      <Starfield seed={404} count={140} mobileCount={55} clear={0} drift />
+      {/* Close to the front page's density now. Stars behind a reading
+          column are a different question from galaxies behind one: a galaxy
+          is a wash covering thousands of pixels, a star is two pixels, and
+          measured against the text the whole field costs about a tenth of a
+          percent of its area. Density here is free in a way size is not. */}
+      <Starfield seed={404} count={430} mobileCount={165} clear={0} drift />
 
-      {/* The form is a column of reading matter, so the galaxies are pushed
-          into the far corners and off the edge — never behind the text. */}
-      <Parallax
-        strength={7}
-        className="absolute -bottom-44 -left-44 hidden sm:block"
-      >
-        <Galaxy seed={41} size={330} tilt={-18} flatten={0.32} duration={720} />
+      {/* ── the left margin ─────────────────────────────── */}
+      <Parallax strength={7} className="absolute -bottom-32 -left-32 hidden sm:block">
+        <Galaxy seed={41} size={340} tilt={-18} flatten={0.32} duration={720} />
       </Parallax>
 
-      <Parallax
-        strength={6}
-        invert
-        className="absolute -right-40 top-[8vh] hidden lg:block"
-      >
-        <Galaxy seed={88} size={290} tilt={24} flatten={0.3} duration={880} reverse />
+      <Parallax strength={6} invert className="absolute -left-24 top-[6vh] hidden lg:block">
+        <Galaxy
+          seed={512}
+          size={215}
+          tilt={32}
+          flatten={0.28}
+          duration={940}
+          ink={NEBULA_INK}
+          core={NEBULA_CORE}
+          style={{ opacity: 0.85 }}
+        />
+      </Parallax>
+
+      <Parallax strength={4} className="absolute left-[1%] top-[46vh] hidden xl:block">
+        <Galaxy
+          seed={733}
+          size={128}
+          tilt={-52}
+          flatten={0.4}
+          duration={1180}
+          reverse
+          style={{ opacity: 0.6 }}
+        />
+      </Parallax>
+
+      {/* ── the right margin ────────────────────────────── */}
+      <Parallax strength={6} invert className="absolute -right-28 top-[5vh] hidden sm:block">
+        <Galaxy
+          seed={88}
+          size={300}
+          tilt={24}
+          flatten={0.3}
+          duration={880}
+          reverse
+          ink={FROST_INK}
+          core={FROST_CORE}
+        />
+      </Parallax>
+
+      <Parallax strength={5} className="absolute -right-20 bottom-[9vh] hidden lg:block">
+        <Galaxy
+          seed={266}
+          size={235}
+          tilt={-40}
+          flatten={0.34}
+          duration={1020}
+          ink={VERDANT_INK}
+          core={VERDANT_CORE}
+          style={{ opacity: 0.8 }}
+        />
+      </Parallax>
+
+      <Parallax strength={4} invert className="absolute right-[2%] top-[38vh] hidden xl:block">
+        <Galaxy
+          seed={907}
+          size={120}
+          tilt={16}
+          flatten={0.44}
+          duration={1260}
+          style={{ opacity: 0.55 }}
+        />
+      </Parallax>
+
+      {/* ── above, beside and below, which is the only clear ground on a
+             phone: the heading is capped at 15ch, so the upper right of the
+             column is empty even when the page is one column wide ── */}
+      <Parallax strength={4} invert className="absolute -right-14 top-[17vh] sm:hidden">
+        <Galaxy
+          seed={621}
+          size={165}
+          tilt={40}
+          flatten={0.32}
+          duration={1160}
+          ink={FROST_INK}
+          core={FROST_CORE}
+          style={{ opacity: 0.5 }}
+        />
+      </Parallax>
+
+      <Parallax strength={3} className="absolute -top-20 left-[6%] sm:hidden">
+        <Galaxy
+          seed={155}
+          size={170}
+          tilt={-30}
+          flatten={0.36}
+          duration={1100}
+          style={{ opacity: 0.55 }}
+        />
+      </Parallax>
+
+      <Parallax strength={3} invert className="absolute -bottom-24 right-[4%] sm:hidden">
+        <Galaxy
+          seed={318}
+          size={190}
+          tilt={28}
+          flatten={0.3}
+          duration={1240}
+          reverse
+          ink={NEBULA_INK}
+          core={NEBULA_CORE}
+          style={{ opacity: 0.55 }}
+        />
       </Parallax>
 
       <Parallax strength={5} className="absolute bottom-[6vh] right-[4%] hidden xl:block">

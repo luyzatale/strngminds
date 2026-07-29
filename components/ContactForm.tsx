@@ -125,7 +125,11 @@ export default function ContactForm() {
       </div>
 
       <div className="flex flex-col items-start gap-5 pt-2 sm:col-span-2 sm:flex-row sm:items-center sm:justify-between">
-        <p className="max-w-[38ch] text-[0.74rem] leading-[1.8] tracking-[0.02em] text-ink-faint">
+        {/* `ink-soft` rather than `ink-faint`: this is the smallest text on
+            the page and it sits at the bottom of the column, which is where
+            the light theme's falloff is deepest. Measured on the rendered
+            page, 59% of its area was under 4.5:1 on the faint tier. */}
+        <p className="max-w-[38ch] text-[0.74rem] leading-[1.8] tracking-[0.02em] text-ink-soft">
           Sessions run 60 minutes, by video or in person. Nothing is charged
           before the first conversation.
         </p>

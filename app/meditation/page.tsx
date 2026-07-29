@@ -1,7 +1,17 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Nav from "@/components/Nav";
-import { Constellation, Galaxy, Starfield } from "@/components/Celestial";
+import {
+  Constellation,
+  FROST_CORE,
+  FROST_INK,
+  Galaxy,
+  NEBULA_CORE,
+  NEBULA_INK,
+  Starfield,
+  VERDANT_CORE,
+  VERDANT_INK,
+} from "@/components/Celestial";
 import { FadeIn, Parallax, PointerField } from "@/components/Motion";
 import { FadedRule } from "@/components/ui";
 
@@ -149,9 +159,13 @@ function Backdrop() {
       className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
       aria-hidden="true"
     >
-      <Starfield seed={77} count={150} mobileCount={60} clear={0} drift />
+      <Starfield seed={77} count={440} mobileCount={170} clear={0} drift />
 
-      {/* far corners only: everything between them is reading matter */}
+      {/* Same rule as the contact page — every core outside the reading
+          column — but this column is 62rem rather than 52rem, so the margins
+          beside it only really open up past `xl`. Below that the extra
+          galaxies stay off, and a phone gets two at the top and bottom edges
+          where the page's own padding leaves the text clear. */}
       <Parallax strength={7} className="absolute -right-40 top-[12vh] hidden sm:block">
         <Galaxy seed={53} size={320} tilt={-16} flatten={0.32} duration={760} />
       </Parallax>
@@ -162,6 +176,114 @@ function Backdrop() {
         className="absolute -bottom-36 -left-36 hidden lg:block"
       >
         <Galaxy seed={12} size={280} tilt={22} flatten={0.3} duration={900} reverse />
+      </Parallax>
+
+      <Parallax strength={6} invert className="absolute -left-28 top-[7vh] hidden xl:block">
+        <Galaxy
+          seed={318}
+          size={215}
+          tilt={-34}
+          flatten={0.28}
+          duration={980}
+          ink={NEBULA_INK}
+          core={NEBULA_CORE}
+          style={{ opacity: 0.85 }}
+        />
+      </Parallax>
+
+      <Parallax strength={5} className="absolute -right-24 bottom-[16vh] hidden lg:block">
+        <Galaxy
+          seed={470}
+          size={240}
+          tilt={38}
+          flatten={0.34}
+          duration={1040}
+          ink={VERDANT_INK}
+          core={VERDANT_CORE}
+          style={{ opacity: 0.8 }}
+        />
+      </Parallax>
+
+      <Parallax strength={4} className="absolute left-[1%] top-[58vh] hidden xl:block">
+        <Galaxy
+          seed={655}
+          size={128}
+          tilt={20}
+          flatten={0.42}
+          duration={1220}
+          reverse
+          style={{ opacity: 0.6 }}
+        />
+      </Parallax>
+
+      {/* This page scrolls, so anything hung off `bottom` lands well below
+          the fold. The upper band carries the first screen. */}
+      <Parallax strength={5} className="absolute -right-16 top-[52vh] hidden lg:block">
+        <Galaxy
+          seed={733}
+          size={200}
+          tilt={-22}
+          flatten={0.3}
+          duration={1080}
+          ink={FROST_INK}
+          core={FROST_CORE}
+          style={{ opacity: 0.75 }}
+        />
+      </Parallax>
+
+      <Parallax strength={4} invert className="absolute right-[1%] top-[40vh] hidden xl:block">
+        <Galaxy
+          seed={882}
+          size={118}
+          tilt={-58}
+          flatten={0.38}
+          duration={1300}
+          style={{ opacity: 0.55 }}
+        />
+      </Parallax>
+
+      {/* ── the phone's only clear ground ── */}
+      <Parallax strength={3} invert className="absolute -top-16 right-[4%] sm:hidden">
+        <Galaxy
+          seed={191}
+          size={165}
+          tilt={34}
+          flatten={0.34}
+          duration={1120}
+          ink={FROST_INK}
+          core={FROST_CORE}
+          style={{ opacity: 0.5 }}
+        />
+      </Parallax>
+
+      {/* anchored to the top, not the bottom: on a page this tall a phone
+          would otherwise scroll past the whole first screen before meeting
+          its second galaxy */}
+      <Parallax strength={3} className="absolute -left-20 top-[68vh] sm:hidden">
+        <Galaxy
+          seed={806}
+          size={170}
+          tilt={-44}
+          flatten={0.32}
+          duration={1200}
+          ink={VERDANT_INK}
+          core={VERDANT_CORE}
+          style={{ opacity: 0.45 }}
+        />
+      </Parallax>
+
+      <Parallax strength={3} className="absolute -bottom-24 left-[5%] sm:hidden">
+        <Galaxy
+          seed={244}
+          size={185}
+          tilt={-26}
+          flatten={0.3}
+          duration={1260}
+          reverse
+          ink={NEBULA_INK}
+          core={NEBULA_CORE}
+          style={{ opacity: 0.5 }}
+        />
       </Parallax>
 
       <Parallax strength={4} className="absolute bottom-[8vh] right-[3%] hidden xl:block">
