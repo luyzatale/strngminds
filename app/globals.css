@@ -12,30 +12,35 @@
    * rather than as a screen turned all the way up, and white is the one
    * value that cannot do that.
    */
-  --color-paper: #f8f7f4;
-  --color-paper-50: #fbfaf8;
-  --color-paper-100: #f6f3ee;
-  --color-paper-200: #f2eee6;
+  --color-paper: #ece7db;
+  --color-paper-50: #f1ede3;
+  --color-paper-100: #e7e1d3;
+  --color-paper-200: #e0d9c9;
 
   /** Buttons sit on ivory, never on white. */
-  --color-surface: #f4f1ea;
+  --color-surface: #f1ece2;
 
   /* ── Lines & neutrals ─────────────────────────────────── */
-  --color-line: #e7e3da;
-  --color-line-strong: #ddd8cf;
-  --color-mute: #b9b3a7;
+  --color-line: #ddd6c7;
+  --color-line-strong: #d1c9b7;
+  --color-mute: #aaa391;
 
   /**
    * ── Ink ───────────────────────────────────────────────
-   * Warm greys, never black. `ink-faint` is #736f67 rather than something
-   * lighter and more in keeping: it carries the hint line and the inactive
-   * tabs, and against this ivory anything paler drops under 4.5:1.
-   * Measured at 4.75:1 — this tier is set by the contrast floor, not by
-   * taste, and it is the one place the palette cannot go quieter.
+   * Warm greys, never black.
+   *
+   * The lower two tiers are darker than the palette nominally calls for,
+   * and the reason is arithmetic rather than taste. Taking the paper down
+   * to a real parchment took the page's luminance from 0.93 to 0.80, and
+   * text contrast is a ratio — the specified #6F6B66 measures 4.27:1
+   * against this ground, and #736F67 measures 4.04:1. Both fail the 4.5
+   * floor for normal text, and the hint line and the inactive tabs are
+   * normal text by every measure that counts. Darkening them by roughly
+   * one step restores 4.9:1 and 4.6:1. The primary tier is untouched.
    */
   --color-ink: #3a3936;
-  --color-ink-soft: #6f6b66;
-  --color-ink-faint: #736f67;
+  --color-ink-soft: #666259;
+  --color-ink-faint: #6b675f;
 
   /* ── Celestial accents (used sparingly) ───────────────── */
   --color-gold: #d8c29a;
@@ -83,6 +88,8 @@
 @property --galaxy-alpha { syntax: "<number>"; inherits: true; initial-value: 1; }
 @property --galaxy-blur-extra { syntax: "<length>"; inherits: true; initial-value: 0px; }
 @property --neb-a { syntax: "<number>"; inherits: true; initial-value: 1; }
+@property --neb-scale { syntax: "<number>"; inherits: true; initial-value: 1; }
+@property --grain-a { syntax: "<number>"; inherits: true; initial-value: 0; }
 @property --planet-bright { syntax: "<number>"; inherits: true; initial-value: 1; }
 @property --planet-contrast { syntax: "<number>"; inherits: true; initial-value: 1; }
 @property --planet-fade { syntax: "<number>"; inherits: true; initial-value: 0; }
@@ -145,41 +152,55 @@
      */
 
     /**
-     * Four washes fixed behind the page, blending the palette's four
-     * ivories. Their radii are enormous and their alphas tiny on purpose:
-     * the requirement is that no transition is ever visible, and the only
-     * reliable way to hide a gradient edge is to make the gradient larger
-     * than anything the eye can take in at once.
+     * The page is no longer lit evenly. The paper token is now the outer
+     * tone rather than the average one, and these two layers put the light
+     * back where it comes from: one lifts the middle toward a bright warm
+     * ivory, the other lets the corners fall into a gentle shadow.
      *
-     * The image itself is identical in both themes and never animates — a
+     * On the stated tonal hierarchy — centre 100 down to corners 80 — this
+     * lands the corners at about 86 rather than 80. Two lines of the brief
+     * pull against each other there: 80% of the centre is #c7c2b4, which is
+     * unmistakably a vignette, and the same paragraph asks for the falloff
+     * to be almost imperceptible. 86 is where a temple's gentle shadow
+     * stops and a photographic effect begins, so the ramp goes there and no
+     * further. Every stop is spread over an enormous radius for the same
+     * reason: the only reliable way to hide a gradient edge is to make the
+     * gradient bigger than anything the eye takes in at once.
+     *
+     * The image is identical in both themes and never animates — an
      * `<image>` custom property cannot be interpolated, so a theme change
-     * would swap it in one frame. Only `--wash-a` moves, and at night it is
-     * simply zero.
+     * would swap it in a single frame. Only `--wash-a` moves, and at night
+     * it is simply zero.
      */
     --wash-a: 1;
-    --page-wash: radial-gradient(
-        130% 95% at 74% 4%,
-        rgba(245, 235, 210, 0.85) 0%,
-        rgba(245, 235, 210, 0.34) 34%,
-        rgba(245, 235, 210, 0) 66%
-      ),
+    --page-wash:
+      /* the light, centred a little above the middle where the sun sits */
       radial-gradient(
-        120% 85% at 8% 96%,
-        rgba(246, 243, 238, 0.9) 0%,
-        rgba(246, 243, 238, 0.4) 38%,
-        rgba(246, 243, 238, 0) 70%
+        112% 92% at 50% 44%,
+        rgba(252, 249, 241, 0.98) 0%,
+        rgba(252, 249, 241, 0.82) 16%,
+        rgba(252, 249, 241, 0.52) 32%,
+        rgba(252, 249, 241, 0.26) 48%,
+        rgba(252, 249, 241, 0.09) 62%,
+        rgba(252, 249, 241, 0) 78%
       ),
-      radial-gradient(
-        90% 70% at 50% 46%,
-        rgba(251, 250, 248, 0.95) 0%,
-        rgba(251, 250, 248, 0.42) 40%,
-        rgba(251, 250, 248, 0) 74%
-      ),
-      radial-gradient(
-        110% 80% at 96% 62%,
-        rgba(242, 238, 230, 0.7) 0%,
-        rgba(242, 238, 230, 0) 62%
-      );
+      /* and the shadow it falls away into */
+        radial-gradient(
+          150% 125% at 50% 46%,
+          rgba(166, 154, 130, 0) 40%,
+          rgba(166, 154, 130, 0.05) 58%,
+          rgba(166, 154, 130, 0.13) 74%,
+          rgba(166, 154, 130, 0.23) 88%,
+          rgba(166, 154, 130, 0.32) 100%
+        );
+
+    /**
+     * Fine grain, so that no part of the page is a mathematically flat
+     * field. One 140px tile of fractal noise, rasterised once and repeated
+     * — at 1.6% it is invisible as texture and only registers as the
+     * absence of digital flatness.
+     */
+    --grain-a: 0.016;
 
     /**
      * Galaxies become celestial forms rather than pictures. Getting here
@@ -204,8 +225,8 @@
     --galaxy-sat: 0.5;
     --galaxy-contrast: 0.8;
     --galaxy-sepia: 0.45;
-    --galaxy-blur-extra: 1.4px;
-    --galaxy-alpha: 0.5;
+    --galaxy-blur-extra: 1.7px;
+    --galaxy-alpha: 0.44;
 
     /**
      * Nebulae, at 3–6%, in ivory, cream, the palest blue and a breath of
@@ -213,12 +234,15 @@
      * 3% over pure white reads as a grey stain; over warm ivory, warmed,
      * the same shapes read as air.
      */
+    /* Pulled back by 30% and drawn in a little, so the page stops glowing
+       from everywhere at once and the sun is the light again. */
     --nebula-show: block;
     --neb-1: #f0e4c4;
     --neb-2: #d6d0dc;
     --neb-3: #ece6d8;
     --neb-4: #ced8e4;
-    --neb-a: 1;
+    --neb-a: 0.7;
+    --neb-scale: 0.9;
 
     /**
      * Stars stop being light and become particles — warm dust on paper. A
@@ -236,11 +260,12 @@
     --sun-spread: 1.16;
 
     /* Engraved into paper: soft beige, never grey, never sharp. */
-    --orbit-line: rgba(183, 158, 116, 0.14);
+    --orbit-line: rgba(176, 150, 106, 0.155);
 
-    /* Planets lift off the page a little, and fade with distance. */
-    --planet-bright: 0.95;
-    --planet-contrast: 1.06;
+    /* The one place local contrast goes up rather than down. Saturation is
+       deliberately untouched — this is for focus, not intensity. */
+    --planet-bright: 0.94;
+    --planet-contrast: 1.19;
     --planet-fade: 1;
 
     /* Pencil on textured paper. */
@@ -286,8 +311,9 @@
      * here is the literal that was previously written into the component,
      * so nothing about this theme changed.
      */
-    /* the wash image is shared; at night it is simply not shown */
+    /* the wash and the grain are shared; at night neither is shown */
     --wash-a: 0;
+    --grain-a: 0;
 
     --star-scale: 2.2;
     /* the identity filter, written out rather than `none` so it can be
@@ -305,6 +331,7 @@
     --neb-3: #ffffff;
     --neb-4: #325e91;
     --neb-a: 1;
+    --neb-scale: 1;
 
     --star-warm: #e6d3ab;
     --star-cool: #c3c0d8;
@@ -387,7 +414,8 @@
     transition-timing-function: cubic-bezier(0.37, 0, 0.25, 1);
     transition-property:
       /* 1 — the sky warms */
-      --color-paper, --color-paper-50, --color-paper-100, --color-paper-200, --wash-a,
+      --color-paper, --color-paper-50, --color-paper-100, --color-paper-200,
+      --wash-a, --grain-a,
       /* 2 — the stars go out */
       --star-scale, --star-warm, --star-cool,
       /* 3 — the sun opens */
@@ -396,7 +424,7 @@
       --galaxy-bright, --galaxy-sat, --galaxy-contrast, --galaxy-sepia,
       --galaxy-blur-extra, --galaxy-alpha,
       /* 5 — the clouds surface */
-      --neb-a, --neb-1, --neb-2, --neb-3, --neb-4,
+      --neb-a, --neb-scale, --neb-1, --neb-2, --neb-3, --neb-4,
       /* 6 — the interface warms */
       --color-ink, --color-ink-soft, --color-ink-faint, --color-line,
       --color-line-strong, --color-mute, --color-surface, --color-gold-deep, --on-gold,
@@ -404,19 +432,19 @@
       --orbit-line, --constellation-ink, --constellation-boost,
       --planet-bright, --planet-contrast, --planet-fade;
     transition-duration:
-      4.2s, 4.2s, 4.2s, 4.2s, 4.2s,
+      4.2s, 4.2s, 4.2s, 4.2s, 4.2s, 4.2s,
       3.6s, 3.6s, 3.6s,
       4.2s, 4.2s, 4.2s, 4.2s,
       3.8s, 3.8s, 3.8s, 3.8s, 3.8s, 3.8s,
-      3.4s, 3.4s, 3.4s, 3.4s, 3.4s,
+      3.4s, 3.4s, 3.4s, 3.4s, 3.4s, 3.4s,
       3.2s, 3.2s, 3.2s, 3.2s, 3.2s, 3.2s, 3.2s, 3.2s, 3.2s,
       3.4s, 3.4s, 3.4s, 3.4s, 3.4s, 3.4s;
     transition-delay:
-      0s, 0s, 0s, 0s, 0s,
+      0s, 0s, 0s, 0s, 0s, 0s,
       0.5s, 0.5s, 0.5s,
       1.1s, 1.1s, 1.1s, 1.1s,
       1.6s, 1.6s, 1.6s, 1.6s, 1.6s, 1.6s,
-      2.3s, 2.3s, 2.3s, 2.3s, 2.3s,
+      2.3s, 2.3s, 2.3s, 2.3s, 2.3s, 2.3s,
       2.7s, 2.7s, 2.7s, 2.7s, 2.7s, 2.7s, 2.7s, 2.7s, 2.7s,
       3.2s, 3.2s, 3.2s, 3.2s, 3.2s, 3.2s;
   }
@@ -450,6 +478,22 @@
     pointer-events: none;
     background-image: var(--page-wash);
     opacity: var(--wash-a);
+  }
+
+  /**
+   * The grain. One 140px tile of fractal noise, inlined as SVG so there is
+   * no asset to fetch — the browser rasterises it once and repeats the
+   * texture, which is why this costs essentially nothing despite covering
+   * the viewport.
+   */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: var(--grain-a);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23g)'/%3E%3C/svg%3E");
   }
 
   ::selection {

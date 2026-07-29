@@ -300,7 +300,13 @@ export function Nebulae({ phone = false }: { phone?: boolean }) {
   return (
     <div
       className="pointer-events-none absolute inset-0"
-      style={{ display: "var(--nebula-show, block)" }}
+      /* `scale` rather than a transform: each cloud's own transform is
+         already owned by its drift keyframe, and this is a separate
+         property that composes with it instead of fighting it. */
+      style={{
+        display: "var(--nebula-show, block)",
+        scale: "var(--neb-scale, 1)",
+      }}
       aria-hidden="true"
     >
       {clouds.map((c, i) => (
