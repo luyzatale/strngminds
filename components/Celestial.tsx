@@ -139,7 +139,8 @@ export function Galaxy({
       style={{
         width: size,
         height: size,
-        filter: "var(--galaxy-filter, none)",
+        filter:
+          "brightness(var(--galaxy-bright, 1)) saturate(var(--galaxy-sat, 1)) contrast(var(--galaxy-contrast, 1)) sepia(var(--galaxy-sepia, 0))",
         ...style,
       }}
       aria-hidden="true"
@@ -239,7 +240,8 @@ export function SoftGalaxy({
         width: size,
         height: size,
         opacity,
-        filter: "var(--galaxy-filter, none)",
+        filter:
+          "brightness(var(--galaxy-bright, 1)) saturate(var(--galaxy-sat, 1)) contrast(var(--galaxy-contrast, 1)) sepia(var(--galaxy-sepia, 0))",
         ...style,
       }}
       aria-hidden="true"
@@ -286,10 +288,10 @@ type Cloud = { x: number; y: number; w: number; h: number; c: string; o: number;
  * ivory, and the earth blue pulled right down.
  */
 const CLOUDS: Cloud[] = [
-  { x: 74, y: 18, w: 940, h: 580, c: "247,232,199", o: 0.05, tilt: -18 },
-  { x: 16, y: 62, w: 860, h: 700, c: "77,143,200", o: 0.034, tilt: 24 },
-  { x: 58, y: 88, w: 980, h: 520, c: "255,255,255", o: 0.03, tilt: -8 },
-  { x: 30, y: 12, w: 700, h: 540, c: "50,94,145", o: 0.038, tilt: 32 },
+  { x: 74, y: 18, w: 940, h: 580, c: "--neb-1", o: 0.05, tilt: -18 },
+  { x: 16, y: 62, w: 860, h: 700, c: "--neb-2", o: 0.034, tilt: 24 },
+  { x: 58, y: 88, w: 980, h: 520, c: "--neb-3", o: 0.03, tilt: -8 },
+  { x: 30, y: 12, w: 700, h: 540, c: "--neb-4", o: 0.038, tilt: 32 },
 ];
 
 export function Nebulae({ phone = false }: { phone?: boolean }) {
@@ -312,12 +314,12 @@ export function Nebulae({ phone = false }: { phone?: boolean }) {
             height: c.h,
             marginLeft: -c.w / 2,
             marginTop: -c.h / 2,
-            background: `radial-gradient(closest-side ellipse at 50% 50%, rgba(${c.c},${c.o}) 0%, rgba(${c.c},${c.o * 0.45}) 38%, rgba(${c.c},0) 76%)`,
+            background: `radial-gradient(closest-side ellipse at 50% 50%, color-mix(in srgb, var(${c.c}) calc(${c.o * 100}% * var(--neb-a, 1)), transparent) 0%, color-mix(in srgb, var(${c.c}) calc(${round(c.o * 45, 3)}% * var(--neb-a, 1)), transparent) 38%, transparent 76%)`,
             // the tilt lives on an inner property-free element's own transform,
             // and the drift keyframe below owns the wrapper's
             rotate: `${c.tilt}deg`,
             animationName: "sm-nebula-drift",
-            animationDuration: `${420 + i * 90}s`,
+            animationDuration: `calc(${420 + i * 90}s * var(--motion-scale, 1))`,
             animationTimingFunction: "ease-in-out",
             animationIterationCount: "infinite",
             animationDirection: "alternate",
@@ -402,41 +404,52 @@ export function Constellation({
   return (
     <div
       className={className}
-      style={{
-        width,
-        animationName: "sm-constellation",
-        animationDuration: "17s",
-        animationTimingFunction: "ease-in-out",
-        animationIterationCount: "infinite",
-        animationDelay: `${delay}s`,
-        ...style,
-      }}
+      /* The keyframe is authored at the dawn theme's level and this wrapper
+         scales it back for night. Two nested opacities multiply, which is
+         the only way to give one keyframe two resting levels without
+         duplicating it per theme. */
+      style={{ width, opacity: "var(--constellation-boost, 1)", ...style }}
       aria-hidden="true"
     >
-      <svg viewBox="0 0 100 72" width="100%" role="presentation">
-        <g stroke="#d8c29a" strokeWidth="0.28" opacity="0.45" fill="none">
-          {edges.map(([a, b], i) => (
-            <line
-              key={i}
-              x1={pts[a][0]}
-              y1={pts[a][1]}
-              x2={pts[b][0]}
-              y2={pts[b][1]}
-            />
-          ))}
-        </g>
-        {pts.map(([x, y], i) => {
-          const s = 1.1 + rnd() * 1.1;
-          return (
-            <path
-              key={i}
-              d={sparklePath(x, y, s)}
-              fill="#d8c29a"
-              opacity={round(0.34 + rnd() * 0.3, 2)}
-            />
-          );
-        })}
-      </svg>
+      <div
+        style={{
+          animationName: "sm-constellation",
+          animationDuration: "calc(17s * var(--motion-scale, 1))",
+          animationTimingFunction: "ease-in-out",
+          animationIterationCount: "infinite",
+          animationDelay: `${delay}s`,
+        }}
+      >
+        <svg viewBox="0 0 100 72" width="100%" role="presentation">
+          <g
+            stroke="var(--constellation-ink, #d8c29a)"
+            strokeWidth="0.26"
+            opacity="0.45"
+            fill="none"
+          >
+            {edges.map(([a, b], i) => (
+              <line
+                key={i}
+                x1={pts[a][0]}
+                y1={pts[a][1]}
+                x2={pts[b][0]}
+                y2={pts[b][1]}
+              />
+            ))}
+          </g>
+          {pts.map(([x, y], i) => {
+            const s = 1.1 + rnd() * 1.1;
+            return (
+              <path
+                key={i}
+                d={sparklePath(x, y, s)}
+                fill="var(--constellation-ink, #d8c29a)"
+                opacity={round(0.34 + rnd() * 0.3, 2)}
+              />
+            );
+          })}
+        </svg>
+      </div>
     </div>
   );
 }
@@ -591,9 +604,12 @@ export function Starfield({
         className="block h-full w-full rounded-full"
         style={{
           opacity: `calc(${st.o} * var(--star-scale, 1))`,
+          /* A star is light at night and a particle by day — a luminous dot
+             cannot exist over ivory, but a grain of warm dust can. The two
+             tokens carry that switch; the shape is identical. */
           background: st.gold
-            ? "radial-gradient(circle, #e6d3ab 0%, rgba(230,211,171,0.55) 45%, rgba(230,211,171,0) 100%)"
-            : "radial-gradient(circle, #c3c0d8 0%, rgba(195,192,216,0.5) 45%, rgba(195,192,216,0) 100%)",
+            ? "radial-gradient(circle, var(--star-warm) 0%, color-mix(in srgb, var(--star-warm) 55%, transparent) 45%, transparent 100%)"
+            : "radial-gradient(circle, var(--star-cool) 0%, color-mix(in srgb, var(--star-cool) 50%, transparent) 45%, transparent 100%)",
           ...(st.sparkle
             ? {
                 ["--star-o" as string]: st.o,
@@ -631,7 +647,7 @@ export function Starfield({
         className="absolute inset-y-0 left-0 flex w-[200%]"
         style={{
           animationName: "sm-drift-right",
-          animationDuration: "var(--star-drift)",
+          animationDuration: "calc(var(--star-drift) * var(--motion-scale, 1))",
           animationTimingFunction: "linear",
           animationIterationCount: "infinite",
         }}

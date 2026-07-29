@@ -19,6 +19,24 @@ export default function ThemeToggle() {
     // the page opens at night unless the visitor has said otherwise
     const current = (document.documentElement.dataset.theme as Theme) ?? "dark";
     setTheme(current);
+
+    /**
+     * Arm the sunrise, but only after the first paint has been committed.
+     *
+     * The transition that carries one theme into the other lives on
+     * `:root[data-theme-ready]`. If that attribute were present from the
+     * start, the theme script's own pre-paint work would qualify as a
+     * change, and every visitor would sit through a six-second dawn on
+     * arrival whether they asked for one or not. Two frames is enough for
+     * the initial values to be the committed ones, so the first thing the
+     * transition ever sees is a real click.
+     */
+    const raf = requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        document.documentElement.dataset.themeReady = "";
+      }),
+    );
+    return () => cancelAnimationFrame(raf);
   }, []);
 
   const toggle = () => {
@@ -38,7 +56,8 @@ export default function ThemeToggle() {
       onClick={toggle}
       aria-label={dark ? "Switch to light" : "Switch to dark"}
       title={dark ? "Switch to light" : "Switch to dark"}
-      className="group relative flex h-9 w-9 sm:h-8 sm:w-8 items-center justify-center rounded-full border border-line-strong/50 text-ink transition-[background-color,border-color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-gold hover:bg-ivory/20"
+      className="group relative flex h-9 w-9 sm:h-8 sm:w-8 items-center justify-center rounded-full border border-line-strong/50 bg-surface text-ink transition-[background-color,border-color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-gold hover:bg-ivory/25"
+      style={{ boxShadow: "var(--control-shadow, none)" }}
     >
       {/* the glyph shows what you will get, not where you are */}
       <span className="relative block h-4 w-4">

@@ -98,7 +98,8 @@ export default function Nav({ links = [] }: { links?: Link[] }) {
               phone it lives in the menu with everything else. */}
           <NextLink
             href={CONTACT}
-            className="hidden h-8 items-center rounded-full border border-line-strong/50 px-3.5 text-[0.74rem] tracking-[0.04em] text-ink-soft transition-[background-color,border-color,color] duration-500 hover:border-gold/70 hover:bg-ivory/15 hover:text-ink md:inline-flex"
+            className="hidden h-8 items-center rounded-full border border-line-strong/50 bg-surface px-3.5 text-[0.74rem] tracking-[0.04em] text-ink-soft transition-[background-color,border-color,color] duration-500 hover:border-gold/70 hover:bg-ivory/25 hover:text-ink md:inline-flex"
+            style={{ boxShadow: "var(--control-shadow, none)" }}
           >
             Contact
           </NextLink>
@@ -108,7 +109,8 @@ export default function Nav({ links = [] }: { links?: Link[] }) {
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
             aria-controls="mobile-menu"
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-line-strong/50 text-ink transition-[background-color,border-color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-gold hover:bg-ivory/20 md:hidden"
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-line-strong/50 bg-surface text-ink transition-[background-color,border-color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-gold hover:bg-ivory/25 md:hidden"
+            style={{ boxShadow: "var(--control-shadow, none)" }}
           >
             <span className="sr-only">{open ? "Close menu" : "Open menu"}</span>
             <span className="relative block h-3 w-4" aria-hidden="true">

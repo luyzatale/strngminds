@@ -283,7 +283,7 @@ export default function SolarSystem({
                   ...preserve,
                   transform: `rotate(${-b.start}deg)`,
                   animationName: "sm-orbit-counter",
-                  animationDuration: `${b.period}s`,
+                  animationDuration: `calc(${b.period}s * var(--motion-scale, 1))`,
                   animationTimingFunction: "linear",
                   animationIterationCount: "infinite",
                   ["--orbit-start" as string]: `${b.start}deg`,
@@ -293,7 +293,7 @@ export default function SolarSystem({
                   <div
                     style={{
                       animationName: "sm-float",
-                      animationDuration: `${29 + i * 5}s`,
+                      animationDuration: `calc(${29 + i * 5}s * var(--motion-scale, 1))`,
                       animationTimingFunction: "ease-in-out",
                       animationIterationCount: "infinite",
                       ["--float-d" as string]: `${b.float ?? 3}px`,
@@ -301,6 +301,7 @@ export default function SolarSystem({
                   >
                     <Planet
                       body={b}
+                      depth={i / (BODIES.length - 1)}
                       active={named === b.name}
                       onEnter={() => setNamed(b.name)}
                       onLeave={() => setNamed((n) => (n === b.name ? null : n))}
@@ -329,7 +330,7 @@ export default function SolarSystem({
                   top: `calc(50% + ${f.y}% - ${m.r}%)`,
                   transform: `rotate(${m.start}deg)`,
                   animationName: "sm-orbit",
-                  animationDuration: `${m.period}s`,
+                  animationDuration: `calc(${m.period}s * var(--motion-scale, 1))`,
                   animationTimingFunction: "linear",
                   animationIterationCount: "infinite",
                   ["--orbit-start" as string]: `${m.start}deg`,
@@ -358,32 +359,41 @@ export default function SolarSystem({
           leaves the seam of that texture visible as a faint square. Nothing
           about the sun needs the plane's rotation, so it stays flat. */}
       <div className="pointer-events-none absolute left-1/2 top-1/2">
-        {/* Four layers, and only the innermost is the body. Everything gained
-            here is light, not sun: the disc is 5.75cqw rather than 4.6 purely
-            to cancel the container's 20% reduction, so it lands on screen at
-            the same pixel size it always had. Each shell is wider and fainter
-            than the last and the outermost reaches past the orbits entirely —
-            the point is that the surrounding space looks lit, not that the sun
-            looks large. Alphas stay low and the hue stays ivory so it reads
-            warm rather than bright. */}
+        {/* Four layers, and only the innermost is the body. Everything else is
+            light, not sun: each shell is wider and fainter than the last and
+            the outermost reaches past the orbits entirely, because the point
+            is that the surrounding space looks lit, not that the sun looks
+            large.
+
+            By day the three shells separate into gold at the core, cream
+            around it and ivory dissolving outward, carried 16% further and at
+            nearly twice the alpha — a light source has to work harder to be
+            felt against paper than against black. At night all three collapse
+            back to one ivory at the original alpha and radius. */}
         <div
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
           style={{
-            width: "144cqw",
-            height: "144cqw",
+            width: "calc(144cqw * var(--sun-spread, 1))",
+            height: "calc(144cqw * var(--sun-spread, 1))",
             background:
-              "radial-gradient(circle, rgba(247,232,199,0.07) 0%, rgba(247,232,199,0.048) 18%, rgba(247,232,199,0.029) 34%, rgba(247,232,199,0.014) 52%, rgba(247,232,199,0.005) 68%, rgba(247,232,199,0) 84%)",
-            animation: "sm-breathe 37s ease-in-out infinite",
+              "radial-gradient(circle, color-mix(in srgb, var(--sun-outer) calc(7% * var(--sun-a)), transparent) 0%, color-mix(in srgb, var(--sun-outer) calc(4.8% * var(--sun-a)), transparent) 18%, color-mix(in srgb, var(--sun-outer) calc(2.9% * var(--sun-a)), transparent) 34%, color-mix(in srgb, var(--sun-outer) calc(1.4% * var(--sun-a)), transparent) 52%, color-mix(in srgb, var(--sun-outer) calc(0.5% * var(--sun-a)), transparent) 68%, transparent 84%)",
+            animationName: "sm-breathe",
+            animationDuration: "calc(37s * var(--motion-scale, 1))",
+            animationTimingFunction: "ease-in-out",
+            animationIterationCount: "infinite",
           }}
         />
         <div
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
           style={{
-            width: "74cqw",
-            height: "74cqw",
+            width: "calc(74cqw * var(--sun-spread, 1))",
+            height: "calc(74cqw * var(--sun-spread, 1))",
             background:
-              "radial-gradient(circle, rgba(247,232,199,0.2) 0%, rgba(247,232,199,0.125) 26%, rgba(247,232,199,0.062) 46%, rgba(247,232,199,0.022) 64%, rgba(247,232,199,0) 82%)",
-            animation: "sm-breathe 29s ease-in-out infinite",
+              "radial-gradient(circle, color-mix(in srgb, var(--sun-mid) calc(20% * var(--sun-a)), transparent) 0%, color-mix(in srgb, var(--sun-mid) calc(12.5% * var(--sun-a)), transparent) 26%, color-mix(in srgb, var(--sun-mid) calc(6.2% * var(--sun-a)), transparent) 46%, color-mix(in srgb, var(--sun-mid) calc(2.2% * var(--sun-a)), transparent) 64%, transparent 82%)",
+            animationName: "sm-breathe",
+            animationDuration: "calc(29s * var(--motion-scale, 1))",
+            animationTimingFunction: "ease-in-out",
+            animationIterationCount: "infinite",
           }}
         />
         <div
@@ -393,7 +403,10 @@ export default function SolarSystem({
             height: "21cqw",
             background:
               "radial-gradient(circle, rgba(255,247,228,0.88) 0%, rgba(250,224,163,0.48) 26%, rgba(240,206,142,0.21) 48%, rgba(240,206,142,0.07) 66%, rgba(240,206,142,0) 82%)",
-            animation: "sm-breathe 21s ease-in-out infinite",
+            animationName: "sm-breathe",
+            animationDuration: "calc(21s * var(--motion-scale, 1))",
+            animationTimingFunction: "ease-in-out",
+            animationIterationCount: "infinite",
           }}
         />
         <div
@@ -451,8 +464,8 @@ function Orbit({
           Where the ring reads at all it is because the sun's glow is behind
           it, which is the intended relationship. */}
       <div
-        className="pointer-events-none absolute rounded-full border-[0.5px] border-gold/[0.09]"
-        style={{ ...box, ...preserve }}
+        className="pointer-events-none absolute rounded-full border-[0.5px]"
+        style={{ ...box, ...preserve, borderColor: "var(--orbit-line)" }}
       />
       <div
         className="pointer-events-none absolute rounded-full"
@@ -464,7 +477,7 @@ function Orbit({
             // the resting position, used when animation is suppressed
             transform: `rotate(${start}deg)`,
             animationName: "sm-orbit",
-            animationDuration: `${period}s`,
+            animationDuration: `calc(${period}s * var(--motion-scale, 1))`,
             animationTimingFunction: "linear",
             animationIterationCount: "infinite",
           } as CSSProperties
@@ -478,19 +491,36 @@ function Orbit({
 
 function Planet({
   body,
+  depth,
   active,
   onEnter,
   onLeave,
   onTap,
 }: {
   body: Body;
+  /** 0 at the innermost orbit, 1 at the outermost */
+  depth: number;
   active: boolean;
   onEnter: () => void;
   onLeave: () => void;
   onTap: () => void;
 }) {
   return (
-    <div className="pointer-events-none relative">
+    <div
+      className="pointer-events-none relative"
+      /**
+       * Atmospheric perspective, by day only. The outermost body loses 11%
+       * — enough that the eye reads the far edge of the system as further
+       * away, far too little to notice as an effect.
+       *
+       * Opacity rather than blur, deliberately. Blur would need a `filter`
+       * on eight elements, and `blur(0px)` is not free: it still promotes a
+       * layer, so the night theme would quietly gain eight rendering
+       * contexts to render identically. `calc()` here resolves to exactly 1
+       * when --planet-fade is 0, which costs nothing at all.
+       */
+      style={{ opacity: `calc(1 - ${depth.toFixed(3)} * 0.11 * var(--planet-fade, 0))` }}
+    >
       <div
         className="pointer-events-auto relative overflow-hidden rounded-full outline-offset-4"
         role="img"
@@ -510,6 +540,13 @@ function Planet({
           width: `${body.d}cqw`,
           height: `${body.d}cqw`,
           backgroundImage: body.surface,
+          /* Safe here and only here: the billboard's preserve-3d chain ends
+             above this element, so a filter cannot flatten the scene. By day
+             the spheres need to sit onto the page rather than glow off it —
+             the same colours, slightly deeper and slightly more separated.
+             `none` at night. */
+          filter:
+            "brightness(var(--planet-bright, 1)) contrast(var(--planet-contrast, 1))",
           boxShadow: active
             ? "inset -2px -3px 6px rgba(20,16,12,0.28), 0 0 0 6px color-mix(in oklab, var(--color-gold) 22%, transparent), 0 6px 16px -6px rgba(25,25,25,0.45)"
             : "inset -2px -3px 6px rgba(20,16,12,0.28), 0 4px 10px -4px rgba(25,25,25,0.4)",
@@ -522,7 +559,7 @@ function Planet({
             className="absolute inset-y-0 left-0 flex w-[200%]"
             style={{
               animationName: "sm-surface",
-              animationDuration: `${body.spin}s`,
+              animationDuration: `calc(${body.spin}s * var(--motion-scale, 1))`,
               animationTimingFunction: "linear",
               animationIterationCount: "infinite",
               animationDirection: body.retrograde ? "reverse" : "normal",

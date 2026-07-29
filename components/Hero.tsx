@@ -47,7 +47,15 @@ export default function Hero() {
           viewport and into the composition — it belongs to the system above it
           rather than to the edge below it. Well clear of the corner controls,
           which reach only 56px up. */}
-      <p className="pointer-events-none absolute bottom-24 left-1/2 z-10 w-full -translate-x-1/2 whitespace-nowrap text-center text-[0.62rem] uppercase tracking-[0.24em] text-ink-faint sm:bottom-[5.5rem] sm:text-[0.68rem] sm:tracking-[0.3em]">
+      {/* Raised another 20px, so it belongs to the system above it rather
+          than to the edge below it, and the tracking opens a touch further.
+
+          Its colour does not move. `ink-faint` is already sitting on the
+          4.5:1 floor against the ivory, and this line is 10px uppercase —
+          normal text by every measure that matters. The contrast cannot come
+          down without failing AA, so the extra quiet comes from the spacing
+          and the position instead. */}
+      <p className="pointer-events-none absolute bottom-[8.75rem] left-1/2 z-10 w-full -translate-x-1/2 whitespace-nowrap text-center text-[0.62rem] uppercase tracking-[0.26em] text-ink-faint sm:bottom-[6.75rem] sm:text-[0.68rem] sm:tracking-[0.32em]">
         Drag to turn
         <span className="sm:hidden"> · tap a planet</span>
         <span className="hidden sm:inline"> · hover a planet</span>
@@ -325,7 +333,7 @@ function HeroDecor() {
         className="absolute inset-0"
         style={{
           animationName: "sm-layer-far",
-          animationDuration: "460s",
+          animationDuration: "calc(460s * var(--motion-scale, 1))",
           animationTimingFunction: "ease-in-out",
           animationIterationCount: "infinite",
         }}
@@ -344,7 +352,7 @@ function HeroDecor() {
         className="absolute inset-0"
         style={{
           animationName: "sm-layer-mid",
-          animationDuration: "370s",
+          animationDuration: "calc(370s * var(--motion-scale, 1))",
           animationTimingFunction: "ease-in-out",
           animationIterationCount: "infinite",
         }}
@@ -368,7 +376,7 @@ function HeroDecor() {
         className="absolute inset-0"
         style={{
           animationName: "sm-layer-near",
-          animationDuration: "290s",
+          animationDuration: "calc(290s * var(--motion-scale, 1))",
           animationTimingFunction: "ease-in-out",
           animationIterationCount: "infinite",
         }}
@@ -455,8 +463,17 @@ function GalaxyAt({
            where everything is equally sharp stays flat however its sizes
            vary. The cost is bounded: these are small elements, static, and
            the drift lives on their parent, so each rasterises once and is
-           then only translated. */
-        ...(b.blur > 0 ? { filter: `blur(${b.blur}px)` } : null),
+           then only translated.
+
+           The extra term belongs to the dawn theme, where galaxies stop
+           being luminous and become watercolour. Every plane is softened by
+           the same amount, so the ordering of the five is untouched and the
+           whole field simply sits further back. Zero at night. */
+        filter: `blur(calc(${b.blur}px + var(--galaxy-blur-extra, 0px)))`,
+        /* and the whole field is a little more transparent by day, which is
+           what "almost disappear into the background" costs — the faintest
+           ones drop below the paper's own tonal variation and are gone */
+        opacity: "var(--galaxy-alpha, 1)",
       }}
     >
       {parallax ? <Parallax {...parallax}>{inner}</Parallax> : inner}
