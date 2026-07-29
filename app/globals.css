@@ -30,17 +30,20 @@
    * Warm greys, never black.
    *
    * The lower two tiers are darker than the palette nominally calls for,
-   * and the reason is arithmetic rather than taste. Taking the paper down
-   * to a real parchment took the page's luminance from 0.93 to 0.80, and
-   * text contrast is a ratio — the specified #6F6B66 measures 4.27:1
-   * against this ground, and #736F67 measures 4.04:1. Both fail the 4.5
-   * floor for normal text, and the hint line and the inactive tabs are
-   * normal text by every measure that counts. Darkening them by roughly
-   * one step restores 4.9:1 and 4.6:1. The primary tier is untouched.
+   * and the reason is arithmetic rather than taste. Text contrast is a
+   * ratio against whatever is actually behind the glyphs, and two rounds of
+   * taking light out of the page have moved that ground twice: first to a
+   * parchment base, then again when the corner falloff deepened. Each time,
+   * the tiers that carry the inactive tabs and the hint line fell under the
+   * 4.5 floor — measured on the rendered page, not assumed from the token.
+   *
+   * These values are set from the darkest ground either tier actually sits
+   * on, with margin for narrower viewports, where `farthest-corner` pulls
+   * the falloff further in. The primary tier has never needed moving.
    */
   --color-ink: #3a3936;
-  --color-ink-soft: #666259;
-  --color-ink-faint: #6b675f;
+  --color-ink-soft: #595549;
+  --color-ink-faint: #635e56;
 
   /* ── Celestial accents (used sparingly) ───────────────── */
   --color-gold: #d8c29a;
@@ -174,24 +177,63 @@
      */
     --wash-a: 1;
     --page-wash:
-      /* the light, centred a little above the middle where the sun sits */
+      /* the light itself, held tight around the sun */
       radial-gradient(
-        112% 92% at 50% 44%,
-        rgba(252, 249, 241, 0.98) 0%,
-        rgba(252, 249, 241, 0.82) 16%,
-        rgba(252, 249, 241, 0.52) 32%,
-        rgba(252, 249, 241, 0.26) 48%,
-        rgba(252, 249, 241, 0.09) 62%,
-        rgba(252, 249, 241, 0) 78%
+        34% 38% at 50% 47%,
+        rgba(255, 251, 241, 0.62) 0%,
+        rgba(255, 251, 241, 0.34) 34%,
+        rgba(255, 251, 241, 0.12) 58%,
+        rgba(255, 251, 241, 0) 80%
       ),
-      /* and the shadow it falls away into */
+      /* the air immediately around it */
         radial-gradient(
-          150% 125% at 50% 46%,
-          rgba(166, 154, 130, 0) 40%,
-          rgba(166, 154, 130, 0.05) 58%,
-          rgba(166, 154, 130, 0.13) 74%,
-          rgba(166, 154, 130, 0.23) 88%,
-          rgba(166, 154, 130, 0.32) 100%
+          58% 62% at 50% 47%,
+          rgba(253, 248, 236, 0.36) 0%,
+          rgba(253, 248, 236, 0.16) 44%,
+          rgba(253, 248, 236, 0.05) 66%,
+          rgba(253, 248, 236, 0) 84%
+        ),
+      /* the room it stands in */
+        radial-gradient(
+          92% 94% at 50% 47%,
+          rgba(251, 245, 232, 0.22) 0%,
+          rgba(251, 245, 232, 0.09) 46%,
+          rgba(251, 245, 232, 0.02) 68%,
+          rgba(251, 245, 232, 0) 86%
+        ),
+      /* two pockets off the axis, so the field reads as air rather than as
+         a lens — perfect radial symmetry is the thing that gives a wash
+         away as a wash */
+        radial-gradient(
+          42% 36% at 20% 24%,
+          rgba(252, 247, 235, 0.14) 0%,
+          rgba(252, 247, 235, 0.04) 46%,
+          rgba(252, 247, 235, 0) 74%
+        ),
+        radial-gradient(
+          48% 40% at 83% 76%,
+          rgba(250, 243, 228, 0.12) 0%,
+          rgba(250, 243, 228, 0.03) 48%,
+          rgba(250, 243, 228, 0) 76%
+        ),
+      /* and the shadow all of it dissolves into, from the same centre, so
+         the falloff belongs to the light rather than framing the viewport.
+
+         `farthest-corner` rather than a percentage pair, and that is the
+         whole difference between this reading as a hierarchy and not. Sized
+         at 138% 132% the ellipse ran so far past the viewport that its
+         corners sat at barely half the ramp — the last three stops were
+         off-screen and the measured falloff came out at 85% when it was
+         drawn for 76%. This pins 100% to the actual corner at any aspect
+         ratio. */
+        radial-gradient(
+          farthest-corner at 50% 47%,
+          rgba(170, 157, 132, 0) 22%,
+          rgba(170, 157, 132, 0.06) 42%,
+          rgba(170, 157, 132, 0.16) 60%,
+          rgba(170, 157, 132, 0.3) 78%,
+          rgba(170, 157, 132, 0.45) 90%,
+          rgba(170, 157, 132, 0.58) 100%
         );
 
     /**
@@ -200,7 +242,7 @@
      * — at 1.6% it is invisible as texture and only registers as the
      * absence of digital flatness.
      */
-    --grain-a: 0.016;
+    --grain-a: 0.013;
 
     /**
      * Galaxies become celestial forms rather than pictures. Getting here
@@ -225,8 +267,9 @@
     --galaxy-sat: 0.5;
     --galaxy-contrast: 0.8;
     --galaxy-sepia: 0.45;
-    --galaxy-blur-extra: 1.7px;
-    --galaxy-alpha: 0.44;
+    /* softer still — the extra contrast is spent on the centre, not here */
+    --galaxy-blur-extra: 1.9px;
+    --galaxy-alpha: 0.4;
 
     /**
      * Nebulae, at 3–6%, in ivory, cream, the palest blue and a breath of
@@ -234,15 +277,29 @@
      * 3% over pure white reads as a grey stain; over warm ivory, warmed,
      * the same shapes read as air.
      */
-    /* Pulled back by 30% and drawn in a little, so the page stops glowing
-       from everywhere at once and the sun is the light again. */
+    /**
+     * Down to a trace, because these were the veil.
+     *
+     * The clouds are tilted ellipses up to 980px across. Against black that
+     * is atmosphere; against parchment, four of them overlapping in warm
+     * cream is a beige film lying over the interface, and the tilt makes
+     * them read as broad directional streaks rather than as air. The
+     * illumination they were providing has moved into the page wash above,
+     * where it is radial and centred on the sun — which is what "air
+     * illuminated from a point" actually looks like.
+     *
+     * Left at 0.14 rather than switched off so the sunrise can fade them
+     * out over its own four seconds. `display` cannot be interpolated, so
+     * `none` here would pop them out of existence in a single frame partway
+     * through the transition.
+     */
     --nebula-show: block;
     --neb-1: #f0e4c4;
     --neb-2: #d6d0dc;
     --neb-3: #ece6d8;
     --neb-4: #ced8e4;
-    --neb-a: 0.7;
-    --neb-scale: 0.9;
+    --neb-a: 0.14;
+    --neb-scale: 0.82;
 
     /**
      * Stars stop being light and become particles — warm dust on paper. A
@@ -260,12 +317,14 @@
     --sun-spread: 1.16;
 
     /* Engraved into paper: soft beige, never grey, never sharp. */
-    --orbit-line: rgba(176, 150, 106, 0.155);
+    --orbit-line: rgba(172, 145, 99, 0.175);
 
-    /* The one place local contrast goes up rather than down. Saturation is
-       deliberately untouched — this is for focus, not intensity. */
-    --planet-bright: 0.94;
-    --planet-contrast: 1.19;
+    /* Local contrast goes up only at the centre — the planets, the sun and
+       the rings. Saturation is deliberately untouched: this is for focus,
+       not intensity, and everything outside the system goes softer to pay
+       for it. */
+    --planet-bright: 0.935;
+    --planet-contrast: 1.24;
     --planet-fade: 1;
 
     /* Pencil on textured paper. */
