@@ -55,7 +55,7 @@ export default function Hero() {
           normal text by every measure that matters. The contrast cannot come
           down without failing AA, so the extra quiet comes from the spacing
           and the position instead. */}
-      <p className="pointer-events-none absolute bottom-[8.75rem] left-1/2 z-10 w-full -translate-x-1/2 whitespace-nowrap text-center text-[0.62rem] uppercase tracking-[0.26em] text-ink-faint sm:bottom-[6.75rem] sm:text-[0.68rem] sm:tracking-[0.32em]">
+      <p className="pointer-events-none absolute bottom-[8.75rem] left-1/2 z-10 w-full -translate-x-1/2 whitespace-nowrap text-center text-[0.54rem] uppercase tracking-[0.26em] text-ink-faint sm:bottom-[6.75rem] sm:text-[0.6rem] sm:tracking-[0.32em]">
         Drag to turn
         <span className="sm:hidden"> · tap a planet</span>
         <span className="hidden sm:inline"> · hover a planet</span>

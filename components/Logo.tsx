@@ -19,7 +19,14 @@ export function LogoMark({
       style={{ width: size, height: size }}
       aria-hidden="true"
     >
-      <span className="absolute inset-0 rounded-full border-[1.5px] border-ink/55" />
+      {/* The ring carries its own weight per theme for the same reason the
+          wordmark does. At 55% it sat comfortably beside a 500 serif; beside
+          a 600 one on parchment it reads as the weaker half of a lockup that
+          is meant to be one mark. */}
+      <span
+        className="absolute inset-0 rounded-full border-[1.5px] border-ink"
+        style={{ opacity: "var(--logo-ring-o, 0.55)" }}
+      />
       <span
         className="absolute inset-0"
         style={
@@ -53,15 +60,21 @@ export function LogoMark({
  * quieter than the thing it introduces. The tracking comes in slightly with
  * the size: wide letterspacing that reads as air at 1.18rem reads as a gap at
  * 0.95rem.
+ *
+ * The weight is a token rather than a utility because the two themes need
+ * different ones. A serif at 500 has enough presence against a dark ground;
+ * on parchment the same strokes thin out, and the mark reads lighter than it
+ * did at night for no reason the eye can name. 600 by day restores it.
  */
 export function Wordmark({ className }: { className?: string }) {
   return (
     <span
       className={clsx(
-        "flex flex-col whitespace-nowrap font-serif text-[0.7rem] font-medium uppercase leading-[1.06] tracking-[0.13em] text-ink",
+        "flex flex-col whitespace-nowrap font-serif text-[0.7rem] uppercase leading-[1.06] tracking-[0.13em] text-ink",
         "sm:flex-row sm:gap-[0.32em] sm:text-[0.95rem] sm:leading-none sm:tracking-[0.2em]",
         className,
       )}
+      style={{ fontWeight: "var(--logo-weight, 500)" }}
     >
       <span>Strng</span>
       <span>Minds</span>

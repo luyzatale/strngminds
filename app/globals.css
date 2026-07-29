@@ -97,6 +97,8 @@
 @property --planet-contrast { syntax: "<number>"; inherits: true; initial-value: 1; }
 @property --planet-fade { syntax: "<number>"; inherits: true; initial-value: 0; }
 @property --constellation-boost { syntax: "<number>"; inherits: true; initial-value: 1; }
+@property --logo-weight { syntax: "<number>"; inherits: true; initial-value: 500; }
+@property --logo-ring-o { syntax: "<number>"; inherits: true; initial-value: 0.55; }
 
 @property --color-paper { syntax: "<color>"; inherits: true; initial-value: #f8f7f4; }
 @property --color-paper-50 { syntax: "<color>"; inherits: true; initial-value: #fbfaf8; }
@@ -327,6 +329,10 @@
     --planet-contrast: 1.24;
     --planet-fade: 1;
 
+    /* The serif needs more body on parchment than it does against black. */
+    --logo-weight: 600;
+    --logo-ring-o: 0.72;
+
     /* Pencil on textured paper. */
     --constellation-ink: #8d867a;
     --constellation-boost: 0.9;
@@ -405,6 +411,9 @@
     --planet-bright: 1;
     --planet-contrast: 1;
     --planet-fade: 0;
+
+    --logo-weight: 500;
+    --logo-ring-o: 0.55;
 
     --constellation-ink: #d8c29a;
     /* the keyframe is authored at 0.2/0.4; this returns it to 0.11/0.22 */
@@ -487,6 +496,7 @@
       /* 6 — the interface warms */
       --color-ink, --color-ink-soft, --color-ink-faint, --color-line,
       --color-line-strong, --color-mute, --color-surface, --color-gold-deep, --on-gold,
+      --logo-weight, --logo-ring-o,
       /* 7 — the engraving appears */
       --orbit-line, --constellation-ink, --constellation-boost,
       --planet-bright, --planet-contrast, --planet-fade;
@@ -496,7 +506,7 @@
       4.2s, 4.2s, 4.2s, 4.2s,
       3.8s, 3.8s, 3.8s, 3.8s, 3.8s, 3.8s,
       3.4s, 3.4s, 3.4s, 3.4s, 3.4s, 3.4s,
-      3.2s, 3.2s, 3.2s, 3.2s, 3.2s, 3.2s, 3.2s, 3.2s, 3.2s,
+      3.2s, 3.2s, 3.2s, 3.2s, 3.2s, 3.2s, 3.2s, 3.2s, 3.2s, 3.2s, 3.2s,
       3.4s, 3.4s, 3.4s, 3.4s, 3.4s, 3.4s;
     transition-delay:
       0s, 0s, 0s, 0s, 0s, 0s,
@@ -504,7 +514,7 @@
       1.1s, 1.1s, 1.1s, 1.1s,
       1.6s, 1.6s, 1.6s, 1.6s, 1.6s, 1.6s,
       2.3s, 2.3s, 2.3s, 2.3s, 2.3s, 2.3s,
-      2.7s, 2.7s, 2.7s, 2.7s, 2.7s, 2.7s, 2.7s, 2.7s, 2.7s,
+      2.7s, 2.7s, 2.7s, 2.7s, 2.7s, 2.7s, 2.7s, 2.7s, 2.7s, 2.7s, 2.7s,
       3.2s, 3.2s, 3.2s, 3.2s, 3.2s, 3.2s;
   }
 

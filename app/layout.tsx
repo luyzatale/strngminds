@@ -5,9 +5,16 @@ import SmoothScroll from "@/components/SmoothScroll";
 import { themeScript } from "@/components/ThemeToggle";
 import "./globals.css";
 
+/**
+ * 600 exists only for the wordmark in the light theme, and it has to be a
+ * really loaded weight rather than a heavier `font-weight` value: `body` sets
+ * `font-synthesis-weight: none`, so asking for a weight that was never
+ * fetched silently renders at the nearest one that was. Without this line the
+ * logo would simply stay at 500 and the change would appear to do nothing.
+ */
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
-  weight: ["300", "400", "500"],
+  weight: ["300", "400", "500", "600"],
   style: ["normal", "italic"],
   variable: "--font-cormorant",
   display: "swap",
