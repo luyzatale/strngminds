@@ -7,13 +7,15 @@ import {
   Constellation,
   FROST_CORE,
   FROST_INK,
+  FORGE_CORE,
+  FORGE_INK,
   Galaxy,
+  JADE_CORE,
+  JADE_INK,
   NEBULA_CORE,
   NEBULA_INK,
-  PINWHEEL_CORE,
-  PINWHEEL_INK,
-  PLUME_CORE,
-  PLUME_INK,
+  SEPIA_CORE,
+  SEPIA_INK,
   Starfield,
   VERDANT_CORE,
   VERDANT_INK,
@@ -202,8 +204,8 @@ function Backdrop() {
           flatten={0.93}
           duration={980}
           shape="lenticular"
-          ink={ARGENT_INK}
-          core={ARGENT_CORE}
+          ink={SEPIA_INK}
+          core={SEPIA_CORE}
           style={{ opacity: 0.8 }}
         />
       </Parallax>
@@ -230,8 +232,8 @@ function Backdrop() {
           duration={1220}
           reverse
           shape="peculiar"
-          ink={PLUME_INK}
-          core={PLUME_CORE}
+          ink={JADE_INK}
+          core={JADE_CORE}
           style={{ opacity: 0.62 }}
         />
       </Parallax>
@@ -259,8 +261,8 @@ function Backdrop() {
           flatten={0.92}
           duration={1300}
           shape="multi"
-          ink={PINWHEEL_INK}
-          core={PINWHEEL_CORE}
+          ink={FORGE_INK}
+          core={FORGE_CORE}
           style={{ opacity: 0.6 }}
         />
       </Parallax>

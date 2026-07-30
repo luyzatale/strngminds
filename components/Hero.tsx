@@ -10,10 +10,14 @@ import {
   EMBER_INK,
   FORGE_CORE,
   FORGE_INK,
+  JADE_CORE,
+  JADE_INK,
   PINWHEEL_CORE,
   PINWHEEL_INK,
   PLUME_CORE,
   PLUME_INK,
+  SEPIA_CORE,
+  SEPIA_INK,
   FROST_CORE,
   FROST_INK,
   Galaxy,
@@ -91,7 +95,9 @@ type Tint =
   | "bloom"
   | "plume"
   | "forge"
-  | "pinwheel";
+  | "pinwheel"
+  | "sepia"
+  | "jade";
 
 const INK: Record<Tint, string[]> = {
   nebula: NEBULA_INK,
@@ -103,6 +109,8 @@ const INK: Record<Tint, string[]> = {
   plume: PLUME_INK,
   forge: FORGE_INK,
   pinwheel: PINWHEEL_INK,
+  sepia: SEPIA_INK,
+  jade: JADE_INK,
 };
 
 const CORE: Record<Tint, string[]> = {
@@ -115,6 +123,8 @@ const CORE: Record<Tint, string[]> = {
   plume: PLUME_CORE,
   forge: FORGE_CORE,
   pinwheel: PINWHEEL_CORE,
+  sepia: SEPIA_CORE,
+  jade: JADE_CORE,
 };
 
 type Common = {
@@ -284,23 +294,30 @@ const HEROES: Spiral[] = [
 const MEDIUM_SIZE = [196, 90, 146, 116, 168, 100, 132, 178, 152];
 
 /**
- * The grand designs, placed by hand rather than scattered.
+ * The right margin, placed by hand rather than scattered.
  *
- * Three of one form is a decision about composition, not a population, and
- * the sampler has no way to know that: left to it, the first one landed low
- * on the left where it read as an afterthought. These sit down the right
- * margin instead, spaced between the two anchors already there — the violet
- * at 23% and the edge-on at 73% — and stepped in size so three of the same
- * thing do not read as one thing repeated.
+ * Three objects down one edge is a decision about composition, and the
+ * sampler has no way to make it — left to it, the first landed low on the
+ * left where it read as an afterthought. These sit between the two anchors
+ * already on that side, the violet at 23% and the edge-on at 73%.
  *
- * All three are near face-on and carry the photographic palette, so they are
- * the most colourful objects in the field after the anchors. That is why they
- * are held out at the margin: the eye finds them, but only after the centre.
+ * They were three grand designs in one palette, stepped only in size, and
+ * that was not enough: size alone does not separate three objects when their
+ * shape and colour are identical, so they read as one thing printed three
+ * times. Each now differs in all three — a face-on spiral, a flat lens and a
+ * ringed disc — and the temperature alternates down the margin so no two
+ * neighbours are warm together.
+ *
+ * Two of those forms already appear elsewhere in the field, so they appear
+ * here in colour nothing else carries: sepia for the lens, jade for the
+ * rings. Repeating a morphology is fine on its own; repeating a morphology
+ * together with its palette is what makes two objects read as one asset
+ * placed twice.
  */
-const PINWHEELS: Spiral[] = [
+const RIGHT_MARGIN: Spiral[] = [
   { kind: "spiral", shape: "multi", x: 95, y: 38, size: 156, tilt: -14, flatten: 0.95, opacity: 0.57, blur: 0.35, duration: 34200, reverse: false, tinted: "pinwheel", seed: 6401 },
-  { kind: "spiral", shape: "multi", x: 81, y: 52, size: 118, tilt: 26, flatten: 0.9, opacity: 0.5, blur: 0.7, duration: 39600, reverse: true, tinted: "pinwheel", seed: 6473 },
-  { kind: "spiral", shape: "multi", x: 93, y: 84, size: 134, tilt: -38, flatten: 0.93, opacity: 0.53, blur: 0.5, duration: 36000, reverse: false, tinted: "pinwheel", seed: 6547 },
+  { kind: "spiral", shape: "lenticular", x: 81, y: 52, size: 124, tilt: 26, flatten: 0.94, opacity: 0.5, blur: 0.7, duration: 39600, reverse: true, tinted: "sepia", seed: 6473 },
+  { kind: "spiral", shape: "ringed", x: 93, y: 84, size: 140, tilt: -38, flatten: 0.62, opacity: 0.53, blur: 0.5, duration: 36000, reverse: false, tinted: "jade", seed: 6547 },
 ];
 
 const { MEDIUM, SMALL, TINY } = (() => {
@@ -311,7 +328,7 @@ const { MEDIUM, SMALL, TINY } = (() => {
    * across them. Sizes are now decided before positions for every layer,
    * because the spacing rule needs them.
    */
-  const taken: Spot[] = [...HEROES, ...PINWHEELS].map((h) => ({
+  const taken: Spot[] = [...HEROES, ...RIGHT_MARGIN].map((h) => ({
     x: h.x / 100,
     y: h.y / 100,
     r: h.size / 2,
@@ -374,7 +391,7 @@ const { MEDIUM, SMALL, TINY } = (() => {
     "lenticular",
     "peculiar",
     // the barred one painted from its photograph; the grand designs that
-    // went with it are placed by hand instead, up in PINWHEELS
+    // went with it are placed by hand instead, up in RIGHT_MARGIN
     "barred",
   ];
   const MEDIUM_TINT: (Tint | null)[] = [
@@ -577,7 +594,7 @@ function HeroDecor() {
         ))}
         {/* Placed by hand, but they belong to this distance, so they drift
             with it rather than with the anchors. */}
-        {PINWHEELS.map((b) => (
+        {RIGHT_MARGIN.map((b) => (
           <GalaxyAt key={b.seed} b={b} className="absolute hidden sm:block" />
         ))}
       </div>

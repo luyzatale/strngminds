@@ -161,6 +161,41 @@ export const PINWHEEL_INK = [
 export const PINWHEEL_CORE = ["#fff8ea", "#f0dcb0", "#c9d8ee"];
 
 /**
+ * Two more, made for shapes the field already contains.
+ *
+ * Repeating a morphology is fine; repeating a morphology *and* its palette is
+ * what makes two objects read as one asset placed twice. So a lenticular and
+ * a ringed disc that appear a second time appear in colour nothing else
+ * carries.
+ *
+ * Sepia is the old photographic plate: warm neutral dust, no hue to speak of,
+ * which suits a lens with no structure in it. Jade is a muted sage — near
+ * enough to verdant to belong, far enough from its saturated teal to be a
+ * different object.
+ */
+export const SEPIA_INK = [
+  "#d9cfc0",
+  "#bfb2a0",
+  "#a2937f",
+  "#efe6d8",
+  "#cabfae",
+  "#8d7f6c",
+];
+
+export const SEPIA_CORE = ["#fff8ec", "#e3d6c2", "#b5a58e"];
+
+export const JADE_INK = [
+  "#a7c4b0",
+  "#8fb39c",
+  "#c6dbcc",
+  "#6f9781",
+  "#e4ded0",
+  "#b8cfc0",
+];
+
+export const JADE_CORE = ["#f6faf2", "#d8e6d8", "#7fa78c"];
+
+/**
  * How many dots a disc of this size is worth.
  *
  * Every dot is its own `<circle>`, so density is paid for in DOM nodes — and
