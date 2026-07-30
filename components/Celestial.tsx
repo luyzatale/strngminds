@@ -124,6 +124,43 @@ export const PLUME_INK = [
 export const PLUME_CORE = ["#fff0dc", "#e9b177", "#7fc3ba"];
 
 /**
+ * Two painted close to their photographs rather than pulled toward the page.
+ *
+ * Forge is the barred spiral: a bar and core burning gold, blue-white arms,
+ * and rose knots along them. Pinwheel is the grand design: colder arms, a
+ * smaller warm centre, and the star-forming knots much further toward true
+ * magenta than anything else in the field carries.
+ *
+ * These are the one deliberate exception to the rule the other palettes
+ * follow. Everything else here is built from tokens the page already owns so
+ * it sits down quietly; these two are meant to be recognisable, so the pink
+ * stays. They are kept in check by size and count instead — both sit in the
+ * mid-field rather than among the anchors, and the field around them is
+ * quiet enough to carry two loud objects without becoming loud itself.
+ */
+export const FORGE_INK = [
+  "#dfe8f5",
+  "#a9c2e0",
+  "#e8a2b4",
+  "#f0d9a8",
+  "#c8d8ec",
+  "#d98fa4",
+];
+
+export const FORGE_CORE = ["#fff6e2", "#f5d79a", "#d9a86a"];
+
+export const PINWHEEL_INK = [
+  "#d6e3f4",
+  "#9fbde2",
+  "#e884a8",
+  "#f2b9cc",
+  "#b9cfea",
+  "#e0708f",
+];
+
+export const PINWHEEL_CORE = ["#fff8ea", "#f0dcb0", "#c9d8ee"];
+
+/**
  * How many dots a disc of this size is worth.
  *
  * Every dot is its own `<circle>`, so density is paid for in DOM nodes — and
@@ -162,7 +199,8 @@ export type GalaxyShape =
 const CORE_FOR: Record<GalaxyShape, { r: number; o: number }> = {
   spiral: { r: 34, o: 1 },
   barred: { r: 30, o: 0.95 },
-  multi: { r: 32, o: 0.9 },
+  // small, or the glow reaches out over the arms it is supposed to sit inside
+  multi: { r: 21, o: 0.85 },
   ringed: { r: 26, o: 1 },
   // an edge-on disc has a bulge, not a halo, and it is a flat one
   edge: { r: 15, o: 0.85 },
@@ -289,7 +327,14 @@ function galaxyDots(
     }
   } else {
     const arms = shape === "multi" ? 4 : 2;
-    const wind = shape === "multi" ? 2.75 : 2.1;
+    /**
+     * A grand design winds *less* than a two-arm spiral, not more, and this
+     * was backwards. Inside the visible disc a wind of 2.75 carries each arm
+     * about 1.9 turns; four arms each going round nearly twice overlap
+     * everything else and the galaxy renders as a plain round blur. At 1.25
+     * they sweep about three-quarters of a turn and stay four separate arms.
+     */
+    const wind = shape === "multi" ? 1.25 : 2.1;
     const bar = shape === "barred" ? 11 : 0;
 
     for (let i = 0; i < count; i++) {
@@ -310,7 +355,15 @@ function galaxyDots(
           : base + (rad - bar) * 0.115
         : base + t * wind;
 
-      const spread = 1.4 + rad * (shape === "multi" ? 0.11 : 0.16);
+      /**
+       * A grand design needs much tighter arms than a two-arm spiral. Four
+       * arms share the same disc, so the scatter that reads as a soft arm at
+       * two reads as fog at four — the arms overlap each other and the whole
+       * thing collapses into a round blur. Narrowing the spread is what lets
+       * them stay four separate things.
+       */
+      const spread =
+        shape === "multi" ? 0.85 + rad * 0.065 : 1.4 + rad * 0.16;
       push(
         50 + Math.cos(theta) * rad + (rnd() - 0.5) * spread * 2,
         50 + Math.sin(theta) * rad + (rnd() - 0.5) * spread * 2,

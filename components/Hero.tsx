@@ -8,6 +8,10 @@ import {
   Dust,
   EMBER_CORE,
   EMBER_INK,
+  FORGE_CORE,
+  FORGE_INK,
+  PINWHEEL_CORE,
+  PINWHEEL_INK,
   PLUME_CORE,
   PLUME_INK,
   FROST_CORE,
@@ -85,7 +89,9 @@ type Tint =
   | "ember"
   | "argent"
   | "bloom"
-  | "plume";
+  | "plume"
+  | "forge"
+  | "pinwheel";
 
 const INK: Record<Tint, string[]> = {
   nebula: NEBULA_INK,
@@ -95,6 +101,8 @@ const INK: Record<Tint, string[]> = {
   argent: ARGENT_INK,
   bloom: BLOOM_INK,
   plume: PLUME_INK,
+  forge: FORGE_INK,
+  pinwheel: PINWHEEL_INK,
 };
 
 const CORE: Record<Tint, string[]> = {
@@ -105,6 +113,8 @@ const CORE: Record<Tint, string[]> = {
   argent: ARGENT_CORE,
   bloom: BLOOM_CORE,
   plume: PLUME_CORE,
+  forge: FORGE_CORE,
+  pinwheel: PINWHEEL_CORE,
 };
 
 type Common = {
@@ -215,14 +225,18 @@ function scatter(
 
     /**
      * Two discs clear each other when their centres are further apart than
-     * their radii together. The 0.84 is because a galaxy does not fill its
-     * box — the arms fade well before the edge — and `floor` keeps the small
+     * their radii together. The 0.9 is because a galaxy does not quite fill
+     * its box — the arms fade before the edge — and `floor` keeps the small
      * layers from collapsing into clumps, since radii alone would let a pair
      * of 20px specks sit almost on top of each other.
+     *
+     * It was 0.84 until a near-face-on pair came within 5px of touching. The
+     * nominal box is not the rendered one: rotation and flattening change it,
+     * so the margin has to absorb the difference.
      */
     const spot = { x, y, r: sizes[out.length] / 2 };
     if (
-      o.taken.some((t) => apart(spot, t) < Math.max((spot.r + t.r) * 0.84, o.floor))
+      o.taken.some((t) => apart(spot, t) < Math.max((spot.r + t.r) * 0.9, o.floor))
     )
       continue;
 
@@ -267,7 +281,7 @@ const HEROES: Spiral[] = [
  * objects inside it end up looking like eight of the same thing. These run 90
  * to 196 — better than two to one — with deliberately uneven steps.
  */
-const MEDIUM_SIZE = [196, 90, 146, 116, 168, 100, 132, 178];
+const MEDIUM_SIZE = [196, 90, 146, 116, 168, 100, 132, 178, 152, 162];
 
 const { MEDIUM, SMALL, TINY } = (() => {
   const rnd = seeded(4703);
@@ -330,6 +344,9 @@ const { MEDIUM, SMALL, TINY } = (() => {
     "multi",
     "lenticular",
     "peculiar",
+    // the two painted from photographs, in the forms those photographs are
+    "barred",
+    "multi",
   ];
   const MEDIUM_TINT: (Tint | null)[] = [
     "nebula",
@@ -340,12 +357,31 @@ const { MEDIUM, SMALL, TINY } = (() => {
     null,
     null,
     "plume",
+    "forge",
+    "pinwheel",
   ];
+
+  /**
+   * The two photographic ones are carried brighter than the layer they sit
+   * in, because their colour is the point of them and this layer's 0.31–0.44
+   * greys it out. They are held to the mid-field in every other respect —
+   * size, position, focus — so what stands out about them is what they are
+   * made of rather than how much room they take.
+   *
+   * They are also nearly face-on, which matters more than the brightness did.
+   * This layer's flatten runs 0.24–0.52, and at that squash a spiral has no
+   * spiral left in it: the first pass turned both photographs into featureless
+   * lozenges. Their originals are seen from almost straight on, so they get
+   * an inclination to match.
+   */
+  const MEDIUM_LIFT: Record<number, number> = { 8: 0.6, 9: 0.57 };
+  const MEDIUM_FLAT: Record<number, number> = { 8: 0.82, 9: 0.95 };
 
   const MEDIUM: Spiral[] = mediumAt.map((s, i) => {
     const size = MEDIUM_SIZE[i];
     const shape = FORMS[i];
     const f = rnd();
+    const o = rnd();
     return {
       kind: "spiral" as const,
       shape,
@@ -358,10 +394,13 @@ const { MEDIUM, SMALL, TINY } = (() => {
          The peculiar one likewise: its plumes are a shape, not a disc, and
          flattening turns them into a smear. */
       flatten:
-        shape === "edge" || shape === "lenticular" || shape === "peculiar"
+        MEDIUM_FLAT[i] ??
+        (shape === "edge" || shape === "lenticular" || shape === "peculiar"
           ? round(0.9 + f * 0.1, 2)
-          : round(0.24 + f * 0.28, 2),
-      opacity: round(0.31 + rnd() * 0.13, 2),
+          : round(0.24 + f * 0.28, 2)),
+      // drawn either way, so skipping it for the lifted two cannot shift the
+      // sequence for everything after them
+      opacity: MEDIUM_LIFT[i] ?? round(0.31 + o * 0.13, 2),
       // focus follows size here too: the largest are sharp, the smallest soft
       blur: round(1.55 - ((size - 90) / 106) * 1.25, 2),
       // an order of magnitude slower than the heroes, which are already slow
