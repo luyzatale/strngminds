@@ -464,7 +464,7 @@ function GalaxyAt({
            being luminous and become watercolour. Every plane is softened by
            the same amount, so the ordering of the five is untouched and the
            whole field simply sits further back. Zero at night. */
-        filter: `blur(calc(${b.blur}px + var(--galaxy-blur-extra, 0px)))`,
+        filter: `blur(calc(${b.blur}px * var(--galaxy-blur-scale, 1) + var(--galaxy-blur-extra, 0px)))`,
         /* and the whole field is a little more transparent by day, which is
            what "almost disappear into the background" costs — the faintest
            ones drop below the paper's own tonal variation and are gone */
