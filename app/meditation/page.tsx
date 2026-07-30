@@ -2,12 +2,18 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Nav from "@/components/Nav";
 import {
+  ARGENT_CORE,
+  ARGENT_INK,
   Constellation,
   FROST_CORE,
   FROST_INK,
   Galaxy,
   NEBULA_CORE,
   NEBULA_INK,
+  PINWHEEL_CORE,
+  PINWHEEL_INK,
+  PLUME_CORE,
+  PLUME_INK,
   Starfield,
   VERDANT_CORE,
   VERDANT_INK,
@@ -178,50 +184,64 @@ function Backdrop() {
         <Galaxy seed={12} size={280} tilt={22} flatten={0.3} duration={900} reverse />
       </Parallax>
 
-      <Parallax strength={6} invert className="absolute -left-28 top-[7vh] hidden xl:block">
+      {/**
+        * The inner ones now sit inside the margin rather than off the edge of
+        * it, and they are staggered down the page — 8, 34, 50 and 56vh — so
+        * the field reads as spread rather than as a pair of borders. This
+        * column is 62rem, which leaves only about 220px each side on a wide
+        * page, so these are sized to fit that rather than pushed out of it:
+        * the two that bleed are the two large corner ones, deliberately.
+        *
+        * Three carry the new morphologies, as on the contact page.
+        */}
+      <Parallax strength={6} invert className="absolute left-[1%] top-[8vh] hidden xl:block">
         <Galaxy
           seed={318}
-          size={215}
+          size={190}
           tilt={-34}
-          flatten={0.28}
+          flatten={0.93}
           duration={980}
-          ink={NEBULA_INK}
-          core={NEBULA_CORE}
-          style={{ opacity: 0.85 }}
+          shape="lenticular"
+          ink={ARGENT_INK}
+          core={ARGENT_CORE}
+          style={{ opacity: 0.8 }}
         />
       </Parallax>
 
-      <Parallax strength={5} className="absolute -right-24 bottom-[16vh] hidden lg:block">
+      <Parallax strength={5} className="absolute right-[2%] bottom-[18vh] hidden lg:block">
         <Galaxy
           seed={470}
-          size={240}
+          size={214}
           tilt={38}
           flatten={0.34}
           duration={1040}
           ink={VERDANT_INK}
           core={VERDANT_CORE}
-          style={{ opacity: 0.8 }}
+          style={{ opacity: 0.78 }}
         />
       </Parallax>
 
-      <Parallax strength={4} className="absolute left-[1%] top-[58vh] hidden xl:block">
+      <Parallax strength={4} className="absolute left-[3%] top-[56vh] hidden xl:block">
         <Galaxy
           seed={655}
-          size={128}
+          size={150}
           tilt={20}
-          flatten={0.42}
+          flatten={0.95}
           duration={1220}
           reverse
-          style={{ opacity: 0.6 }}
+          shape="peculiar"
+          ink={PLUME_INK}
+          core={PLUME_CORE}
+          style={{ opacity: 0.62 }}
         />
       </Parallax>
 
       {/* This page scrolls, so anything hung off `bottom` lands well below
           the fold. The upper band carries the first screen. */}
-      <Parallax strength={5} className="absolute -right-16 top-[52vh] hidden lg:block">
+      <Parallax strength={5} className="absolute right-[4%] top-[50vh] hidden lg:block">
         <Galaxy
           seed={733}
-          size={200}
+          size={168}
           tilt={-22}
           flatten={0.3}
           duration={1080}
@@ -231,14 +251,17 @@ function Backdrop() {
         />
       </Parallax>
 
-      <Parallax strength={4} invert className="absolute right-[1%] top-[40vh] hidden xl:block">
+      <Parallax strength={4} invert className="absolute right-[1%] top-[32vh] hidden xl:block">
         <Galaxy
           seed={882}
-          size={118}
+          size={162}
           tilt={-58}
-          flatten={0.38}
+          flatten={0.92}
           duration={1300}
-          style={{ opacity: 0.55 }}
+          shape="multi"
+          ink={PINWHEEL_INK}
+          core={PINWHEEL_CORE}
+          style={{ opacity: 0.6 }}
         />
       </Parallax>
 

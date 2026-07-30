@@ -317,10 +317,19 @@ const { MEDIUM, SMALL, TINY } = (() => {
     r: h.size / 2,
   }));
 
-  const smallSize = Array.from({ length: 12 }, () =>
-    Math.round(58 + rnd() * 50),
-  );
-  const tinySize = Array.from({ length: 30 }, () => Math.round(18 + rnd() * 30));
+  /**
+   * The two soft layers are the blurred ones — gradient discs with no
+   * structure, and the only things in the field whose whole job is to be
+   * out of focus. At 12 and 30 they outnumbered everything drawn dot by dot
+   * three to one, and a field where most objects are smudges reads as a
+   * blurred field rather than a deep one.
+   *
+   * Thinned to 7 and 16, which is a little under half. Not removed: without
+   * them the far distance has nothing in it at all, and the spirals lose the
+   * thing that makes them read as near.
+   */
+  const smallSize = Array.from({ length: 7 }, () => Math.round(58 + rnd() * 50));
+  const tinySize = Array.from({ length: 16 }, () => Math.round(18 + rnd() * 30));
 
   const mediumAt = scatter(rnd, MEDIUM_SIZE, {
     clear: 0.44,
@@ -451,7 +460,7 @@ const { MEDIUM, SMALL, TINY } = (() => {
       blur: round(2.2 - ((size - 58) / 50) * 1.0, 2),
       ink: SOFT_INK[Math.floor(rnd() * SOFT_INK.length)],
       core: SOFT_CORE[Math.floor(rnd() * SOFT_CORE.length)],
-      phone: i < 5,
+      phone: i < 4,
       seed: 6000 + i * 41,
     };
   });
@@ -475,7 +484,7 @@ const { MEDIUM, SMALL, TINY } = (() => {
       blur: round(3.0 - ((size - 18) / 30) * 1.2, 2),
       ink: SOFT_INK[Math.floor(rnd() * SOFT_INK.length)],
       core: SOFT_CORE[Math.floor(rnd() * SOFT_CORE.length)],
-      phone: i < 16,
+      phone: i < 10,
       seed: 7000 + i * 43,
     };
   });

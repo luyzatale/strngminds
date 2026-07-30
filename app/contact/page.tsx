@@ -3,12 +3,18 @@ import Link from "next/link";
 import Nav from "@/components/Nav";
 import ContactForm from "@/components/ContactForm";
 import {
+  ARGENT_CORE,
+  ARGENT_INK,
   Constellation,
   FROST_CORE,
   FROST_INK,
   Galaxy,
   NEBULA_CORE,
   NEBULA_INK,
+  PINWHEEL_CORE,
+  PINWHEEL_INK,
+  PLUME_CORE,
+  PLUME_INK,
   Starfield,
   VERDANT_CORE,
   VERDANT_INK,
@@ -110,41 +116,59 @@ function Backdrop() {
           percent of its area. Density here is free in a way size is not. */}
       <Starfield seed={404} count={430} mobileCount={165} clear={0} drift />
 
+      {/**
+        * The margins beside the column, and the point of these positions is
+        * that they sit *in* the margin rather than off the edge of it. They
+        * used to hang at -32 and -28, which put every core within about 40px
+        * of the frame and made the field read as a border rather than as
+        * space. The column is 52rem centred, so on a wide page there is a
+        * genuine 300px of room on each side: these use it, at varied insets
+        * and staggered heights, and only the two largest still bleed.
+        *
+        * Three carry the new morphologies — a lenticular, an interacting pair
+        * and a grand design — so the inner pages show the same range the
+        * front page does rather than six of one shape.
+        */}
+
       {/* ── the left margin ─────────────────────────────── */}
-      <Parallax strength={7} className="absolute -bottom-32 -left-32 hidden sm:block">
-        <Galaxy seed={41} size={340} tilt={-18} flatten={0.32} duration={720} />
+      <Parallax strength={7} className="absolute -bottom-28 -left-24 hidden sm:block">
+        <Galaxy seed={41} size={330} tilt={-18} flatten={0.32} duration={720} />
       </Parallax>
 
-      <Parallax strength={6} invert className="absolute -left-24 top-[6vh] hidden lg:block">
+      <Parallax strength={6} invert className="absolute left-[3%] top-[9vh] hidden lg:block">
         <Galaxy
           seed={512}
-          size={215}
+          size={198}
           tilt={32}
-          flatten={0.28}
+          flatten={0.9}
           duration={940}
-          ink={NEBULA_INK}
-          core={NEBULA_CORE}
-          style={{ opacity: 0.85 }}
+          shape="multi"
+          ink={PINWHEEL_INK}
+          core={PINWHEEL_CORE}
+          style={{ opacity: 0.8 }}
         />
       </Parallax>
 
-      <Parallax strength={4} className="absolute left-[1%] top-[46vh] hidden xl:block">
+      <Parallax strength={4} className="absolute left-[7%] top-[45vh] hidden xl:block">
         <Galaxy
           seed={733}
-          size={128}
+          size={146}
           tilt={-52}
-          flatten={0.4}
+          flatten={0.95}
           duration={1180}
           reverse
-          style={{ opacity: 0.6 }}
+          shape="peculiar"
+          ink={PLUME_INK}
+          core={PLUME_CORE}
+          style={{ opacity: 0.62 }}
         />
       </Parallax>
 
       {/* ── the right margin ────────────────────────────── */}
-      <Parallax strength={6} invert className="absolute -right-28 top-[5vh] hidden sm:block">
+      <Parallax strength={6} invert className="absolute -right-20 top-[7vh] hidden sm:block">
         <Galaxy
           seed={88}
-          size={300}
+          size={286}
           tilt={24}
           flatten={0.3}
           duration={880}
@@ -154,27 +178,30 @@ function Backdrop() {
         />
       </Parallax>
 
-      <Parallax strength={5} className="absolute -right-20 bottom-[9vh] hidden lg:block">
+      <Parallax strength={5} className="absolute right-[4%] bottom-[12vh] hidden lg:block">
         <Galaxy
           seed={266}
-          size={235}
+          size={212}
           tilt={-40}
           flatten={0.34}
           duration={1020}
           ink={VERDANT_INK}
           core={VERDANT_CORE}
-          style={{ opacity: 0.8 }}
+          style={{ opacity: 0.78 }}
         />
       </Parallax>
 
-      <Parallax strength={4} invert className="absolute right-[2%] top-[38vh] hidden xl:block">
+      <Parallax strength={4} invert className="absolute right-[8%] top-[36vh] hidden xl:block">
         <Galaxy
           seed={907}
-          size={120}
+          size={132}
           tilt={16}
-          flatten={0.44}
+          flatten={0.92}
           duration={1260}
-          style={{ opacity: 0.55 }}
+          shape="lenticular"
+          ink={ARGENT_INK}
+          core={ARGENT_CORE}
+          style={{ opacity: 0.6 }}
         />
       </Parallax>
 
@@ -205,10 +232,11 @@ function Backdrop() {
           seed={621}
           size={215}
           tilt={40}
-          flatten={0.32}
+          flatten={0.94}
           duration={1160}
-          ink={FROST_INK}
-          core={FROST_CORE}
+          shape="peculiar"
+          ink={PLUME_INK}
+          core={PLUME_CORE}
           style={{ opacity: 0.85 }}
         />
       </Parallax>
@@ -218,11 +246,12 @@ function Backdrop() {
           seed={877}
           size={210}
           tilt={18}
-          flatten={0.3}
+          flatten={0.92}
           duration={1210}
           reverse
-          ink={VERDANT_INK}
-          core={VERDANT_CORE}
+          shape="multi"
+          ink={PINWHEEL_INK}
+          core={PINWHEEL_CORE}
           style={{ opacity: 0.84 }}
         />
       </Parallax>
