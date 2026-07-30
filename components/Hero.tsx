@@ -281,7 +281,27 @@ const HEROES: Spiral[] = [
  * objects inside it end up looking like eight of the same thing. These run 90
  * to 196 — better than two to one — with deliberately uneven steps.
  */
-const MEDIUM_SIZE = [196, 90, 146, 116, 168, 100, 132, 178, 152, 162];
+const MEDIUM_SIZE = [196, 90, 146, 116, 168, 100, 132, 178, 152];
+
+/**
+ * The grand designs, placed by hand rather than scattered.
+ *
+ * Three of one form is a decision about composition, not a population, and
+ * the sampler has no way to know that: left to it, the first one landed low
+ * on the left where it read as an afterthought. These sit down the right
+ * margin instead, spaced between the two anchors already there — the violet
+ * at 23% and the edge-on at 73% — and stepped in size so three of the same
+ * thing do not read as one thing repeated.
+ *
+ * All three are near face-on and carry the photographic palette, so they are
+ * the most colourful objects in the field after the anchors. That is why they
+ * are held out at the margin: the eye finds them, but only after the centre.
+ */
+const PINWHEELS: Spiral[] = [
+  { kind: "spiral", shape: "multi", x: 95, y: 38, size: 156, tilt: -14, flatten: 0.95, opacity: 0.57, blur: 0.35, duration: 34200, reverse: false, tinted: "pinwheel", seed: 6401 },
+  { kind: "spiral", shape: "multi", x: 81, y: 52, size: 118, tilt: 26, flatten: 0.9, opacity: 0.5, blur: 0.7, duration: 39600, reverse: true, tinted: "pinwheel", seed: 6473 },
+  { kind: "spiral", shape: "multi", x: 93, y: 84, size: 134, tilt: -38, flatten: 0.93, opacity: 0.53, blur: 0.5, duration: 36000, reverse: false, tinted: "pinwheel", seed: 6547 },
+];
 
 const { MEDIUM, SMALL, TINY } = (() => {
   const rnd = seeded(4703);
@@ -291,7 +311,7 @@ const { MEDIUM, SMALL, TINY } = (() => {
    * across them. Sizes are now decided before positions for every layer,
    * because the spacing rule needs them.
    */
-  const taken: Spot[] = HEROES.map((h) => ({
+  const taken: Spot[] = [...HEROES, ...PINWHEELS].map((h) => ({
     x: h.x / 100,
     y: h.y / 100,
     r: h.size / 2,
@@ -344,9 +364,9 @@ const { MEDIUM, SMALL, TINY } = (() => {
     "multi",
     "lenticular",
     "peculiar",
-    // the two painted from photographs, in the forms those photographs are
+    // the barred one painted from its photograph; the grand designs that
+    // went with it are placed by hand instead, up in PINWHEELS
     "barred",
-    "multi",
   ];
   const MEDIUM_TINT: (Tint | null)[] = [
     "nebula",
@@ -358,7 +378,6 @@ const { MEDIUM, SMALL, TINY } = (() => {
     null,
     "plume",
     "forge",
-    "pinwheel",
   ];
 
   /**
@@ -374,8 +393,8 @@ const { MEDIUM, SMALL, TINY } = (() => {
    * lozenges. Their originals are seen from almost straight on, so they get
    * an inclination to match.
    */
-  const MEDIUM_LIFT: Record<number, number> = { 8: 0.6, 9: 0.57 };
-  const MEDIUM_FLAT: Record<number, number> = { 8: 0.82, 9: 0.95 };
+  const MEDIUM_LIFT: Record<number, number> = { 8: 0.6 };
+  const MEDIUM_FLAT: Record<number, number> = { 8: 0.82 };
 
   const MEDIUM: Spiral[] = mediumAt.map((s, i) => {
     const size = MEDIUM_SIZE[i];
@@ -545,6 +564,11 @@ function HeroDecor() {
           />
         ))}
         {MEDIUM.map((b) => (
+          <GalaxyAt key={b.seed} b={b} className="absolute hidden sm:block" />
+        ))}
+        {/* Placed by hand, but they belong to this distance, so they drift
+            with it rather than with the anchors. */}
+        {PINWHEELS.map((b) => (
           <GalaxyAt key={b.seed} b={b} className="absolute hidden sm:block" />
         ))}
       </div>
