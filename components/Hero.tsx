@@ -177,21 +177,26 @@ function scatter(
  * carry a composition are not a job for a random number generator.
  *
  * Two of them sit on a diagonal, upper-right against mid-left, which balances
- * without symmetry; the third is smaller and quieter and sits low on the right
- * to stop that diagonal reading as a rule. They also carry three of the four
- * painted palettes, the teal one keeping its standing place at the left of the
- * system.
+ * without symmetry; the third sits low on the right to stop that diagonal
+ * reading as a rule. They also carry three of the four painted palettes, the
+ * teal one keeping its standing place at the left of the system.
  *
- * The three are not on the same focus plane, and that is deliberate: the first
- * is fully sharp, the second slightly off, the third softer again. Anchors at
- * identical sharpness read as three stickers on one sheet of glass no matter
- * how their sizes vary, because focus is the cue the eye actually uses for
- * distance. Positions are fixed; only weight and focus move.
+ * The sizes are 268, 176 and 128, and the irregularity is the point. They were
+ * 193, 178 and 158 — steps of 0.92 and 0.89, which is a ramp rather than a
+ * spread, and at that spacing three objects simply read as one size repeated.
+ * Nothing in a real field is evenly graded, because apparent size comes from
+ * distance and distance is not distributed politely. The steps here are 0.66
+ * and 0.73, and the largest is over twice the smallest.
+ *
+ * Focus and weight follow size rather than being set separately, which is what
+ * makes the variation read as distance instead of as three different-sized
+ * stickers on one sheet of glass: the near one is fully sharp and the brightest,
+ * and each step back is softer and dimmer. Positions are unchanged.
  */
 const HEROES: Spiral[] = [
-  { kind: "spiral", x: 83, y: 23, size: 193, tilt: -28, flatten: 0.4, opacity: 0.57, blur: 0, duration: 21600, reverse: false, tinted: "nebula", seed: 4101 },
-  { kind: "spiral", x: 10, y: 50, size: 178, tilt: 16, flatten: 0.34, opacity: 0.54, blur: 0.3, duration: 25200, reverse: true, tinted: "verdant", seed: 4207 },
-  { kind: "spiral", x: 86, y: 73, size: 158, tilt: -52, flatten: 0.44, opacity: 0.49, blur: 0.65, duration: 28800, reverse: false, tinted: "frost", seed: 4313 },
+  { kind: "spiral", x: 10, y: 50, size: 268, tilt: 16, flatten: 0.34, opacity: 0.6, blur: 0, duration: 25200, reverse: true, tinted: "verdant", seed: 4207 },
+  { kind: "spiral", x: 83, y: 23, size: 176, tilt: -28, flatten: 0.4, opacity: 0.5, blur: 0.4, duration: 21600, reverse: false, tinted: "nebula", seed: 4101 },
+  { kind: "spiral", x: 86, y: 73, size: 128, tilt: -52, flatten: 0.44, opacity: 0.43, blur: 0.75, duration: 28800, reverse: false, tinted: "frost", seed: 4313 },
 ];
 
 const { MEDIUM, SMALL, TINY } = (() => {
@@ -299,11 +304,12 @@ const { MEDIUM, SMALL, TINY } = (() => {
  */
 const PHONE: Body[] = [
   { kind: "soft", x: 24, y: 17, size: 70, tilt: -34, flatten: 0.5, opacity: 0.18, blur: 2.1, ink: SOFT_INK[1], core: SOFT_CORE[0], phone: true, seed: 8101 },
-  { kind: "spiral", x: 79, y: 25, size: 116, tilt: 22, flatten: 0.42, opacity: 0.4, blur: 0.55, duration: 25200, reverse: true, tinted: "nebula", seed: 8207 },
-  // left of the system, at the height of the sun
-  { kind: "spiral", x: 15, y: 47, size: 120, tilt: -18, flatten: 0.38, opacity: 0.42, blur: 0.3, duration: 28800, reverse: false, tinted: "verdant", seed: 8313 },
-  // the nearest and largest, set against the two on the left below it
-  { kind: "spiral", x: 74, y: 69, size: 156, tilt: 41, flatten: 0.34, opacity: 0.45, blur: 0, duration: 21600, reverse: true, tinted: "frost", seed: 8419 },
+  // furthest of the three: smallest, softest, faintest
+  { kind: "spiral", x: 79, y: 25, size: 98, tilt: 22, flatten: 0.42, opacity: 0.34, blur: 0.8, duration: 25200, reverse: true, tinted: "nebula", seed: 8207 },
+  // the nearest, and left of the system at the height of the sun
+  { kind: "spiral", x: 15, y: 47, size: 176, tilt: -18, flatten: 0.38, opacity: 0.47, blur: 0, duration: 28800, reverse: false, tinted: "verdant", seed: 8313 },
+  // between the two, low on the right
+  { kind: "spiral", x: 74, y: 69, size: 124, tilt: 41, flatten: 0.34, opacity: 0.4, blur: 0.45, duration: 21600, reverse: true, tinted: "frost", seed: 8419 },
   // pulled up from 76%: the hint moved closer to the system, and on a short
   // screen this was the one object with room to be crossed by it
   { kind: "soft", x: 26, y: 73, size: 100, tilt: -52, flatten: 0.42, opacity: 0.25, blur: 1.5, ink: SOFT_INK[2], core: SOFT_CORE[3], phone: true, seed: 8525 },
