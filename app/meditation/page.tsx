@@ -268,61 +268,70 @@ function Backdrop() {
       </Parallax>
 
       {/* ── the phone ───────────────────────────────────────
-             Same treatment as the contact page: no margins exist at this
-             width, so each one hangs half outside the viewport. The bright
-             core stays off-screen and only the outer arm crosses the text,
-             which is what makes 0.85 affordable here. Anchored to `top`
-             throughout — this page is several screens tall, and anything on
-             `bottom` would sit below all of them. ── */}
-      <Parallax strength={4} invert className="absolute -right-28 top-[8vh] sm:hidden">
+             These used to hang half outside the viewport, every centre pinned
+             to 0% or 100%. Measured, they sat at x = 102, -2, 100 and 0 — four
+             objects on two vertical lines, which is why they read as clustered
+             against the edges rather than spread through the frame however
+             far apart their heights were.
+
+             They now zigzag across it: 15%, 34%, 56%, 78% down and alternating
+             sides, with none of them touching an edge. Bringing the cores on
+             screen is what costs, so they are smaller and considerably
+             fainter than the 0.85 they carried while half of each was hidden —
+             the text measurement below is what set those numbers. ── */}
+      <Parallax strength={4} invert className="absolute left-[55%] top-[6vh] sm:hidden">
         <Galaxy
           seed={191}
-          size={210}
+          size={152}
           tilt={34}
-          flatten={0.34}
+          flatten={0.9}
           duration={1120}
+          shape="edge"
           ink={FROST_INK}
           core={FROST_CORE}
-          style={{ opacity: 0.85 }}
+          style={{ opacity: 0.55 }}
         />
       </Parallax>
 
-      <Parallax strength={3} className="absolute -left-28 top-[36vh] sm:hidden">
+      <Parallax strength={3} className="absolute left-[7%] top-[26vh] sm:hidden">
         <Galaxy
           seed={806}
-          size={205}
+          size={130}
           tilt={-44}
-          flatten={0.32}
+          flatten={0.55}
           duration={1200}
+          shape="ringed"
           ink={VERDANT_INK}
           core={VERDANT_CORE}
-          style={{ opacity: 0.84 }}
+          style={{ opacity: 0.5 }}
         />
       </Parallax>
 
-      <Parallax strength={4} className="absolute -left-24 top-[90vh] sm:hidden">
+      <Parallax strength={4} className="absolute left-[11%] top-[70vh] sm:hidden">
         <Galaxy
           seed={559}
-          size={190}
+          size={134}
           tilt={22}
-          flatten={0.34}
+          flatten={0.86}
           duration={1320}
           reverse
-          style={{ opacity: 0.83 }}
+          shape="irregular"
+          style={{ opacity: 0.52 }}
         />
       </Parallax>
 
-      <Parallax strength={3} invert className="absolute -right-24 top-[64vh] sm:hidden">
+      <Parallax strength={3} invert className="absolute left-[58%] top-[48vh] sm:hidden">
         <Galaxy
           seed={244}
-          size={195}
+          size={142}
           tilt={-26}
-          flatten={0.3}
+          flatten={0.45}
           duration={1260}
           reverse
+          shape="barred"
           ink={NEBULA_INK}
           core={NEBULA_CORE}
-          style={{ opacity: 0.85 }}
+          style={{ opacity: 0.54 }}
         />
       </Parallax>
 

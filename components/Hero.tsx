@@ -532,15 +532,20 @@ const { MEDIUM, SMALL, TINY } = (() => {
  */
 const PHONE: Body[] = [
   { kind: "soft", x: 24, y: 17, size: 70, tilt: -34, flatten: 0.5, opacity: 0.18, blur: 2.1, ink: SOFT_INK[1], core: SOFT_CORE[0], phone: true, seed: 8101 },
-  // furthest of the three: smallest, softest, faintest
-  { kind: "spiral", shape: "spiral", x: 79, y: 25, size: 98, tilt: 22, flatten: 0.42, opacity: 0.34, blur: 0.8, duration: 25200, reverse: true, tinted: "nebula", seed: 8207 },
-  // the nearest, and left of the system at the height of the sun
+  /**
+   * The phone used to show three of the eight forms — a plain spiral, a bar
+   * and an edge-on — which meant every morphology added since existed only
+   * on a desktop. Four of the newer ones are here now: a grand design in the
+   * photographic palette, an interacting pair, a lens and the bar that was
+   * already here. The teal bar keeps its place at the left of the system,
+   * which is the one position on this screen that was ever asked for.
+   */
+  { kind: "spiral", shape: "multi", x: 79, y: 25, size: 112, tilt: 22, flatten: 0.9, opacity: 0.38, blur: 0.65, duration: 25200, reverse: true, tinted: "pinwheel", seed: 8207 },
   { kind: "spiral", shape: "barred", x: 15, y: 47, size: 176, tilt: -18, flatten: 0.38, opacity: 0.47, blur: 0, duration: 28800, reverse: false, tinted: "verdant", seed: 8313 },
-  // between the two, low on the right, and seen edge-on
-  { kind: "spiral", shape: "edge", x: 74, y: 69, size: 124, tilt: 41, flatten: 0.9, opacity: 0.4, blur: 0.45, duration: 21600, reverse: true, tinted: "frost", seed: 8419 },
+  { kind: "spiral", shape: "peculiar", x: 74, y: 69, size: 132, tilt: 41, flatten: 0.94, opacity: 0.42, blur: 0.45, duration: 21600, reverse: true, tinted: "plume", seed: 8419 },
   // pulled up from 76%: the hint moved closer to the system, and on a short
   // screen this was the one object with room to be crossed by it
-  { kind: "soft", x: 26, y: 73, size: 100, tilt: -52, flatten: 0.42, opacity: 0.25, blur: 1.5, ink: SOFT_INK[2], core: SOFT_CORE[3], phone: true, seed: 8525 },
+  { kind: "spiral", shape: "lenticular", x: 26, y: 73, size: 118, tilt: -52, flatten: 0.93, opacity: 0.36, blur: 0.7, duration: 33000, reverse: false, tinted: "sepia", seed: 8525 },
 ];
 
 function HeroDecor() {
