@@ -315,7 +315,11 @@ const MEDIUM_SIZE = [196, 90, 146, 116, 168, 100, 132, 178, 152];
  * placed twice.
  */
 const RIGHT_MARGIN: Spiral[] = [
-  { kind: "spiral", shape: "multi", x: 95, y: 38, size: 156, tilt: -14, flatten: 0.95, opacity: 0.57, blur: 0.35, duration: 34200, reverse: false, tinted: "pinwheel", seed: 6401 },
+  /* Larger, and pulled in from 95% to 91% to pay for it: at this size the old
+     position would have hung 35px of the disc off the right edge instead of
+     the 6px it was losing before. Dropped 3% down the page as well, which
+     restores the clearance to the violet anchor that growing it had spent. */
+  { kind: "spiral", shape: "multi", x: 91, y: 41, size: 215, tilt: -14, flatten: 0.95, opacity: 0.57, blur: 0.35, duration: 34200, reverse: false, tinted: "pinwheel", seed: 6401 },
   { kind: "spiral", shape: "lenticular", x: 81, y: 52, size: 124, tilt: 26, flatten: 0.94, opacity: 0.5, blur: 0.7, duration: 39600, reverse: true, tinted: "sepia", seed: 6473 },
   { kind: "spiral", shape: "ringed", x: 93, y: 84, size: 140, tilt: -38, flatten: 0.62, opacity: 0.53, blur: 0.5, duration: 36000, reverse: false, tinted: "jade", seed: 6547 },
 ];
