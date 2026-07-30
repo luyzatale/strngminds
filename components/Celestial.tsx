@@ -89,6 +89,41 @@ export const ARGENT_INK = [
 export const ARGENT_CORE = ["#f4f8fd", "#c8d7e8", "#5f82ad"];
 
 /**
+ * Bloom is the blue-white disc threaded with star-forming knots — and the
+ * knots are the adaptation. A real survey renders them in hydrogen-alpha
+ * magenta, which on this page would be the one colour that belongs to no
+ * other object; pulled back to a dusty rose it still reads as a knot while
+ * staying inside the ivory-and-gold family everything else lives in.
+ */
+export const BLOOM_INK = [
+  "#cdd8ee",
+  "#9fb4d8",
+  "#e0a7bd",
+  "#f2dbe2",
+  "#b9c6e2",
+  "#e8d4c0",
+];
+
+export const BLOOM_CORE = ["#fff6ea", "#e8d3c4", "#b8c4de"];
+
+/**
+ * And plume is the interacting pair: cool tidal streams around a core still
+ * burning from the collision. It is deliberately built from the two families
+ * already on the page — verdant's teal and ember's copper — so the most
+ * unusual object in the field is made of the most familiar colour in it.
+ */
+export const PLUME_INK = [
+  "#6fbfb4",
+  "#8fd2cc",
+  "#c98a54",
+  "#a8d8d0",
+  "#d8a06a",
+  "#bfe0da",
+];
+
+export const PLUME_CORE = ["#fff0dc", "#e9b177", "#7fc3ba"];
+
+/**
  * How many dots a disc of this size is worth.
  *
  * Every dot is its own `<circle>`, so density is paid for in DOM nodes — and
@@ -119,6 +154,8 @@ export type GalaxyShape =
   | "multi" // four tighter arms, a grand design
   | "ringed" // concentric dust rings rather than arms
   | "edge" // seen edge-on: a needle with a bulge and a dust lane
+  | "lenticular" // a smooth lens, all bulge and no structure at all
+  | "peculiar" // two tidal plumes and a core still lit by the collision
   | "irregular"; // no symmetry, a few knots and nothing at the centre
 
 /** How big and how strong the core glow is, per morphology. */
@@ -129,6 +166,11 @@ const CORE_FOR: Record<GalaxyShape, { r: number; o: number }> = {
   ringed: { r: 26, o: 1 },
   // an edge-on disc has a bulge, not a halo, and it is a flat one
   edge: { r: 15, o: 0.85 },
+  // a lenticular is almost entirely bulge, and it is the brightest of them
+  lenticular: { r: 26, o: 1.15 },
+  // the collision is still burning, but tight — a wide glow here swallows the
+  // plumes and leaves a bright blob with threads hanging off it
+  peculiar: { r: 11, o: 0.9 },
   // a dwarf has no bulge worth drawing at all
   irregular: { r: 14, o: 0.42 },
 };
@@ -168,6 +210,60 @@ function galaxyDots(
       const y = 50 + g * thickness;
       if (Math.abs(y - 50) < 0.8 && Math.abs(along) > 0.13 && rnd() > 0.1) continue;
       push(50 + along * 45, y, Math.abs(along) * 45);
+    }
+  } else if (shape === "lenticular") {
+    /**
+     * A lens, and the point of it is that there is nothing to see: no arms,
+     * no lane, no knots. Dots fall off smoothly from the centre with a power
+     * curve, squashed hard on one axis. Every other form here is defined by
+     * its structure; this one is defined by having none, which is what makes
+     * it read as a different kind of object rather than a plainer spiral.
+     */
+    for (let i = 0; i < count; i++) {
+      const a = rnd() * Math.PI * 2;
+      const rad = 44 * Math.pow(rnd(), 0.62);
+      push(50 + Math.cos(a) * rad, 50 + Math.sin(a) * rad * 0.17, rad);
+    }
+  } else if (shape === "peculiar") {
+    /**
+     * Two tidal plumes, and the thing that decides whether this reads as an
+     * interaction or as a piece of junk is that they must leave the centre on
+     * *opposite* sides. A first pass started both at downward angles and drew
+     * a wishbone with the core sitting above it, detached — which is not a
+     * shape anything in space makes. Starting them a half-turn apart and
+     * curving them in opposite senses gives the S every tidal pair has.
+     *
+     * They also start at the core rather than beyond it, so there is no gap,
+     * and the innermost fifth is packed tight for the burst still going on in
+     * the middle.
+     */
+    for (let i = 0; i < count; i++) {
+      const arm = i % 2;
+      const t = rnd();
+      if (t < 0.2) {
+        const a = rnd() * Math.PI * 2;
+        const rad = 8 * Math.pow(rnd(), 0.55);
+        push(50 + Math.cos(a) * rad, 50 + Math.sin(a) * rad * 0.85, rad);
+        continue;
+      }
+      /**
+       * Both tails curve the *same* rotational way. Mirroring them instead —
+       * one clockwise, one anticlockwise — makes the two arcs bend toward
+       * each other and very nearly close a ring, which was the second wrong
+       * shape this went through. A tidal pair is point-symmetric: each tail
+       * is the other rotated a half-turn, and that is what draws the S.
+       *
+       * The sweep is also small. Ninety degrees of it curls the tails round
+       * the core; fifty lets them leave.
+       */
+      const theta = (arm ? 0 : Math.PI) + t * 0.9;
+      const rad = 6 + t * 40;
+      const spread = 1.6 + t * 5;
+      push(
+        50 + Math.cos(theta) * rad + (rnd() - 0.5) * spread,
+        50 + Math.sin(theta) * rad + (rnd() - 0.5) * spread,
+        rad,
+      );
     }
   } else if (shape === "irregular") {
     // three or four knots of star formation, and no centre to speak of
@@ -223,9 +319,10 @@ function galaxyDots(
     }
   }
 
-  // A faint halo of field stars around the disc, scaled with it. An edge-on
-  // disc keeps its halo flat, or the needle sits inside a round cloud.
-  const flat = shape === "edge";
+  // A faint halo of field stars around the disc, scaled with it. The two
+  // edge-on forms keep their halo flat, or the lens sits inside a round cloud
+  // and stops looking edge-on at all.
+  const flat = shape === "edge" || shape === "lenticular";
   for (let i = 0; i < Math.round(count * 0.2); i++) {
     const a = rnd() * Math.PI * 2;
     const rad = 12 + rnd() * 34;
@@ -319,7 +416,13 @@ export function Galaxy({
               cx="50"
               cy="50"
               rx={glow.r}
-              ry={shape === "edge" ? glow.r * 0.5 : glow.r}
+              ry={
+                shape === "edge"
+                  ? glow.r * 0.5
+                  : shape === "lenticular"
+                    ? glow.r * 0.3
+                    : glow.r
+              }
               fill={`url(#${id}-core)`}
             />
             {dots.map((d, i) => (

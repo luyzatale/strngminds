@@ -2,10 +2,14 @@ import Scene from "@/components/Scene";
 import {
   ARGENT_CORE,
   ARGENT_INK,
+  BLOOM_CORE,
+  BLOOM_INK,
   Constellation,
   Dust,
   EMBER_CORE,
   EMBER_INK,
+  PLUME_CORE,
+  PLUME_INK,
   FROST_CORE,
   FROST_INK,
   Galaxy,
@@ -74,7 +78,14 @@ export default function Hero() {
    is placed to fill a gap — the gaps are the point.
    ──────────────────────────────────────────────────────────── */
 
-type Tint = "nebula" | "frost" | "verdant" | "ember" | "argent";
+type Tint =
+  | "nebula"
+  | "frost"
+  | "verdant"
+  | "ember"
+  | "argent"
+  | "bloom"
+  | "plume";
 
 const INK: Record<Tint, string[]> = {
   nebula: NEBULA_INK,
@@ -82,6 +93,8 @@ const INK: Record<Tint, string[]> = {
   verdant: VERDANT_INK,
   ember: EMBER_INK,
   argent: ARGENT_INK,
+  bloom: BLOOM_INK,
+  plume: PLUME_INK,
 };
 
 const CORE: Record<Tint, string[]> = {
@@ -90,6 +103,8 @@ const CORE: Record<Tint, string[]> = {
   verdant: VERDANT_CORE,
   ember: EMBER_CORE,
   argent: ARGENT_CORE,
+  bloom: BLOOM_CORE,
+  plume: PLUME_CORE,
 };
 
 type Common = {
@@ -145,26 +160,50 @@ const VOIDS = [
   { x: 0.04, y: 0.85, r: 0.15 },
 ];
 
-type Spot = { x: number; y: number };
+/** A placed object: normalised position, and its radius in nominal pixels. */
+type Spot = { x: number; y: number; r: number };
 
 /**
- * Scatter `count` positions under the field's rules.
+ * The frame the spacing arithmetic is done against.
+ *
+ * Positions are percentages, so they have no intrinsic size and no aspect —
+ * but a rule about whether two discs collide is meaningless without both.
+ * Every separation below is therefore computed as if the page were this,
+ * which is exact at one shape of window and a good approximation at the rest.
+ */
+const NOMINAL = { w: 1440, h: 900 };
+
+const apart = (a: Spot, b: Spot) =>
+  Math.hypot((a.x - b.x) * NOMINAL.w, (a.y - b.y) * NOMINAL.h);
+
+/**
+ * Scatter one position per entry in `sizes`, under the field's rules.
  *
  * `edge` is the one that does the compositional work: a candidate survives
  * with probability `depth ^ edge`, so above 1 the population is pushed out
  * toward the frame and below 1 it is allowed to come inward. That is how the
  * field frames the system instead of ringing it — the big things stay out at
  * the border and only the faintest are permitted near the middle.
+ *
+ * Separation is size-aware, and it has to be. It used to be one normalised
+ * number per layer, which knows neither how large the two objects are nor
+ * that 0.2 of this frame is 288px across and 180px down. That held while
+ * every mid-field galaxy was about 150px and broke as soon as they ran 90 to
+ * 196 against heroes of 268 — one candidate cleared the rule by 0.011 and
+ * still landed with its disc lying across the teal anchor's. Raising the
+ * number instead was worse: at 0.27 the sampler could not place eight objects
+ * at all and silently returned four, which is a defect that looks like a
+ * design decision. Comparing radii costs nothing and cannot drift.
  */
 function scatter(
   rnd: () => number,
-  count: number,
-  o: { gap: number; clear: number; edge: number; taken: Spot[] },
+  sizes: number[],
+  o: { clear: number; edge: number; floor: number; taken: Spot[] },
 ): Spot[] {
   const out: Spot[] = [];
   let guard = 0;
 
-  while (out.length < count && guard++ < count * 400) {
+  while (out.length < sizes.length && guard++ < sizes.length * 900) {
     const x = rnd();
     const y = rnd();
     const d = depth(x, y);
@@ -173,10 +212,22 @@ function scatter(
     if (y < 0.07 || y > 0.95) continue; // clear of the bar and of the hint
     if (rnd() > Math.pow(d, o.edge)) continue;
     if (VOIDS.some((v) => Math.hypot(v.x - x, v.y - y) < v.r)) continue;
-    if (o.taken.some((t) => Math.hypot(t.x - x, t.y - y) < o.gap)) continue;
 
-    out.push({ x, y });
-    o.taken.push({ x, y });
+    /**
+     * Two discs clear each other when their centres are further apart than
+     * their radii together. The 0.84 is because a galaxy does not fill its
+     * box — the arms fade well before the edge — and `floor` keeps the small
+     * layers from collapsing into clumps, since radii alone would let a pair
+     * of 20px specks sit almost on top of each other.
+     */
+    const spot = { x, y, r: sizes[out.length] / 2 };
+    if (
+      o.taken.some((t) => apart(spot, t) < Math.max((spot.r + t.r) * 0.84, o.floor))
+    )
+      continue;
+
+    out.push(spot);
+    o.taken.push(spot);
   }
 
   return out;
@@ -210,13 +261,51 @@ const HEROES: Spiral[] = [
   { kind: "spiral", shape: "edge", x: 86, y: 73, size: 128, tilt: -52, flatten: 0.92, opacity: 0.43, blur: 0.75, duration: 28800, reverse: false, tinted: "frost", seed: 4313 },
 ];
 
+/**
+ * Written out rather than drawn from a range, for the reason the anchors
+ * were: `122 + rnd() * 56` is a band whose ends are only 1.5 apart, and eight
+ * objects inside it end up looking like eight of the same thing. These run 90
+ * to 196 — better than two to one — with deliberately uneven steps.
+ */
+const MEDIUM_SIZE = [196, 90, 146, 116, 168, 100, 132, 178];
+
 const { MEDIUM, SMALL, TINY } = (() => {
   const rnd = seeded(4703);
-  const taken: Spot[] = HEROES.map((h) => ({ x: h.x / 100, y: h.y / 100 }));
 
-  const mediumAt = scatter(rnd, 7, { gap: 0.2, clear: 0.44, edge: 1.2, taken });
-  const smallAt = scatter(rnd, 12, { gap: 0.13, clear: 0.33, edge: 0.85, taken });
-  const tinyAt = scatter(rnd, 30, { gap: 0.07, clear: 0.25, edge: 0.5, taken });
+  /**
+   * The anchors go in first and carry their real radii, so nothing is placed
+   * across them. Sizes are now decided before positions for every layer,
+   * because the spacing rule needs them.
+   */
+  const taken: Spot[] = HEROES.map((h) => ({
+    x: h.x / 100,
+    y: h.y / 100,
+    r: h.size / 2,
+  }));
+
+  const smallSize = Array.from({ length: 12 }, () =>
+    Math.round(58 + rnd() * 50),
+  );
+  const tinySize = Array.from({ length: 30 }, () => Math.round(18 + rnd() * 30));
+
+  const mediumAt = scatter(rnd, MEDIUM_SIZE, {
+    clear: 0.44,
+    edge: 1.2,
+    floor: 150,
+    taken,
+  });
+  const smallAt = scatter(rnd, smallSize, {
+    clear: 0.33,
+    edge: 0.85,
+    floor: 96,
+    taken,
+  });
+  const tinyAt = scatter(rnd, tinySize, {
+    clear: 0.25,
+    edge: 0.5,
+    floor: 52,
+    taken,
+  });
 
   /**
    * Layer 4 — the frame. Large enough to still be spirals, dim enough that
@@ -239,20 +328,22 @@ const { MEDIUM, SMALL, TINY } = (() => {
     "irregular",
     "barred",
     "multi",
-    "spiral",
+    "lenticular",
+    "peculiar",
   ];
   const MEDIUM_TINT: (Tint | null)[] = [
     "nebula",
     "argent",
     null,
-    null,
+    "bloom",
     "ember",
     null,
     null,
+    "plume",
   ];
 
   const MEDIUM: Spiral[] = mediumAt.map((s, i) => {
-    const size = Math.round(122 + rnd() * 56);
+    const size = MEDIUM_SIZE[i];
     const shape = FORMS[i];
     const f = rnd();
     return {
@@ -262,11 +353,17 @@ const { MEDIUM, SMALL, TINY } = (() => {
       y: round(s.y * 100, 2),
       size,
       tilt: Math.round(-70 + rnd() * 140),
-      // an edge-on disc is already flat; squashing it again leaves a hairline
-      flatten: shape === "edge" ? round(0.86 + f * 0.12, 2) : round(0.24 + f * 0.28, 2),
+      /* The two edge-on forms build their own flatness into the dots, so the
+         wrapper must leave them alone — squashed again they become hairlines.
+         The peculiar one likewise: its plumes are a shape, not a disc, and
+         flattening turns them into a smear. */
+      flatten:
+        shape === "edge" || shape === "lenticular" || shape === "peculiar"
+          ? round(0.9 + f * 0.1, 2)
+          : round(0.24 + f * 0.28, 2),
       opacity: round(0.31 + rnd() * 0.13, 2),
-      // focus follows size within the band too, not just between bands
-      blur: round(1.6 - ((size - 122) / 56) * 0.8, 2),
+      // focus follows size here too: the largest are sharp, the smallest soft
+      blur: round(1.55 - ((size - 90) / 106) * 1.25, 2),
       // an order of magnitude slower than the heroes, which are already slow
       duration: Math.round(32400 + rnd() * 12600),
       reverse: rnd() > 0.5,
@@ -284,7 +381,7 @@ const { MEDIUM, SMALL, TINY } = (() => {
    * round enough to read as things rather than as marks.
    */
   const SMALL: Soft[] = smallAt.map((s, i) => {
-    const size = Math.round(58 + rnd() * 50);
+    const size = smallSize[i];
     return {
       kind: "soft" as const,
       x: round(s.x * 100, 2),
@@ -307,7 +404,7 @@ const { MEDIUM, SMALL, TINY } = (() => {
    * make the count of things out there feel unbounded, which is the whole job.
    */
   const TINY: Soft[] = tinyAt.map((s, i) => {
-    const size = Math.round(18 + rnd() * 30);
+    const size = tinySize[i];
     return {
       kind: "soft" as const,
       x: round(s.x * 100, 2),
