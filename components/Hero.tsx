@@ -1,7 +1,11 @@
 import Scene from "@/components/Scene";
 import {
+  ARGENT_CORE,
+  ARGENT_INK,
   Constellation,
   Dust,
+  EMBER_CORE,
+  EMBER_INK,
   FROST_CORE,
   FROST_INK,
   Galaxy,
@@ -13,6 +17,7 @@ import {
   SoftGalaxy,
   VERDANT_CORE,
   VERDANT_INK,
+  type GalaxyShape,
 } from "@/components/Celestial";
 import { Parallax } from "@/components/Motion";
 import { round, seeded } from "@/lib/rand";
@@ -69,18 +74,22 @@ export default function Hero() {
    is placed to fill a gap — the gaps are the point.
    ──────────────────────────────────────────────────────────── */
 
-type Tint = "nebula" | "frost" | "verdant";
+type Tint = "nebula" | "frost" | "verdant" | "ember" | "argent";
 
 const INK: Record<Tint, string[]> = {
   nebula: NEBULA_INK,
   frost: FROST_INK,
   verdant: VERDANT_INK,
+  ember: EMBER_INK,
+  argent: ARGENT_INK,
 };
 
 const CORE: Record<Tint, string[]> = {
   nebula: NEBULA_CORE,
   frost: FROST_CORE,
   verdant: VERDANT_CORE,
+  ember: EMBER_CORE,
+  argent: ARGENT_CORE,
 };
 
 type Common = {
@@ -102,6 +111,7 @@ type Spiral = Common & {
   reverse: boolean;
   blur: number;
   tinted: Tint | null;
+  shape: GalaxyShape;
 };
 
 /** Too small for arms to mean anything, so drawn as light. */
@@ -194,9 +204,10 @@ function scatter(
  * and each step back is softer and dimmer. Positions are unchanged.
  */
 const HEROES: Spiral[] = [
-  { kind: "spiral", x: 10, y: 50, size: 268, tilt: 16, flatten: 0.34, opacity: 0.6, blur: 0, duration: 25200, reverse: true, tinted: "verdant", seed: 4207 },
-  { kind: "spiral", x: 83, y: 23, size: 176, tilt: -28, flatten: 0.4, opacity: 0.5, blur: 0.4, duration: 21600, reverse: false, tinted: "nebula", seed: 4101 },
-  { kind: "spiral", x: 86, y: 73, size: 128, tilt: -52, flatten: 0.44, opacity: 0.43, blur: 0.75, duration: 28800, reverse: false, tinted: "frost", seed: 4313 },
+  { kind: "spiral", shape: "barred", x: 10, y: 50, size: 268, tilt: 16, flatten: 0.34, opacity: 0.6, blur: 0, duration: 25200, reverse: true, tinted: "verdant", seed: 4207 },
+  { kind: "spiral", shape: "multi", x: 83, y: 23, size: 176, tilt: -28, flatten: 0.4, opacity: 0.5, blur: 0.4, duration: 21600, reverse: false, tinted: "nebula", seed: 4101 },
+  // edge-on, so it keeps its own flatness rather than being squashed again
+  { kind: "spiral", shape: "edge", x: 86, y: 73, size: 128, tilt: -52, flatten: 0.92, opacity: 0.43, blur: 0.75, duration: 28800, reverse: false, tinted: "frost", seed: 4313 },
 ];
 
 const { MEDIUM, SMALL, TINY } = (() => {
@@ -209,25 +220,57 @@ const { MEDIUM, SMALL, TINY } = (() => {
 
   /**
    * Layer 4 — the frame. Large enough to still be spirals, dim enough that
-   * they register as structure rather than as objects. One of them carries the
-   * second violet palette.
+   * they register as structure rather than as objects.
+   *
+   * The morphologies are dealt out from a fixed list rather than drawn at
+   * random, so every form the scene knows how to make is guaranteed to appear
+   * exactly once across the seven — a random draw would leave one or two
+   * missing and double up on another, which is how a field of six shapes ends
+   * up looking like a field of four.
+   *
+   * Two of them carry the new palettes, both at this layer's low opacity. The
+   * loud ones stay the three anchors; these are colour as variety, not as
+   * another anchor.
    */
+  const FORMS: GalaxyShape[] = [
+    "spiral",
+    "edge",
+    "ringed",
+    "irregular",
+    "barred",
+    "multi",
+    "spiral",
+  ];
+  const MEDIUM_TINT: (Tint | null)[] = [
+    "nebula",
+    "argent",
+    null,
+    null,
+    "ember",
+    null,
+    null,
+  ];
+
   const MEDIUM: Spiral[] = mediumAt.map((s, i) => {
     const size = Math.round(122 + rnd() * 56);
+    const shape = FORMS[i];
+    const f = rnd();
     return {
       kind: "spiral" as const,
+      shape,
       x: round(s.x * 100, 2),
       y: round(s.y * 100, 2),
       size,
       tilt: Math.round(-70 + rnd() * 140),
-      flatten: round(0.24 + rnd() * 0.28, 2),
+      // an edge-on disc is already flat; squashing it again leaves a hairline
+      flatten: shape === "edge" ? round(0.86 + f * 0.12, 2) : round(0.24 + f * 0.28, 2),
       opacity: round(0.31 + rnd() * 0.13, 2),
       // focus follows size within the band too, not just between bands
       blur: round(1.6 - ((size - 122) / 56) * 0.8, 2),
       // an order of magnitude slower than the heroes, which are already slow
       duration: Math.round(32400 + rnd() * 12600),
       reverse: rnd() > 0.5,
-      tinted: i === 0 ? ("nebula" as const) : null,
+      tinted: MEDIUM_TINT[i],
       seed: 5000 + i * 37,
     };
   });
@@ -305,11 +348,11 @@ const { MEDIUM, SMALL, TINY } = (() => {
 const PHONE: Body[] = [
   { kind: "soft", x: 24, y: 17, size: 70, tilt: -34, flatten: 0.5, opacity: 0.18, blur: 2.1, ink: SOFT_INK[1], core: SOFT_CORE[0], phone: true, seed: 8101 },
   // furthest of the three: smallest, softest, faintest
-  { kind: "spiral", x: 79, y: 25, size: 98, tilt: 22, flatten: 0.42, opacity: 0.34, blur: 0.8, duration: 25200, reverse: true, tinted: "nebula", seed: 8207 },
+  { kind: "spiral", shape: "spiral", x: 79, y: 25, size: 98, tilt: 22, flatten: 0.42, opacity: 0.34, blur: 0.8, duration: 25200, reverse: true, tinted: "nebula", seed: 8207 },
   // the nearest, and left of the system at the height of the sun
-  { kind: "spiral", x: 15, y: 47, size: 176, tilt: -18, flatten: 0.38, opacity: 0.47, blur: 0, duration: 28800, reverse: false, tinted: "verdant", seed: 8313 },
-  // between the two, low on the right
-  { kind: "spiral", x: 74, y: 69, size: 124, tilt: 41, flatten: 0.34, opacity: 0.4, blur: 0.45, duration: 21600, reverse: true, tinted: "frost", seed: 8419 },
+  { kind: "spiral", shape: "barred", x: 15, y: 47, size: 176, tilt: -18, flatten: 0.38, opacity: 0.47, blur: 0, duration: 28800, reverse: false, tinted: "verdant", seed: 8313 },
+  // between the two, low on the right, and seen edge-on
+  { kind: "spiral", shape: "edge", x: 74, y: 69, size: 124, tilt: 41, flatten: 0.9, opacity: 0.4, blur: 0.45, duration: 21600, reverse: true, tinted: "frost", seed: 8419 },
   // pulled up from 76%: the hint moved closer to the system, and on a short
   // screen this was the one object with room to be crossed by it
   { kind: "soft", x: 26, y: 73, size: 100, tilt: -52, flatten: 0.42, opacity: 0.25, blur: 1.5, ink: SOFT_INK[2], core: SOFT_CORE[3], phone: true, seed: 8525 },
@@ -433,6 +476,7 @@ function GalaxyAt({
         flatten={b.flatten}
         duration={b.duration}
         reverse={b.reverse}
+        shape={b.shape}
         ink={b.tinted ? INK[b.tinted] : undefined}
         core={b.tinted ? CORE[b.tinted] : undefined}
         style={{ opacity: b.opacity }}

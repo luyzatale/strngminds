@@ -55,6 +55,40 @@ export const VERDANT_INK = [
 export const VERDANT_CORE = ["#fdf6dd", "#e9dcae", "#5fae9a"];
 
 /**
+ * Two more, and both are built out of the palette the site already owns
+ * rather than sampled from a photograph — which is the whole reason they sit
+ * down quietly next to the existing four instead of announcing themselves.
+ *
+ * Ember is `--color-terra`, `--color-gold` and `--color-ivory`: the copper of
+ * a dusty ringed disc, and the three warmest values on the page.
+ */
+export const EMBER_INK = [
+  "#c98a54",
+  "#d8c29a",
+  "#a56b44",
+  "#f7e8c7",
+  "#e0b783",
+  "#8f5a38",
+];
+
+export const EMBER_CORE = ["#fff4dc", "#f0cf95", "#c2854a"];
+
+/**
+ * And argent is `--color-earth` and `--color-cosmos` lifted toward silver —
+ * the cold counterweight, for the discs seen edge-on.
+ */
+export const ARGENT_INK = [
+  "#cfd8e6",
+  "#9fb6d2",
+  "#4d8fc8",
+  "#325e91",
+  "#e6ecf4",
+  "#7d97b8",
+];
+
+export const ARGENT_CORE = ["#f4f8fd", "#c8d7e8", "#5f82ad"];
+
+/**
  * How many dots a disc of this size is worth.
  *
  * Every dot is its own `<circle>`, so density is paid for in DOM nodes — and
@@ -66,36 +100,138 @@ export const VERDANT_CORE = ["#fdf6dd", "#e9dcae", "#5fae9a"];
 const dotsFor = (size: number) =>
   Math.max(150, Math.min(420, Math.round(size * 1.7)));
 
-function galaxyDots(seed: number, count = 460, ink = GALAXY_INK): Dot[] {
+/**
+ * The morphologies.
+ *
+ * Every galaxy in the scene used to be the same object — one two-arm spiral,
+ * turned and squashed differently each time — and a field of one shape reads
+ * as a repeated asset however much its tilt varies. These are the forms a real
+ * field contains.
+ *
+ * Note what is *not* here: new colour. Each of these draws from the same four
+ * ink palettes the scene already uses, so the variety is entirely structural.
+ * Introducing the pinks and cyans of a real photographic survey would read as
+ * a different site.
+ */
+export type GalaxyShape =
+  | "spiral" // two arms, the original
+  | "barred" // a straight bar through the core, arms leaving its ends
+  | "multi" // four tighter arms, a grand design
+  | "ringed" // concentric dust rings rather than arms
+  | "edge" // seen edge-on: a needle with a bulge and a dust lane
+  | "irregular"; // no symmetry, a few knots and nothing at the centre
+
+/** How big and how strong the core glow is, per morphology. */
+const CORE_FOR: Record<GalaxyShape, { r: number; o: number }> = {
+  spiral: { r: 34, o: 1 },
+  barred: { r: 30, o: 0.95 },
+  multi: { r: 32, o: 0.9 },
+  ringed: { r: 26, o: 1 },
+  // an edge-on disc has a bulge, not a halo, and it is a flat one
+  edge: { r: 15, o: 0.85 },
+  // a dwarf has no bulge worth drawing at all
+  irregular: { r: 14, o: 0.42 },
+};
+
+function galaxyDots(
+  seed: number,
+  count = 460,
+  ink = GALAXY_INK,
+  shape: GalaxyShape = "spiral",
+): Dot[] {
   const rnd = seeded(seed);
   const dots: Dot[] = [];
-  const arms = 2;
 
-  for (let i = 0; i < count; i++) {
-    const arm = i % arms;
-    const t = (i / count) * 5.2 + 0.35;
-    const theta = t * 2.1 + (arm * Math.PI * 2) / arms;
-    const radius = 2.2 * Math.exp(0.34 * (t * 2.1));
-    const spread = 1.4 + radius * 0.16;
-    const jx = (rnd() - 0.5) * spread * 2;
-    const jy = (rnd() - 0.5) * spread * 2;
-
+  const push = (x: number, y: number, rad: number, dim = 1) => {
     dots.push({
-      x: round(50 + Math.cos(theta) * radius + jx, 2),
-      y: round(50 + Math.sin(theta) * radius + jy, 2),
+      x: round(x, 2),
+      y: round(y, 2),
       r: round(0.22 + rnd() * 0.55, 2),
-      o: round(0.12 + rnd() * 0.5 * (1 - radius / 46), 2),
+      o: round((0.12 + rnd() * 0.5 * (1 - Math.min(rad, 45) / 46)) * dim, 2),
       c: ink[Math.floor(rnd() * ink.length)],
     });
+  };
+
+  if (shape === "edge") {
+    /**
+     * A needle. Dots are spread along the major axis with a vertical scatter
+     * that swells into a bulge at the centre, and a dust lane is cut out of
+     * the midplane everywhere except the core — that dark line through the
+     * middle is the whole reason an edge-on galaxy reads as one rather than
+     * as a smear of light.
+     */
+    for (let i = 0; i < count; i++) {
+      const along = rnd() * 2 - 1;
+      const bulge = Math.exp(-(along * along) / 0.02);
+      const thickness = 1.05 + bulge * 6.2;
+      const g = (rnd() + rnd() + rnd() - 1.5) / 1.5;
+      const y = 50 + g * thickness;
+      if (Math.abs(y - 50) < 0.8 && Math.abs(along) > 0.13 && rnd() > 0.1) continue;
+      push(50 + along * 45, y, Math.abs(along) * 45);
+    }
+  } else if (shape === "irregular") {
+    // three or four knots of star formation, and no centre to speak of
+    const knots = Array.from({ length: 3 + Math.floor(rnd() * 2) }, () => ({
+      x: 50 + (rnd() - 0.5) * 36,
+      y: 50 + (rnd() - 0.5) * 30,
+      s: 5 + rnd() * 9,
+    }));
+    for (let i = 0; i < count; i++) {
+      const k = knots[Math.floor(rnd() * knots.length)];
+      const a = rnd() * Math.PI * 2;
+      const d = k.s * Math.pow(rnd(), 0.6);
+      const x = k.x + Math.cos(a) * d;
+      const y = k.y + Math.sin(a) * d * 0.82;
+      push(x, y, Math.hypot(x - 50, y - 50));
+    }
+  } else if (shape === "ringed") {
+    for (let i = 0; i < count; i++) {
+      const ring = i % 5;
+      const rad = 9.5 + ring * 7.4 + (rnd() - 0.5) * 3.2;
+      const a = rnd() * Math.PI * 2;
+      push(50 + Math.cos(a) * rad, 50 + Math.sin(a) * rad, rad);
+    }
+  } else {
+    const arms = shape === "multi" ? 4 : 2;
+    const wind = shape === "multi" ? 2.75 : 2.1;
+    const bar = shape === "barred" ? 11 : 0;
+
+    for (let i = 0; i < count; i++) {
+      const arm = i % arms;
+      const t = (i / count) * 5.2 + 0.35;
+      const rad = 2.2 * Math.exp(0.34 * (t * 2.1));
+      const base = (arm * Math.PI * 2) / arms;
+
+      /**
+       * Inside the bar the dots lie on a straight line through the core, and
+       * outside it the angle is driven by radius alone rather than by `t`.
+       * That second part matters: winding on `t` leaves a visible kink where
+       * the bar meets the arm, because `t` is not zero at the bar's end.
+       */
+      const theta = bar
+        ? rad < bar
+          ? base
+          : base + (rad - bar) * 0.115
+        : base + t * wind;
+
+      const spread = 1.4 + rad * (shape === "multi" ? 0.11 : 0.16);
+      push(
+        50 + Math.cos(theta) * rad + (rnd() - 0.5) * spread * 2,
+        50 + Math.sin(theta) * rad + (rnd() - 0.5) * spread * 2,
+        rad,
+      );
+    }
   }
 
-  // A faint halo of field stars around the disc, scaled with it.
+  // A faint halo of field stars around the disc, scaled with it. An edge-on
+  // disc keeps its halo flat, or the needle sits inside a round cloud.
+  const flat = shape === "edge";
   for (let i = 0; i < Math.round(count * 0.2); i++) {
     const a = rnd() * Math.PI * 2;
     const rad = 12 + rnd() * 34;
     dots.push({
       x: round(50 + Math.cos(a) * rad, 2),
-      y: round(50 + Math.sin(a) * rad, 2),
+      y: round(50 + Math.sin(a) * rad * (flat ? 0.22 : 1), 2),
       r: round(0.14 + rnd() * 0.24, 2),
       o: round(0.06 + rnd() * 0.16, 2),
       c: ink[Math.floor(rnd() * ink.length)],
@@ -116,6 +252,8 @@ export function Galaxy({
   ink = GALAXY_INK,
   /** the three inner stops of the core glow */
   core = ["#fff8e6", "#f3e6c8", "#ded9ef"],
+  /** which morphology to draw */
+  shape = "spiral",
   className,
   style,
 }: {
@@ -127,10 +265,12 @@ export function Galaxy({
   reverse?: boolean;
   ink?: string[];
   core?: string[];
+  shape?: GalaxyShape;
   className?: string;
   style?: CSSProperties;
 }) {
-  const dots = galaxyDots(seed, dotsFor(size), ink);
+  const dots = galaxyDots(seed, dotsFor(size), ink, shape);
+  const glow = CORE_FOR[shape];
   const id = `gx-${seed}`;
 
   return (
@@ -166,13 +306,22 @@ export function Galaxy({
           <svg viewBox="0 0 100 100" width="100%" height="100%" role="presentation">
             <defs>
               <radialGradient id={`${id}-core`}>
-                <stop offset="0%" stopColor={core[0]} stopOpacity="0.95" />
-                <stop offset="26%" stopColor={core[1]} stopOpacity="0.55" />
-                <stop offset="58%" stopColor={core[2]} stopOpacity="0.24" />
+                <stop offset="0%" stopColor={core[0]} stopOpacity={0.95 * glow.o} />
+                <stop offset="26%" stopColor={core[1]} stopOpacity={0.55 * glow.o} />
+                <stop offset="58%" stopColor={core[2]} stopOpacity={0.24 * glow.o} />
                 <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
               </radialGradient>
             </defs>
-            <circle cx="50" cy="50" r="34" fill={`url(#${id}-core)`} />
+            {/* The bulge, sized and dimmed per morphology: an edge-on disc has
+                a small flat one and a dwarf has effectively none, so a single
+                34-unit round glow would give both a centre they do not have. */}
+            <ellipse
+              cx="50"
+              cy="50"
+              rx={glow.r}
+              ry={shape === "edge" ? glow.r * 0.5 : glow.r}
+              fill={`url(#${id}-core)`}
+            />
             {dots.map((d, i) => (
               <circle key={i} cx={d.x} cy={d.y} r={d.r} fill={d.c} opacity={d.o} />
             ))}
