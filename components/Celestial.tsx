@@ -235,6 +235,7 @@ export type GalaxyShape =
   | "edge" // seen edge-on: a needle with a bulge and a dust lane
   | "lenticular" // a smooth lens, all bulge and no structure at all
   | "peculiar" // two tidal plumes and a core still lit by the collision
+  | "cluster" // resolved stars, not a galaxy: a swarm of points, no glow
   | "irregular"; // no symmetry, a few knots and nothing at the centre
 
 /** How big and how strong the core glow is, per morphology. */
@@ -251,6 +252,13 @@ const CORE_FOR: Record<GalaxyShape, { r: number; o: number }> = {
   // the collision is still burning, but tight — a wide glow here swallows the
   // plumes and leaves a bright blob with threads hanging off it
   peculiar: { r: 11, o: 0.9 },
+  /**
+   * A cluster is resolved stars. The whole character of one is that you see
+   * the individual points and nothing smooth behind them, so the glow is
+   * almost switched off — leave it on and it fills the gaps between the
+   * stars, which is precisely what stops it looking like a cluster.
+   */
+  cluster: { r: 11, o: 0.22 },
   // a dwarf has no bulge worth drawing at all
   irregular: { r: 14, o: 0.42 },
 };
@@ -344,6 +352,25 @@ function galaxyDots(
         50 + Math.sin(theta) * rad + (rnd() - 0.5) * spread,
         rad,
       );
+    }
+  } else if (shape === "cluster") {
+    /**
+     * A globular. Points crowd hard toward the middle — the exponent is what
+     * does that, and it has to be well above 1 or the result is a disc of
+     * even density rather than a swarm. They are also drawn smaller and
+     * brighter than a galaxy's dots, because these are meant to read as
+     * individual stars rather than as the dust between them.
+     */
+    for (let i = 0; i < count; i++) {
+      const a = rnd() * Math.PI * 2;
+      const rad = 27 * Math.pow(rnd(), 1.8);
+      dots.push({
+        x: round(50 + Math.cos(a) * rad, 2),
+        y: round(50 + Math.sin(a) * rad * 0.92, 2),
+        r: round(0.2 + rnd() * 0.3, 2),
+        o: round(0.34 + rnd() * 0.5 * (1 - rad / 34), 2),
+        c: ink[Math.floor(rnd() * ink.length)],
+      });
     }
   } else if (shape === "irregular") {
     // three or four knots of star formation, and no centre to speak of

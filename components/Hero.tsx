@@ -185,35 +185,35 @@ type Band = "near" | "mid" | "far";
 
 const COMPOSED: (Body & { band: Band })[] = [
   /* ── the hero: upper left, and the only large object in the field ── */
-  { kind: "spiral", shape: "barred", band: "near", x: 11, y: 20, size: 300, tilt: -22, flatten: 0.44, opacity: 0.58, blur: 0, duration: 25200, reverse: false, tinted: "ember", seed: 9101 },
+  { kind: "spiral", shape: "barred", band: "near", x: 11, y: 20, size: 300, tilt: -22, flatten: 0.44, opacity: 0.9, blur: 0, duration: 25200, reverse: false, tinted: "ember", seed: 9101 },
 
   /* ── the left: a teal spiral at mid height, a warm one below it, and two
         small things further back ── */
-  { kind: "spiral", shape: "spiral", band: "mid", x: 13, y: 49, size: 200, tilt: 28, flatten: 0.38, opacity: 0.4, blur: 0.45, duration: 30600, reverse: true, tinted: "verdant", seed: 9207 },
-  { kind: "spiral", shape: "barred", band: "mid", x: 6, y: 70, size: 210, tilt: 14, flatten: 0.4, opacity: 0.42, blur: 0.35, duration: 34200, reverse: false, tinted: "sepia", seed: 9313 },
-  { kind: "spiral", shape: "edge", band: "far", x: 28, y: 70, size: 110, tilt: -36, flatten: 0.92, opacity: 0.33, blur: 1, duration: 39600, reverse: true, tinted: "plume", seed: 9419 },
-  { kind: "spiral", shape: "lenticular", band: "far", x: 16, y: 88, size: 96, tilt: 20, flatten: 0.93, opacity: 0.3, blur: 1.3, duration: 43200, reverse: false, tinted: "jade", seed: 9521 },
+  { kind: "spiral", shape: "spiral", band: "mid", x: 13, y: 49, size: 200, tilt: 28, flatten: 0.38, opacity: 0.62, blur: 0.45, duration: 30600, reverse: true, tinted: "verdant", seed: 9207 },
+  { kind: "spiral", shape: "barred", band: "mid", x: 6, y: 70, size: 210, tilt: 14, flatten: 0.4, opacity: 0.65, blur: 0.35, duration: 34200, reverse: false, tinted: "sepia", seed: 9313 },
+  { kind: "spiral", shape: "edge", band: "far", x: 28, y: 70, size: 110, tilt: -36, flatten: 0.92, opacity: 0.51, blur: 1, duration: 39600, reverse: true, tinted: "plume", seed: 9419 },
+  { kind: "spiral", shape: "lenticular", band: "far", x: 16, y: 88, size: 96, tilt: 20, flatten: 0.93, opacity: 0.47, blur: 1.3, duration: 43200, reverse: false, tinted: "jade", seed: 9521 },
 
   /* ── across the top: two distant things, well apart ── */
-  { kind: "spiral", shape: "edge", band: "far", x: 32, y: 14, size: 90, tilt: 42, flatten: 0.9, opacity: 0.33, blur: 1, duration: 36000, reverse: false, tinted: "sepia", seed: 9627 },
-  { kind: "spiral", shape: "edge", band: "far", x: 60, y: 13, size: 96, tilt: -18, flatten: 0.91, opacity: 0.31, blur: 1.2, duration: 41400, reverse: true, tinted: "argent", seed: 9733 },
+  { kind: "spiral", shape: "edge", band: "far", x: 32, y: 14, size: 90, tilt: 42, flatten: 0.9, opacity: 0.51, blur: 1, duration: 36000, reverse: false, tinted: "sepia", seed: 9627 },
+  { kind: "spiral", shape: "edge", band: "far", x: 60, y: 13, size: 96, tilt: -18, flatten: 0.91, opacity: 0.48, blur: 1.2, duration: 41400, reverse: true, tinted: "argent", seed: 9733 },
 
   /* ── upper right: grouped, not overlapping ── */
-  { kind: "spiral", shape: "multi", band: "mid", x: 91, y: 21, size: 140, tilt: -14, flatten: 0.92, opacity: 0.36, blur: 0.5, duration: 32400, reverse: false, tinted: "nebula", seed: 9839 },
-  { kind: "spiral", shape: "irregular", band: "far", x: 72, y: 31, size: 84, tilt: 30, flatten: 0.86, opacity: 0.35, blur: 0.9, duration: 45000, reverse: true, tinted: "ember", seed: 9941 },
+  { kind: "spiral", shape: "multi", band: "mid", x: 91, y: 21, size: 140, tilt: -14, flatten: 0.92, opacity: 0.56, blur: 0.5, duration: 32400, reverse: false, tinted: "nebula", seed: 9839 },
+  { kind: "spiral", shape: "cluster", band: "far", x: 72, y: 31, size: 96, tilt: 30, flatten: 0.94, opacity: 0.78, blur: 0.35, duration: 45000, reverse: true, tinted: "argent", seed: 9941 },
 
   /* ── the right: a warm spiral, a thin edge-on, and the large one coming out
         of the corner ── */
-  { kind: "spiral", shape: "spiral", band: "mid", x: 90, y: 43, size: 175, tilt: 34, flatten: 0.42, opacity: 0.4, blur: 0.4, duration: 28800, reverse: true, tinted: "forge", seed: 10047 },
-  { kind: "spiral", shape: "edge", band: "mid", x: 83, y: 57, size: 130, tilt: -28, flatten: 0.94, opacity: 0.3, blur: 0.8, duration: 37800, reverse: false, tinted: "frost", seed: 10153 },
+  { kind: "spiral", shape: "spiral", band: "mid", x: 90, y: 43, size: 175, tilt: 34, flatten: 0.42, opacity: 0.62, blur: 0.4, duration: 28800, reverse: true, tinted: "forge", seed: 10047 },
+  { kind: "spiral", shape: "edge", band: "mid", x: 83, y: 57, size: 130, tilt: -28, flatten: 0.94, opacity: 0.47, blur: 0.8, duration: 37800, reverse: false, tinted: "frost", seed: 10153 },
   /* pushed to 94% so it leaves the frame: this one is meant to be cut by the
      corner rather than to sit inside it, which is what makes it read as the
      nearest thing in the field */
-  { kind: "spiral", shape: "edge", band: "near", x: 94, y: 83, size: 240, tilt: 24, flatten: 0.9, opacity: 0.5, blur: 0.15, duration: 27000, reverse: true, tinted: "argent", seed: 10259 },
+  { kind: "spiral", shape: "edge", band: "near", x: 94, y: 83, size: 240, tilt: 24, flatten: 0.9, opacity: 0.78, blur: 0.15, duration: 27000, reverse: true, tinted: "argent", seed: 10259 },
 
   /* ── low centre: two clusters, there to carry the eye across the bottom ── */
-  { kind: "spiral", shape: "irregular", band: "far", x: 34, y: 87, size: 76, tilt: -40, flatten: 0.88, opacity: 0.31, blur: 1.1, duration: 46800, reverse: false, tinted: "argent", seed: 10361 },
-  { kind: "spiral", shape: "ringed", band: "far", x: 70, y: 77, size: 88, tilt: 16, flatten: 0.6, opacity: 0.33, blur: 1, duration: 43800, reverse: true, tinted: "ember", seed: 10467 },
+  { kind: "spiral", shape: "cluster", band: "far", x: 34, y: 87, size: 84, tilt: -40, flatten: 0.95, opacity: 0.71, blur: 0.35, duration: 46800, reverse: false, tinted: "argent", seed: 10361 },
+  { kind: "spiral", shape: "cluster", band: "far", x: 70, y: 77, size: 92, tilt: 16, flatten: 0.94, opacity: 0.78, blur: 0.3, duration: 43800, reverse: true, tinted: "ember", seed: 10467 },
 
   /* ── and the atmosphere: six that barely exist, and are meant not to ── */
   { kind: "soft", band: "far", x: 24, y: 32, size: 62, tilt: -30, flatten: 0.7, opacity: 0.1, blur: 2.4, ink: SOFT_INK[1], core: SOFT_CORE[0], phone: false, seed: 10573 },

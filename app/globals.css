@@ -444,8 +444,16 @@
      * cutting here as well applied the reduction twice and took the far
      * galaxies down to a tenth. The two multiply; only one of them should be
      * doing the reducing.
+     *
+     * Then 1.0, because 0.8 was still not the reference. Put the two frames
+     * side by side and the difference is not subtle: its galaxies are
+     * photographs, with arms and knots you can read; these were smudges. The
+     * brief's "reduce luminosity" was written against a field of thirty-eight
+     * objects crowding each other. This one has twenty with room around them,
+     * and a quiet composition can carry bright objects where a crowded one
+     * cannot — the restraint is in the spacing now, not in the dimming.
      */
-    --galaxy-alpha: 0.8;
+    --galaxy-alpha: 1;
 
     /**
      * The clouds are the fog. They are the single largest contributor to the
