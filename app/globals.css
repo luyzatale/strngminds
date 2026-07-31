@@ -431,8 +431,16 @@
      * restrain it, it drains it. 0.88 removes the intensity the brief was
      * objecting to while leaving the colour identity the picture shows.
      */
-    --galaxy-bright: 1.06;
-    --galaxy-sat: 0.88;
+    /**
+     * Saturation ends at 1. The reduction was written before the approved
+     * frame existed, and that frame settles it: its teal galaxy shows plain
+     * cyan speckle, its hero has orange knots, its upper-right spiral is
+     * violet. Every step down from 1 trades exactly that away — at 0.88 the
+     * teal renders grey-green — and the approved image is now the
+     * specification, so the reduction goes.
+     */
+    --galaxy-bright: 1.1;
+    --galaxy-sat: 1;
     --galaxy-contrast: 1.14;
     --galaxy-sepia: 0;
     --galaxy-blur-extra: 0px;

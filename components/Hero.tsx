@@ -184,36 +184,51 @@ type Body = Spiral | Soft;
 type Band = "near" | "mid" | "far";
 
 const COMPOSED: (Body & { band: Band })[] = [
-  /* ── the hero: upper left, and the only large object in the field ── */
-  { kind: "spiral", shape: "barred", band: "near", x: 11, y: 20, size: 300, tilt: -22, flatten: 0.44, opacity: 0.9, blur: 0, duration: 25200, reverse: false, tinted: "ember", seed: 9101 },
+  /**
+   * Every row below is measured off the approved frame rather than judged.
+   * That frame is 1672px wide, so a position is its pixel centre over 1672
+   * and 941, and a size is its pixel width scaled by 1440/1672 — which is
+   * what makes each object land on the same fraction of the screen it
+   * occupies in the reference.
+   *
+   * The correction that mattered was scale, not placement. Compared side by
+   * side the positions were already within about a percent, but every galaxy
+   * was between 1.4 and 1.8 times too large: the hero was 300 against a
+   * measured 215, the right-hand spiral 175 against 116, the lower-right
+   * edge-on 240 against 134. Oversized objects eat the gaps between them,
+   * which is why the field read as fuller than the reference while holding
+   * exactly the same number of things.
+   */
 
-  /* ── the left: a teal spiral at mid height, a warm one below it, and two
-        small things further back ── */
-  { kind: "spiral", shape: "spiral", band: "mid", x: 13, y: 49, size: 200, tilt: 28, flatten: 0.38, opacity: 0.62, blur: 0.45, duration: 30600, reverse: true, tinted: "verdant", seed: 9207 },
-  { kind: "spiral", shape: "barred", band: "mid", x: 6, y: 70, size: 210, tilt: 14, flatten: 0.4, opacity: 0.65, blur: 0.35, duration: 34200, reverse: false, tinted: "sepia", seed: 9313 },
-  { kind: "spiral", shape: "edge", band: "far", x: 28, y: 70, size: 110, tilt: -36, flatten: 0.92, opacity: 0.51, blur: 1, duration: 39600, reverse: true, tinted: "plume", seed: 9419 },
-  { kind: "spiral", shape: "lenticular", band: "far", x: 16, y: 88, size: 96, tilt: 20, flatten: 0.93, opacity: 0.47, blur: 1.3, duration: 43200, reverse: false, tinted: "jade", seed: 9521 },
+  /* upper left — 195,185 @250 */
+  { kind: "spiral", shape: "barred", band: "near", x: 11.7, y: 19.7, size: 215, tilt: -25, flatten: 0.44, opacity: 0.9, blur: 0, duration: 25200, reverse: false, tinted: "ember", seed: 9101 },
 
-  /* ── across the top: two distant things, well apart ── */
-  { kind: "spiral", shape: "edge", band: "far", x: 32, y: 14, size: 90, tilt: 42, flatten: 0.9, opacity: 0.51, blur: 1, duration: 36000, reverse: false, tinted: "sepia", seed: 9627 },
-  { kind: "spiral", shape: "edge", band: "far", x: 60, y: 13, size: 96, tilt: -18, flatten: 0.91, opacity: 0.48, blur: 1.2, duration: 41400, reverse: true, tinted: "argent", seed: 9733 },
+  /* mid left, the teal one — 225,460 @145 */
+  { kind: "spiral", shape: "spiral", band: "mid", x: 13.5, y: 48.9, size: 125, tilt: -20, flatten: 0.4, opacity: 0.68, blur: 0.4, duration: 30600, reverse: true, tinted: "verdant", seed: 9207 },
+  /* lower left, warm — 105,620 @175 */
+  { kind: "spiral", shape: "barred", band: "mid", x: 6.3, y: 65.9, size: 151, tilt: 16, flatten: 0.42, opacity: 0.72, blur: 0.3, duration: 34200, reverse: false, tinted: "ember", seed: 9313 },
+  /* small edge-on below centre left — 468,660 @65 */
+  { kind: "spiral", shape: "edge", band: "far", x: 28, y: 70.1, size: 56, tilt: -34, flatten: 0.92, opacity: 0.55, blur: 0.7, duration: 39600, reverse: true, tinted: "sepia", seed: 9419 },
+  /* the faint round one in the corner — 265,830 @75 */
+  { kind: "spiral", shape: "lenticular", band: "far", x: 15.8, y: 88.2, size: 65, tilt: 22, flatten: 0.9, opacity: 0.42, blur: 1.2, duration: 43200, reverse: false, tinted: "argent", seed: 9521 },
 
-  /* ── upper right: grouped, not overlapping ── */
-  { kind: "spiral", shape: "multi", band: "mid", x: 91, y: 21, size: 140, tilt: -14, flatten: 0.92, opacity: 0.56, blur: 0.5, duration: 32400, reverse: false, tinted: "nebula", seed: 9839 },
-  { kind: "spiral", shape: "cluster", band: "far", x: 72, y: 31, size: 96, tilt: 30, flatten: 0.94, opacity: 0.78, blur: 0.35, duration: 45000, reverse: true, tinted: "argent", seed: 9941 },
+  /* across the top — 530,130 @60 and 1000,158 @75 */
+  { kind: "spiral", shape: "spiral", band: "far", x: 31.7, y: 13.8, size: 52, tilt: 40, flatten: 0.66, opacity: 0.5, blur: 0.8, duration: 36000, reverse: false, tinted: "nebula", seed: 9627 },
+  { kind: "spiral", shape: "edge", band: "far", x: 59.8, y: 16.8, size: 65, tilt: -20, flatten: 0.9, opacity: 0.5, blur: 0.85, duration: 41400, reverse: true, tinted: "sepia", seed: 9733 },
 
-  /* ── the right: a warm spiral, a thin edge-on, and the large one coming out
-        of the corner ── */
-  { kind: "spiral", shape: "spiral", band: "mid", x: 90, y: 43, size: 175, tilt: 34, flatten: 0.42, opacity: 0.62, blur: 0.4, duration: 28800, reverse: true, tinted: "forge", seed: 10047 },
-  { kind: "spiral", shape: "edge", band: "mid", x: 83, y: 57, size: 130, tilt: -28, flatten: 0.94, opacity: 0.47, blur: 0.8, duration: 37800, reverse: false, tinted: "frost", seed: 10153 },
-  /* pushed to 94% so it leaves the frame: this one is meant to be cut by the
-     corner rather than to sit inside it, which is what makes it read as the
-     nearest thing in the field */
-  { kind: "spiral", shape: "edge", band: "near", x: 94, y: 83, size: 240, tilt: 24, flatten: 0.9, opacity: 0.78, blur: 0.15, duration: 27000, reverse: true, tinted: "argent", seed: 10259 },
+  /* upper right — the violet spiral 1518,205 @110 and the cluster 1205,292 @65 */
+  { kind: "spiral", shape: "multi", band: "mid", x: 90.8, y: 21.8, size: 95, tilt: -12, flatten: 0.92, opacity: 0.62, blur: 0.4, duration: 32400, reverse: false, tinted: "nebula", seed: 9839 },
+  { kind: "spiral", shape: "cluster", band: "far", x: 72.1, y: 31, size: 56, tilt: 30, flatten: 0.94, opacity: 0.8, blur: 0.3, duration: 45000, reverse: true, tinted: "argent", seed: 9941 },
 
-  /* ── low centre: two clusters, there to carry the eye across the bottom ── */
-  { kind: "spiral", shape: "cluster", band: "far", x: 34, y: 87, size: 84, tilt: -40, flatten: 0.95, opacity: 0.71, blur: 0.35, duration: 46800, reverse: false, tinted: "argent", seed: 10361 },
-  { kind: "spiral", shape: "cluster", band: "far", x: 70, y: 77, size: 92, tilt: 16, flatten: 0.94, opacity: 0.78, blur: 0.3, duration: 43800, reverse: true, tinted: "ember", seed: 10467 },
+  /* right — warm spiral 1512,400 @135, thin edge-on 1400,522 @90 */
+  { kind: "spiral", shape: "multi", band: "mid", x: 90.4, y: 42.5, size: 116, tilt: 30, flatten: 0.9, opacity: 0.66, blur: 0.35, duration: 28800, reverse: true, tinted: "forge", seed: 10047 },
+  { kind: "spiral", shape: "edge", band: "mid", x: 83.7, y: 55.5, size: 78, tilt: -26, flatten: 0.94, opacity: 0.52, blur: 0.6, duration: 37800, reverse: false, tinted: "frost", seed: 10153 },
+  /* lower right, warm and fully in frame — 1432,762 @155 */
+  { kind: "spiral", shape: "edge", band: "near", x: 85.6, y: 81, size: 134, tilt: 26, flatten: 0.9, opacity: 0.82, blur: 0.15, duration: 27000, reverse: true, tinted: "forge", seed: 10259 },
+
+  /* the two lower clusters — 568,822 @55 and 1163,727 @70 */
+  { kind: "spiral", shape: "cluster", band: "far", x: 34, y: 87.4, size: 47, tilt: -40, flatten: 0.95, opacity: 0.74, blur: 0.3, duration: 46800, reverse: false, tinted: "argent", seed: 10361 },
+  { kind: "spiral", shape: "cluster", band: "far", x: 69.6, y: 77.3, size: 60, tilt: 16, flatten: 0.94, opacity: 0.8, blur: 0.25, duration: 43800, reverse: true, tinted: "ember", seed: 10467 },
 
   /* ── and the atmosphere: six that barely exist, and are meant not to ── */
   { kind: "soft", band: "far", x: 24, y: 32, size: 62, tilt: -30, flatten: 0.7, opacity: 0.1, blur: 2.4, ink: SOFT_INK[1], core: SOFT_CORE[0], phone: false, seed: 10573 },
