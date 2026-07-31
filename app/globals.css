@@ -363,6 +363,11 @@
     /** The one filled button sits on gold and cannot carry a near-black. */
     --on-gold: #33302a;
 
+    /* The painted plate is dark artwork; over parchment it would be a black
+       rectangle. Hidden here until there is a plate painted for daylight,
+       so this theme keeps the drawn field. */
+    --plate-a: 0;
+
     /** Dawn is not in a hurry. */
     --motion-scale: 1.45;
   }
@@ -520,6 +525,7 @@
     --control-shadow: none;
     --on-gold: #191919;
     --motion-scale: 1;
+    --plate-a: 1;
   }
 
   @media (min-width: 768px) {

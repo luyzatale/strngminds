@@ -1,3 +1,6 @@
+import { existsSync } from "node:fs";
+import path from "node:path";
+import Image from "next/image";
 import Scene from "@/components/Scene";
 import {
   ARGENT_CORE,
@@ -34,6 +37,24 @@ import {
 import { Parallax } from "@/components/Motion";
 
 /**
+ * The painted background plate.
+ *
+ * When a file is present at one of these names the whole procedural field
+ * below is switched off and the artwork is rendered instead — pixel for
+ * pixel, no galaxy synthesised. When no file is present the drawn field runs
+ * as before, so the page is never left with an empty sky while the artwork is
+ * missing. This is a server component, so the check happens at build time and
+ * costs nothing at runtime.
+ *
+ * Drop the file in `public/` under one of these names. WebP is listed first
+ * because a plate of this size is 1–3MB as PNG and a tenth of that as WebP,
+ * and it is the largest single asset on the page either way.
+ */
+const PLATE = ["cosmos-dark.webp", "cosmos-dark.jpg", "cosmos-dark.png"].find(
+  (f) => existsSync(path.join(process.cwd(), "public", f)),
+);
+
+/**
  * The hero is a single viewport, and at this stage it is only the system:
  * the copy that used to sit in the middle has been cleared out so the object
  * carries the page on its own.
@@ -63,6 +84,7 @@ export default function Hero() {
           already on the 4.5:1 floor against the ivory, so the quiet comes
           from size, spacing and position instead. */}
       <Scene
+        plate={Boolean(PLATE)}
         caption={
           <p className="pointer-events-none mt-7 w-full whitespace-nowrap text-center text-[0.54rem] uppercase tracking-[0.26em] text-ink-faint sm:mt-8 sm:text-[0.6rem] sm:tracking-[0.32em]">
             Drag to turn
@@ -280,6 +302,35 @@ const PHONE: Body[] = [
 ];
 
 function HeroDecor() {
+  /**
+   * The artwork, rendered as itself. Nothing is drawn over it and nothing is
+   * generated behind it — no starfield, no nebulae, no dust, no
+   * constellations, because the plate already contains all of them and a
+   * second copy would drift across the first.
+   *
+   * `--plate-a` hides it in the light theme, where a dark plate would fight
+   * the parchment. Light keeps the drawn field until there is a plate painted
+   * for it too.
+   */
+  if (PLATE) {
+    return (
+      <div
+        className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+        style={{ opacity: "var(--plate-a, 1)" }}
+        aria-hidden="true"
+      >
+        <Image
+          src={`/${PLATE}`}
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+      </div>
+    );
+  }
+
   return (
     <div
       className="pointer-events-none absolute inset-0 z-0 overflow-hidden"

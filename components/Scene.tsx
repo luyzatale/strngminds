@@ -22,7 +22,18 @@ import { FadeIn } from "@/components/Motion";
  * the section's bottom edge drifted away from it on a tall window and crowded
  * it on a short one. Below the system, it is below the system at every size.
  */
-export default function Scene({ caption }: { caption?: ReactNode }) {
+export default function Scene({
+  caption,
+  /**
+   * True when a painted background plate is in use. The plate already
+   * contains its own stars, so the procedural field has to go — leave it on
+   * and the page renders two skies, one drifting across the other.
+   */
+  plate = false,
+}: {
+  caption?: ReactNode;
+  plate?: boolean;
+}) {
   const tilt = useMotionValue(0);
   const spin = useMotionValue(0);
   const soft = { stiffness: 38, damping: 20, mass: 1.1 };
@@ -42,15 +53,17 @@ export default function Scene({ caption }: { caption?: ReactNode }) {
     <>
       {/* Overhangs the section by 15% on every side, so the parallax can run
           its full ±70px without dragging a bare edge into view. */}
-      <motion.div
-        className="pointer-events-none absolute -inset-[15%] z-0"
-        style={{ x, y }}
-      >
-        {/* Sparser. The galaxies are meant to emerge from darkness, and at 560
-            the field behind them was dense enough to read as noise rather than
-            as sky. */}
-        <Starfield seed={21} count={380} mobileCount={150} clear={0} drift />
-      </motion.div>
+      {!plate && (
+        <motion.div
+          className="pointer-events-none absolute -inset-[15%] z-0"
+          style={{ x, y }}
+        >
+          {/* Sparser. The galaxies are meant to emerge from darkness, and at
+              560 the field behind them was dense enough to read as noise
+              rather than as sky. */}
+          <Starfield seed={21} count={380} mobileCount={150} clear={0} drift />
+        </motion.div>
+      )}
 
       {/* Nudged up a touch on phones: a mobile browser's own bar overlays the
           bottom of the visible area, so dead-centre in the viewport reads low
