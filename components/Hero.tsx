@@ -16,6 +16,8 @@ import {
   PINWHEEL_INK,
   PLUME_CORE,
   PLUME_INK,
+  SAFFRON_CORE,
+  SAFFRON_INK,
   SEPIA_CORE,
   SEPIA_INK,
   FROST_CORE,
@@ -95,6 +97,7 @@ type Tint =
   | "plume"
   | "forge"
   | "pinwheel"
+  | "saffron"
   | "sepia"
   | "jade";
 
@@ -108,6 +111,7 @@ const INK: Record<Tint, string[]> = {
   plume: PLUME_INK,
   forge: FORGE_INK,
   pinwheel: PINWHEEL_INK,
+  saffron: SAFFRON_INK,
   sepia: SEPIA_INK,
   jade: JADE_INK,
 };
@@ -122,6 +126,7 @@ const CORE: Record<Tint, string[]> = {
   plume: PLUME_CORE,
   forge: FORGE_CORE,
   pinwheel: PINWHEEL_CORE,
+  saffron: SAFFRON_CORE,
   sepia: SEPIA_CORE,
   jade: JADE_CORE,
 };
@@ -146,6 +151,8 @@ type Spiral = Common & {
   blur: number;
   tinted: Tint | null;
   shape: GalaxyShape;
+  /** bulge size against this morphology's default; 1 unless stated */
+  bulge?: number;
 };
 
 /** Too small for arms to mean anything, so drawn as light. */
@@ -205,8 +212,26 @@ const COMPOSED: (Body & { band: Band })[] = [
 
   /* mid left, the teal one — 225,460 @145 */
   { kind: "spiral", shape: "spiral", band: "mid", x: 13.5, y: 48.9, size: 125, tilt: -20, flatten: 0.4, opacity: 0.68, blur: 0.4, duration: 30600, reverse: true, tinted: "verdant", seed: 9207 },
-  /* lower left, warm — 105,620 @175 */
-  { kind: "spiral", shape: "barred", band: "mid", x: 6.3, y: 65.9, size: 151, tilt: 16, flatten: 0.42, opacity: 0.72, blur: 0.3, duration: 34200, reverse: false, tinted: "ember", seed: 9313 },
+  /**
+   * lower left — 105,620. Repainted from a photograph of a many-armed spiral
+   * seen almost face-on, replacing the inclined copper bar that was here.
+   *
+   * Four things had to move together, and the size is the one that is easy to
+   * get wrong. Opening a disc from 0.42 flat to 0.85 nearly doubles its
+   * height, so holding 151 would have put roughly 177x160px of galaxy here —
+   * within a few percent of the hero at the top left, which is the only object
+   * this composition allows to be large. At 118 it covers about 139x125 and
+   * stays a secondary, while still being the biggest thing on the lower left.
+   *
+   * `multi` rather than the two-arm form because the reference is plainly a
+   * grand design: four arms opening about three-quarters of a turn each, not
+   * two wound round twice. That morphology comes with a deliberately small
+   * bulge — sized so a four-arm glow cannot swallow the arms it sits inside —
+   * and this galaxy's bulge is its loudest feature, so `bulge` widens this one
+   * back out to roughly what the two-arm form carries. Per-instance: the other
+   * three grand designs in the scene are untouched.
+   */
+  { kind: "spiral", shape: "multi", band: "mid", x: 6.3, y: 65.9, size: 130, tilt: -12, flatten: 0.72, opacity: 0.92, blur: 0.05, duration: 34200, reverse: false, tinted: "saffron", bulge: 1.15, seed: 9313 },
   /* small edge-on below centre left — 468,660 @65 */
   { kind: "spiral", shape: "edge", band: "far", x: 28, y: 70.1, size: 56, tilt: -34, flatten: 0.92, opacity: 0.55, blur: 0.7, duration: 39600, reverse: true, tinted: "sepia", seed: 9419 },
   /* the faint round one in the corner — 265,830 @75 */
@@ -387,6 +412,7 @@ function GalaxyAt({
         duration={b.duration}
         reverse={b.reverse}
         shape={b.shape}
+        coreScale={b.bulge}
         ink={b.tinted ? INK[b.tinted] : undefined}
         core={b.tinted ? CORE[b.tinted] : undefined}
         style={{ opacity: b.opacity }}

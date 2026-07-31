@@ -203,6 +203,32 @@ export const JADE_INK = [
 export const JADE_CORE = ["#f2f7f8", "#d6e2e4", "#7f9ca4"];
 
 /**
+ * Saffron, painted from a photograph of a many-armed spiral seen almost
+ * face-on: a bulge burning gold, a disc of muted tan and dust-brown, and a
+ * scattering of cool knots along the arms.
+ *
+ * It exists because the field already carries a grand design in violet and one
+ * in blue-white, and a third in ember's copper would have read as the same
+ * object placed again. The warmth here is gold rather than copper — nearer the
+ * page's own `--color-gold` than to terracotta — which is what keeps it beside
+ * ember rather than on top of it.
+ *
+ * Only one of the six inks is cool. That ratio is the point: the knots in the
+ * photograph are a sprinkle across a warm disc, and at a third of the dots they
+ * stop being knots and turn the whole galaxy grey-blue.
+ */
+export const SAFFRON_INK = [
+  "#d8b47e",
+  "#b8905a",
+  "#efdcb6",
+  "#9a7442",
+  "#c6a570",
+  "#a8c4e2",
+];
+
+export const SAFFRON_CORE = ["#fff7e6", "#f4dca4", "#d2a45f"];
+
+/**
  * How many dots a disc of this size is worth.
  *
  * Every dot is its own `<circle>`, so density is paid for in DOM nodes — and
@@ -473,6 +499,15 @@ export function Galaxy({
   core = ["#fff8e6", "#f3e6c8", "#ded9ef"],
   /** which morphology to draw */
   shape = "spiral",
+  /**
+   * Widens or narrows this one galaxy's bulge against its morphology's
+   * default. Bulge-to-disc ratio varies far more between real galaxies of the
+   * same form than `CORE_FOR` can express with one number per shape, and a
+   * grand design with a dominant centre is a different object from one with a
+   * modest one. Per-instance rather than per-shape, so raising it here cannot
+   * reach the other galaxies drawn from the same entry.
+   */
+  coreScale = 1,
   className,
   style,
 }: {
@@ -485,11 +520,13 @@ export function Galaxy({
   ink?: string[];
   core?: string[];
   shape?: GalaxyShape;
+  coreScale?: number;
   className?: string;
   style?: CSSProperties;
 }) {
   const dots = galaxyDots(seed, dotsFor(size), ink, shape);
   const glow = CORE_FOR[shape];
+  const bulge = glow.r * coreScale;
   const id = `gx-${seed}`;
 
   return (
@@ -537,13 +574,13 @@ export function Galaxy({
             <ellipse
               cx="50"
               cy="50"
-              rx={glow.r}
+              rx={bulge}
               ry={
                 shape === "edge"
-                  ? glow.r * 0.5
+                  ? bulge * 0.5
                   : shape === "lenticular"
-                    ? glow.r * 0.3
-                    : glow.r
+                    ? bulge * 0.3
+                    : bulge
               }
               fill={`url(#${id}-core)`}
             />
