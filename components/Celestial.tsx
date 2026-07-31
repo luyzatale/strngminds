@@ -149,13 +149,14 @@ export const FORGE_INK = [
 
 export const FORGE_CORE = ["#fff6e2", "#f5d79a", "#d9a86a"];
 
+/* the knots pulled off magenta and onto dusty lavender, for the same reason */
 export const PINWHEEL_INK = [
   "#d6e3f4",
   "#9fbde2",
-  "#e884a8",
-  "#f2b9cc",
+  "#c9a3bd",
+  "#ddc3d0",
   "#b9cfea",
-  "#e0708f",
+  "#bd93a8",
 ];
 
 export const PINWHEEL_CORE = ["#fff8ea", "#f0dcb0", "#c9d8ee"];
@@ -184,16 +185,22 @@ export const SEPIA_INK = [
 
 export const SEPIA_CORE = ["#fff8ec", "#e3d6c2", "#b5a58e"];
 
+/**
+ * Turned from sage toward a desaturated cyan. Green is the one hue the
+ * composition's palette excludes outright, and a global `saturate()` only
+ * makes a green greyer — it cannot move it off green. That had to happen at
+ * source.
+ */
 export const JADE_INK = [
-  "#a7c4b0",
-  "#8fb39c",
-  "#c6dbcc",
-  "#6f9781",
-  "#e4ded0",
-  "#b8cfc0",
+  "#a8c2c6",
+  "#8fadb4",
+  "#c4d8da",
+  "#6f8f96",
+  "#e0dcd2",
+  "#b6ccd0",
 ];
 
-export const JADE_CORE = ["#f6faf2", "#d8e6d8", "#7fa78c"];
+export const JADE_CORE = ["#f2f7f8", "#d6e2e4", "#7f9ca4"];
 
 /**
  * How many dots a disc of this size is worth.

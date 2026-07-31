@@ -46,7 +46,10 @@ export default function Scene({ caption }: { caption?: ReactNode }) {
         className="pointer-events-none absolute -inset-[15%] z-0"
         style={{ x, y }}
       >
-        <Starfield seed={21} count={560} mobileCount={200} clear={0} drift />
+        {/* Sparser. The galaxies are meant to emerge from darkness, and at 560
+            the field behind them was dense enough to read as noise rather than
+            as sky. */}
+        <Starfield seed={21} count={380} mobileCount={150} clear={0} drift />
       </motion.div>
 
       {/* Nudged up a touch on phones: a mobile browser's own bar overlays the

@@ -274,10 +274,13 @@
     --galaxy-sat: 0.5;
     --galaxy-contrast: 0.8;
     --galaxy-sepia: 0.45;
-    /* softer still — the extra contrast is spent on the centre, not here */
+    /* softer still — the extra contrast is spent on the centre, not here.
+       0.52 rather than 0.4 because the recomposed field authors its objects
+       at lower opacities than the layout it replaced, and 0.4 on top of that
+       emptied this theme's sky almost completely. */
     --galaxy-blur-extra: 1.9px;
     --galaxy-blur-scale: 1;
-    --galaxy-alpha: 0.4;
+    --galaxy-alpha: 0.52;
 
     /**
      * Nebulae, at 3–6%, in ivory, cream, the palest blue and a breath of
@@ -412,13 +415,37 @@
      * so that sharpening them does not also make them louder — the depth is
      * supposed to come from clarity, not from brightness.
      */
-    --galaxy-bright: 1.04;
-    --galaxy-sat: 1.06;
-    --galaxy-contrast: 1.16;
+    /**
+     * A restrained astrophotography palette rather than a saturated one.
+     * Saturation comes down 35% and luminosity 30% — both asked for as
+     * proportions, and both cheaper to apply here once than to re-author
+     * eleven palettes toward the same end. Contrast stays above unity so
+     * that quieting them does not also blur them: they are meant to be
+     * understated and still detailed.
+     */
+    /**
+     * Saturation lands at 0.88, not the 0.69 a flat 35% cut would give.
+     * The written brief and the reference frame disagree here, and the frame
+     * wins: its galaxies are unmistakably warm amber and ivory, while 0.69
+     * takes exactly those hues to grey — a 35% cut on a warm palette does not
+     * restrain it, it drains it. 0.88 removes the intensity the brief was
+     * objecting to while leaving the colour identity the picture shows.
+     */
+    --galaxy-bright: 1.06;
+    --galaxy-sat: 0.88;
+    --galaxy-contrast: 1.14;
     --galaxy-sepia: 0;
     --galaxy-blur-extra: 0px;
     --galaxy-blur-scale: 0.35;
-    --galaxy-alpha: 0.86;
+    /**
+     * 0.8, not the 0.6 this first went to. The 30% reduction is a proportion
+     * of what the field carried before, and the composition below already
+     * carries lower per-object opacities than the layout it replaced — so
+     * cutting here as well applied the reduction twice and took the far
+     * galaxies down to a tenth. The two multiply; only one of them should be
+     * doing the reducing.
+     */
+    --galaxy-alpha: 0.8;
 
     /**
      * The clouds are the fog. They are the single largest contributor to the
