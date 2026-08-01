@@ -297,7 +297,26 @@ const PHONE: Body[] = [
    * which is the one position on this screen that was ever asked for.
    */
   { kind: "spiral", shape: "multi", x: 79, y: 25, size: 112, tilt: 22, flatten: 0.9, opacity: 0.38, blur: 0.65, duration: 25200, reverse: true, tinted: "pinwheel", seed: 8207 },
-  { kind: "spiral", shape: "barred", x: 15, y: 47, size: 176, tilt: -18, flatten: 0.38, opacity: 0.47, blur: 0, duration: 28800, reverse: false, tinted: "verdant", seed: 8313 },
+  /**
+   * The teal bar, lifted out of the solar system.
+   *
+   * It used to sit at 15,47 — beside the system, which is where it was
+   * originally asked for. That reads on a desktop and does not read here: the
+   * system takes 76vw of a phone, so "beside" leaves about 45px of margin and
+   * the galaxy was crossing the outer orbits, with Neptune passing through it.
+   *
+   * Measured, the only band clear of the system on every phone is the strip
+   * between the bar and the system's top edge, and on a 375x667 screen that
+   * strip is 84px tall — the system's own square starts at y142. The lower
+   * band is taller but already carries the pair and the lens.
+   *
+   * So the tilt does the work rather than the size. At -18deg this galaxy's
+   * bounding box was 118px tall, half of that coming from the rotation of a
+   * disc only 67px thick; at -7deg it is 70px, which fits the strip with room
+   * either side while the object stays 145px wide and still the anchor of the
+   * upper left. The size comes down only enough to keep that width honest.
+   */
+  { kind: "spiral", shape: "barred", x: 18, y: 14.5, size: 140, tilt: -7, flatten: 0.38, opacity: 0.47, blur: 0, duration: 28800, reverse: false, tinted: "verdant", seed: 8313 },
   { kind: "spiral", shape: "peculiar", x: 74, y: 69, size: 132, tilt: 41, flatten: 0.94, opacity: 0.42, blur: 0.45, duration: 21600, reverse: true, tinted: "plume", seed: 8419 },
   // pulled up from 76%: the hint moved closer to the system, and on a short
   // screen this was the one object with room to be crossed by it
