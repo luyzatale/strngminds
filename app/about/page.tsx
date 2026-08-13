@@ -240,11 +240,12 @@ function Signature() {
           * after twenty-four scripts were rendered against the supplied
           * signature and none of them was it.
           *
-          * Three numbers, and all three are consequences of the face rather
-          * than preferences. The size is up by half again on the serif italic
-          * that was here: Stalemate is delicate and carries a small x-height
-          * for its em, so the same point size reads a good deal smaller. The
-          * rise is eight degrees rather than five — measured off the artwork
+          * The size still runs well above what the serif italic here needed —
+          * Stalemate is delicate and carries a small x-height for its em, so
+          * the same point size reads a good deal smaller in it — but a step
+          * down from where it started, which the fainter setting allows: a
+          * line this quiet does not have to be this large to hold the foot of
+          * the page. The rise is eight degrees — measured off the artwork
           * again, where the name climbs about 27px across its 220px width,
           * and the first pass under-read it. And it is set well under full
           * strength, which is most of why it reads as ink rather than as type.
@@ -263,7 +264,7 @@ function Signature() {
           * somewhere to go once they have swung down on the left.
           */}
         <p
-          className="font-script text-[clamp(2.6rem,8vw,4rem)] leading-[1.15] text-ink"
+          className="font-script text-[clamp(2.2rem,6.8vw,3.4rem)] leading-[1.15] text-ink"
           style={{ opacity: "var(--signature-alpha, 0.6)" }}
         >
           <span className="inline-block origin-center -rotate-[8deg] pb-1.5">
