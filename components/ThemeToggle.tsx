@@ -12,6 +12,23 @@ export const THEME_KEY = "sm-theme";
  */
 export const themeScript = `(function(){try{var s=localStorage.getItem("${THEME_KEY}");document.documentElement.dataset.theme=s||"dark";}catch(e){document.documentElement.dataset.theme="dark";}})();`;
 
+/**
+ * The toggle is hidden, not removed.
+ *
+ * Flip this to `true` and the button comes back exactly as it was — the state,
+ * the effect that arms the sunrise transition after first paint, and the
+ * handler that writes the choice to storage are all untouched below.
+ *
+ * Two consequences worth knowing while it is `false`. The light theme itself
+ * is not disabled: every token, and the whole dawn palette, is still there and
+ * still switches on `[data-theme="light"]`. And `sm-theme` is still read
+ * before paint, so anyone who chose light *before* this was hidden keeps
+ * getting light, with nothing on screen to change it back. Clearing that key
+ * for them would mean touching their stored preference, which this does not
+ * do — say the word if the intent is to force everyone to night.
+ */
+const SHOW_TOGGLE = false;
+
 export default function ThemeToggle() {
   const [theme, setTheme] = useState<Theme>("dark");
 
@@ -49,6 +66,8 @@ export default function ThemeToggle() {
   };
 
   const dark = theme === "dark";
+
+  if (!SHOW_TOGGLE) return null;
 
   return (
     <button

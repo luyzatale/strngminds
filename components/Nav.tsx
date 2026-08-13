@@ -224,9 +224,18 @@ export default function Nav({ links = [] }: { links?: Link[] }) {
                           active ? "bg-gold-deep" : "bg-mute/60",
                         )}
                       />
+                      {/* The register the rest of the site navigates in.
+                          These were Cormorant Light at 1.4rem — display type,
+                          and the lightest weight of it, which is the setting
+                          that face is least sure in at a size this large on a
+                          phone. Every other navigational thing here is small
+                          uppercase sans on wide tracking: the desktop tabs at
+                          0.62rem/0.2em, the eyebrows, the field labels. This
+                          is that, opened up enough to stay comfortable as a
+                          touch target. */}
                       <span
                         className={clsx(
-                          "font-serif text-[1.4rem] font-light leading-none",
+                          "font-sans text-[0.82rem] uppercase leading-none tracking-[0.24em]",
                           active ? "text-ink" : "text-ink-soft",
                         )}
                       >

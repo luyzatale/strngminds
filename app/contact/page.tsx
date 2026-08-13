@@ -5,8 +5,6 @@ import ContactForm from "@/components/ContactForm";
 import {
   Constellation,
   Galaxy,
-  NEBULA_CORE,
-  NEBULA_INK,
   PINWHEEL_CORE,
   PINWHEEL_INK,
   PLUME_CORE,
@@ -15,6 +13,8 @@ import {
 } from "@/components/Celestial";
 import { FadeIn, Parallax, PointerField } from "@/components/Motion";
 import { SpiralMark } from "@/components/Logo";
+import Social from "@/components/Social";
+import { FadedRule } from "@/components/ui";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -83,6 +83,19 @@ export default function ContactPage() {
           <FadeIn delay={0.28} className="mt-16">
             <ContactForm />
           </FadeIn>
+
+          {/* Below the form rather than beside it. Someone on this page is
+              already trying to reach her, so these are the alternative route
+              — offered after the enquiry, not as competition for it. */}
+          <FadeIn delay={0.4} className="mt-16">
+            <FadedRule />
+            <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2">
+              <p className="text-[0.62rem] uppercase tracking-[0.26em] text-ink-faint">
+                Or find her here
+              </p>
+              <Social className="-my-2" />
+            </div>
+          </FadeIn>
         </div>
       </main>
     </>
@@ -92,14 +105,16 @@ export default function ContactPage() {
 /**
  * The sky behind the form.
  *
- * The one rule everything here obeys: the form is a column of reading matter
- * capped at 52rem and centred, so every galaxy is placed with its *core*
- * outside that column — in the margins beside it, or above and below it.
- * Only the faint outer halo is ever allowed to reach the text. That is why
- * each one is gated to the breakpoint at which its margin actually exists:
- * below `lg` there is no room beside the column, so the mid-sized ones are
- * simply not there, and a phone gets two at the top and bottom edges instead,
- * where the page's own padding leaves the text clear.
+ * What is left is three galaxies, all on the right, and they obey the rule the
+ * whole field was built on: the form is a column of reading matter capped at
+ * 52rem and centred, so every core sits outside that column and only the faint
+ * outer halo is ever allowed to reach the text. Each is gated to the
+ * breakpoint at which its margin actually exists — below `lg` there is no room
+ * beside the column, so the smaller two are simply not there.
+ *
+ * Which leaves a phone with stars and nothing else. It used to carry four of
+ * its own, hung half off each edge because a phone has no margin to hide in;
+ * those are gone.
  */
 function Backdrop() {
   return (
@@ -175,70 +190,12 @@ function Backdrop() {
              everything beside this column is now on the right of it. ── */}
 
       {/* ── the phone ───────────────────────────────────────
-             A phone has no margins to hide in: the column is the screen. So
-             each of these hangs off the left or right edge with roughly half
-             of it outside the viewport. The core — the bright part, and the
-             part that would make text unreadable — never lands on the page
-             at all, and what crosses the text is only the outer arm. That is
-             what buys the opacity to actually see them: at 0.85 they read
-             clearly while measuring 0% of any text box under 4.5:1.
-
-             All four are anchored to `top`, so they land in the first screen
-             rather than below the fold. ── */}
-      <Parallax strength={4} className="absolute -left-24 top-[9vh] sm:hidden">
-        <Galaxy
-          seed={155}
-          size={200}
-          tilt={-30}
-          flatten={0.36}
-          duration={1100}
-          style={{ opacity: 0.86 }}
-        />
-      </Parallax>
-
-      <Parallax strength={4} invert className="absolute -right-28 top-[30vh] sm:hidden">
-        <Galaxy
-          seed={621}
-          size={215}
-          tilt={40}
-          flatten={0.94}
-          duration={1160}
-          shape="peculiar"
-          ink={PLUME_INK}
-          core={PLUME_CORE}
-          style={{ opacity: 0.85 }}
-        />
-      </Parallax>
-
-      <Parallax strength={3} className="absolute -left-28 top-[58vh] sm:hidden">
-        <Galaxy
-          seed={877}
-          size={210}
-          tilt={18}
-          flatten={0.92}
-          duration={1210}
-          reverse
-          shape="multi"
-          ink={PINWHEEL_INK}
-          core={PINWHEEL_CORE}
-          style={{ opacity: 0.84 }}
-        />
-      </Parallax>
-
-      <Parallax strength={3} invert className="absolute -right-24 top-[82vh] sm:hidden">
-        <Galaxy
-          seed={318}
-          size={195}
-          tilt={28}
-          flatten={0.3}
-          duration={1240}
-          reverse
-          ink={NEBULA_INK}
-          core={NEBULA_CORE}
-          style={{ opacity: 0.85 }}
-        />
-      </Parallax>
-
+             Empty. Four galaxies used to hang half off the left and right
+             edges here, sized and placed so their cores stayed outside the
+             viewport and only an outer arm ever crossed the text — a phone
+             has no margins to hide in, the column is the screen. They are
+             gone with the rest of the field; the stars carry this page on a
+             phone now. ── */}
       <Parallax strength={5} className="absolute bottom-[6vh] right-[4%] hidden xl:block">
         <Constellation shape="cassiopeia" width={160} delay={5} />
       </Parallax>

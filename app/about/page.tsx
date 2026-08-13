@@ -3,6 +3,7 @@ import Nav from "@/components/Nav";
 import { Constellation, Starfield } from "@/components/Celestial";
 import { FadeIn, Parallax, PointerField } from "@/components/Motion";
 import { SpiralMark, WordmarkArt } from "@/components/Logo";
+import Social from "@/components/Social";
 import { FadedRule } from "@/components/ui";
 
 export const metadata: Metadata = {
@@ -235,16 +236,19 @@ function Signature() {
 
       <div className="mt-14 flex flex-col items-center text-center">
         {/*
-          * The delivered signature sets this in a script face. The site loads
-          * Cormorant Garamond and Inter and nothing else, so this is the
-          * serif's italic — which is already how her name is set on the
-          * podcast page, so it reads as the house style rather than as a
-          * substitute. Matching the script exactly needs either the artwork
-          * on a ground that can be cut out, or a script webfont added to the
-          * two the site loads.
+          * Her name in the script, set on the rise the delivered signature
+          * has — measured off it at about five degrees, not guessed.
+          *
+          * The rotation is on an inner span so the <p> keeps an upright box:
+          * rotating the block itself would tilt the space it occupies and
+          * push the wordmark below it off centre. `inline-block` is required
+          * for the transform to apply at all, and the small `pb` gives the
+          * descenders somewhere to go once they have swung down on the left.
           */}
-        <p className="font-serif text-[clamp(1.6rem,5vw,2.3rem)] italic leading-[1.2] text-ink">
-          Isabel Vanessa
+        <p className="font-script text-[clamp(2.1rem,6.6vw,3.2rem)] leading-[1.15] text-ink">
+          <span className="inline-block origin-center -rotate-[5deg] pb-1">
+            Isabel Vanessa
+          </span>
         </p>
 
         {/* Sized so the line below sits on one line beneath it and the two
@@ -262,6 +266,12 @@ function Signature() {
         <p className="mt-6 max-w-[46ch] text-balance font-serif text-[clamp(0.85rem,2.6vw,1rem)] leading-[1.7] tracking-[0.02em] text-ink-soft">
           Embody your soul. Master your mind. Lead your life.
         </p>
+
+        {/* Directly under the sign-off, which is the one place on the site
+            where following her is the obvious next thing rather than a
+            distraction from the enquiry. `-mb-3` takes back some of the 44px
+            tap targets' own padding so the row does not read as detached. */}
+        <Social className="mt-5 -mb-3" />
       </div>
     </FadeIn>
   );
