@@ -3,11 +3,7 @@ import Link from "next/link";
 import Nav from "@/components/Nav";
 import ContactForm from "@/components/ContactForm";
 import {
-  ARGENT_CORE,
-  ARGENT_INK,
   Constellation,
-  FROST_CORE,
-  FROST_INK,
   Galaxy,
   NEBULA_CORE,
   NEBULA_INK,
@@ -16,8 +12,6 @@ import {
   PLUME_CORE,
   PLUME_INK,
   Starfield,
-  VERDANT_CORE,
-  VERDANT_INK,
 } from "@/components/Celestial";
 import { FadeIn, Parallax, PointerField } from "@/components/Motion";
 import { SpiralMark } from "@/components/Logo";
@@ -168,46 +162,15 @@ function Backdrop() {
         />
       </Parallax>
 
-      {/* ── the right margin ────────────────────────────── */}
-      <Parallax strength={6} invert className="absolute -right-20 top-[7vh] hidden sm:block">
-        <Galaxy
-          seed={88}
-          size={286}
-          tilt={24}
-          flatten={0.3}
-          duration={880}
-          reverse
-          ink={FROST_INK}
-          core={FROST_CORE}
-        />
-      </Parallax>
+      {/* ── the right margin is empty ────────────────────
+             All three that were here are gone — the frost spiral bleeding off
+             the top right, the verdant one low down, and the small lenticular
+             that only ever appeared past `xl`. Two of them is what a laptop
+             actually showed; the third is removed with them rather than left
+             to reappear on a wider screen alone.
 
-      <Parallax strength={5} className="absolute right-[4%] bottom-[12vh] hidden lg:block">
-        <Galaxy
-          seed={266}
-          size={212}
-          tilt={-40}
-          flatten={0.34}
-          duration={1020}
-          ink={VERDANT_INK}
-          core={VERDANT_CORE}
-          style={{ opacity: 0.78 }}
-        />
-      </Parallax>
-
-      <Parallax strength={4} invert className="absolute right-[8%] top-[36vh] hidden xl:block">
-        <Galaxy
-          seed={907}
-          size={132}
-          tilt={16}
-          flatten={0.92}
-          duration={1260}
-          shape="lenticular"
-          ink={ARGENT_INK}
-          core={ARGENT_CORE}
-          style={{ opacity: 0.6 }}
-        />
-      </Parallax>
+             The left margin below is untouched, so the field is deliberately
+             one-sided now. ── */}
 
       {/* ── the phone ───────────────────────────────────────
              A phone has no margins to hide in: the column is the screen. So

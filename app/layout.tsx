@@ -67,8 +67,19 @@ export const metadata: Metadata = {
     statusBarStyle: "black-translucent",
   },
   icons: {
+    /**
+     * The tab icon is the spiral alone — black, on nothing. No plate behind
+     * it, which is why these are PNG with an alpha channel rather than the
+     * SVG that used to be here: the mark is a crop of the artwork, and the
+     * artwork has no vector original to ship.
+     *
+     * Worth knowing: black on transparent is legible on a light tab strip and
+     * close to invisible on a dark one, since there is no ground to separate
+     * it from. That is the cost of dropping the plate.
+     */
     icon: [
-      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon.png", sizes: "96x96", type: "image/png" },
       { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
       { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
     ],

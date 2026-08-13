@@ -1,25 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Nav from "@/components/Nav";
-import {
-  ARGENT_CORE,
-  ARGENT_INK,
-  Constellation,
-  FROST_CORE,
-  FROST_INK,
-  FORGE_CORE,
-  FORGE_INK,
-  Galaxy,
-  JADE_CORE,
-  JADE_INK,
-  NEBULA_CORE,
-  NEBULA_INK,
-  SEPIA_CORE,
-  SEPIA_INK,
-  Starfield,
-  VERDANT_CORE,
-  VERDANT_INK,
-} from "@/components/Celestial";
+import { Constellation, Starfield } from "@/components/Celestial";
 import EpisodeList from "@/components/EpisodeList";
 import { FadeIn, Parallax, PointerField } from "@/components/Motion";
 import { FadedRule } from "@/components/ui";
@@ -152,172 +134,13 @@ function Backdrop() {
     >
       <Starfield seed={77} count={440} mobileCount={170} clear={0} drift />
 
-      {/* Same rule as the contact page — every core outside the reading
-          column — but this column is 62rem rather than 52rem, so the margins
-          beside it only really open up past `xl`. Below that the extra
-          galaxies stay off, and a phone gets two at the top and bottom edges
-          where the page's own padding leaves the text clear. */}
-      <Parallax strength={7} className="absolute -right-40 top-[12vh] hidden sm:block">
-        <Galaxy seed={53} size={320} tilt={-16} flatten={0.32} duration={760} />
-      </Parallax>
+      {/* The galaxy field that used to fill both margins is gone, as it is on
+          the front page. What it was arranged around still holds if it ever
+          comes back: this column is 62rem rather than the contact page's 52,
+          so the margins beside it only really open up past `xl`, and every
+          core sat outside the column with only the outer halo reaching it.
 
-      <Parallax
-        strength={5}
-        invert
-        className="absolute -bottom-36 -left-36 hidden lg:block"
-      >
-        <Galaxy seed={12} size={280} tilt={22} flatten={0.3} duration={900} reverse />
-      </Parallax>
-
-      {/**
-        * The inner ones now sit inside the margin rather than off the edge of
-        * it, and they are staggered down the page — 8, 34, 50 and 56vh — so
-        * the field reads as spread rather than as a pair of borders. This
-        * column is 62rem, which leaves only about 220px each side on a wide
-        * page, so these are sized to fit that rather than pushed out of it:
-        * the two that bleed are the two large corner ones, deliberately.
-        *
-        * Three carry the new morphologies, as on the contact page.
-        */}
-      <Parallax strength={6} invert className="absolute left-[1%] top-[8vh] hidden xl:block">
-        <Galaxy
-          seed={318}
-          size={190}
-          tilt={-34}
-          flatten={0.93}
-          duration={980}
-          shape="lenticular"
-          ink={SEPIA_INK}
-          core={SEPIA_CORE}
-          style={{ opacity: 0.8 }}
-        />
-      </Parallax>
-
-      <Parallax strength={5} className="absolute right-[2%] bottom-[18vh] hidden lg:block">
-        <Galaxy
-          seed={470}
-          size={214}
-          tilt={38}
-          flatten={0.34}
-          duration={1040}
-          ink={VERDANT_INK}
-          core={VERDANT_CORE}
-          style={{ opacity: 0.78 }}
-        />
-      </Parallax>
-
-      <Parallax strength={4} className="absolute left-[3%] top-[56vh] hidden xl:block">
-        <Galaxy
-          seed={655}
-          size={150}
-          tilt={20}
-          flatten={0.95}
-          duration={1220}
-          reverse
-          shape="peculiar"
-          ink={JADE_INK}
-          core={JADE_CORE}
-          style={{ opacity: 0.62 }}
-        />
-      </Parallax>
-
-      {/* This page scrolls, so anything hung off `bottom` lands well below
-          the fold. The upper band carries the first screen. */}
-      <Parallax strength={5} className="absolute right-[4%] top-[50vh] hidden lg:block">
-        <Galaxy
-          seed={733}
-          size={168}
-          tilt={-22}
-          flatten={0.3}
-          duration={1080}
-          ink={FROST_INK}
-          core={FROST_CORE}
-          style={{ opacity: 0.75 }}
-        />
-      </Parallax>
-
-      <Parallax strength={4} invert className="absolute right-[1%] top-[32vh] hidden xl:block">
-        <Galaxy
-          seed={882}
-          size={162}
-          tilt={-58}
-          flatten={0.92}
-          duration={1300}
-          shape="multi"
-          ink={FORGE_INK}
-          core={FORGE_CORE}
-          style={{ opacity: 0.6 }}
-        />
-      </Parallax>
-
-      {/* ── the phone ───────────────────────────────────────
-             These used to hang half outside the viewport, every centre pinned
-             to 0% or 100%. Measured, they sat at x = 102, -2, 100 and 0 — four
-             objects on two vertical lines, which is why they read as clustered
-             against the edges rather than spread through the frame however
-             far apart their heights were.
-
-             They now zigzag across it: 15%, 34%, 56%, 78% down and alternating
-             sides, with none of them touching an edge. Bringing the cores on
-             screen is what costs, so they are smaller and considerably
-             fainter than the 0.85 they carried while half of each was hidden —
-             the text measurement below is what set those numbers. ── */}
-      <Parallax strength={4} invert className="absolute left-[55%] top-[6vh] sm:hidden">
-        <Galaxy
-          seed={191}
-          size={152}
-          tilt={34}
-          flatten={0.9}
-          duration={1120}
-          shape="edge"
-          ink={FROST_INK}
-          core={FROST_CORE}
-          style={{ opacity: 0.55 }}
-        />
-      </Parallax>
-
-      <Parallax strength={3} className="absolute left-[7%] top-[26vh] sm:hidden">
-        <Galaxy
-          seed={806}
-          size={130}
-          tilt={-44}
-          flatten={0.55}
-          duration={1200}
-          shape="ringed"
-          ink={VERDANT_INK}
-          core={VERDANT_CORE}
-          style={{ opacity: 0.5 }}
-        />
-      </Parallax>
-
-      <Parallax strength={4} className="absolute left-[11%] top-[70vh] sm:hidden">
-        <Galaxy
-          seed={559}
-          size={134}
-          tilt={22}
-          flatten={0.86}
-          duration={1320}
-          reverse
-          shape="irregular"
-          style={{ opacity: 0.52 }}
-        />
-      </Parallax>
-
-      <Parallax strength={3} invert className="absolute left-[58%] top-[48vh] sm:hidden">
-        <Galaxy
-          seed={244}
-          size={142}
-          tilt={-26}
-          flatten={0.45}
-          duration={1260}
-          reverse
-          shape="barred"
-          ink={NEBULA_INK}
-          core={NEBULA_CORE}
-          style={{ opacity: 0.54 }}
-        />
-      </Parallax>
-
+          The constellation stays. It is drawn from stars. */}
       <Parallax strength={4} className="absolute bottom-[8vh] right-[3%] hidden xl:block">
         <Constellation shape="ursa" width={190} delay={7} />
       </Parallax>

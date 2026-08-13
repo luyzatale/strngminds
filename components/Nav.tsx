@@ -24,8 +24,8 @@ const CONTACT = "/contact";
 /** Centred tabs from md up; the same list behind one button on a phone. */
 const TABS: Link[] = [
   { href: "/", label: "Home" },
-  { href: "/about", label: "About" },
   { href: "/podcast", label: "Podcast" },
+  { href: "/about", label: "About" },
 ];
 
 const MENU: Link[] = [...TABS, { href: CONTACT, label: "Contact" }];
