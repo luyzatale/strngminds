@@ -246,10 +246,13 @@ function Signature() {
           * for its em, so the same point size reads a good deal smaller. The
           * rise is eight degrees rather than five — measured off the artwork
           * again, where the name climbs about 27px across its 220px width,
-          * and the first pass under-read it. And the 88% is the artwork's own
-          * translucency; the lettering there sits under full strength rather
-          * than solid, which is most of why it reads as ink rather than as
-          * type.
+          * and the first pass under-read it. And it is set well under full
+          * strength, which is most of why it reads as ink rather than as type.
+          *
+          * 70% is about as far as that can go. Against the parchment it puts
+          * the lettering at roughly 4.1:1 on the paper — under the 4.5 body
+          * copy needs, but far past the size at which the large-text floor of
+          * 3:1 applies, so it holds. Fainter starts failing that one too.
           *
           * The rotation is on an inner span so the <p> keeps an upright box:
           * rotating the block itself would tilt the space it occupies and push
@@ -257,7 +260,7 @@ function Signature() {
           * the transform to apply at all, and the `pb` gives the descenders
           * somewhere to go once they have swung down on the left.
           */}
-        <p className="font-script text-[clamp(2.6rem,8vw,4rem)] leading-[1.15] text-ink opacity-[0.88]">
+        <p className="font-script text-[clamp(2.6rem,8vw,4rem)] leading-[1.15] text-ink opacity-70">
           <span className="inline-block origin-center -rotate-[8deg] pb-1.5">
             Isabel Vanessa
           </span>
@@ -269,10 +272,15 @@ function Signature() {
             is roughly 325px of width — and the line, at 1rem of this serif,
             measures about the same. Below `sm` both give way and the line
             wraps, which is the only thing that fits. */}
+        {/* Pulled up under the name. This was tried once before at a negative
+            margin and rolled back for crowding — but that was the serif
+            italic, whose descenders drop straight into the caps below.
+            Stalemate's tail sweeps sideways off the final `a` instead, so the
+            two close up without colliding. Kept positive all the same. */}
         <WordmarkArt
           align="center"
           height="clamp(2rem,6.6vw,4rem)"
-          className="mt-7"
+          className="mt-1 sm:mt-0.5"
         />
 
         <p className="mt-6 max-w-[46ch] text-balance font-serif text-[clamp(0.85rem,2.6vw,1rem)] leading-[1.7] tracking-[0.02em] text-ink-soft">
