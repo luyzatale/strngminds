@@ -19,6 +19,21 @@ import { musicStore } from "@/components/music-store";
 const BUTTON =
   "flex h-9 w-9 sm:h-8 sm:w-8 items-center justify-center rounded-full border border-line-strong/70 bg-paper/60 text-ink-soft opacity-70 backdrop-blur-md transition-[background-color,border-color,opacity,color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-gold hover:bg-ivory/20 hover:text-ink hover:opacity-100 focus-visible:opacity-100 disabled:opacity-40";
 
+/**
+ * The controls are hidden, not removed.
+ *
+ * Flip this to `true` and the pair comes back exactly as they were. Everything
+ * below is untouched: the store subscription, the restart and play handlers,
+ * and the blur listener that ducks the background sound when an episode embed
+ * takes focus.
+ *
+ * Note what this does *not* do — the music itself is unaffected. The <audio>
+ * element lives in the root layout beside this component, not inside it, so it
+ * still loads and still obeys the store. This hides the way a visitor turns it
+ * off, which is worth knowing if it is ever set to autoplay.
+ */
+const SHOW_CONTROLS = false;
+
 export default function MusicControls() {
   const { ready, playing, failed } = useSyncExternalStore(
     musicStore.subscribe,
@@ -44,7 +59,7 @@ export default function MusicControls() {
     return () => window.removeEventListener("blur", onBlur);
   }, []);
 
-  if (failed) return null;
+  if (failed || !SHOW_CONTROLS) return null;
 
   return (
     <div className="fixed bottom-5 right-5 z-40 flex items-center gap-2 sm:bottom-6 sm:right-6">

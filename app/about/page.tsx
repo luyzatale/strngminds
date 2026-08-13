@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Nav from "@/components/Nav";
 import { Constellation, Starfield } from "@/components/Celestial";
 import { FadeIn, Parallax, PointerField } from "@/components/Motion";
+import { SpiralMark, WordmarkArt } from "@/components/Logo";
 import { FadedRule } from "@/components/ui";
 
 export const metadata: Metadata = {
@@ -60,19 +61,25 @@ export default function AboutPage() {
             sweep between lines. */}
         <div className="relative z-10 mx-auto w-full max-w-[46rem]">
           <FadeIn delay={0.1}>
-            <p className="text-[0.62rem] uppercase tracking-[0.26em] text-ink-faint">
-              About
-            </p>
+            {/* The same pairing the contact page opens with: the mark at 30px
+                in `ink-soft`, then the eyebrow. Identical values on purpose —
+                the two inner pages should start the same way. */}
+            <div className="flex items-center gap-3.5">
+              <SpiralMark size={30} className="text-ink-soft" />
+              <p className="text-[0.62rem] uppercase tracking-[0.26em] text-ink-faint">
+                About
+              </p>
+            </div>
 
             <h1 className="mt-6 max-w-[18ch] text-[clamp(2.2rem,5.4vw,3.6rem)] leading-[1.08] text-ink">
-              Performing, and embodying.
+              Embody your soul.
             </h1>
 
             <p className="mt-6 text-[0.95rem] leading-[1.9] text-ink-soft">
               <span className="font-serif text-[1.08rem] italic text-ink">
                 Isabel Vanessa
               </span>{" "}
-              · transformational coach
+              · Transformational Coach
             </p>
           </FadeIn>
 
@@ -194,9 +201,69 @@ export default function AboutPage() {
               </p>
             </FadeIn>
           </div>
+
+          <Signature />
         </div>
       </main>
     </>
+  );
+}
+
+/**
+ * The sign-off: the name, the wordmark, the line — centred, after everything.
+ *
+ * Built rather than placed. The supplied signature is artwork sitting on a
+ * photograph, and the photograph has to go: a page that repaints itself
+ * between a near-black and a parchment cannot carry a fixed image of a room
+ * behind its closing mark. Lifting the lettering off that photo is also not
+ * the black-ground trick the wordmark allowed — there the ground was flat and
+ * luminance alone separated it; here the letters cross pale wood and a dark
+ * band in the same stroke, so no threshold cuts them cleanly.
+ *
+ * So the three lines are assembled from what is already exact. The wordmark is
+ * the real artwork, masked and tinted like everywhere else, and the line
+ * beneath it is the same live text the front page carries. Both sit on the
+ * page's own ground and follow the theme.
+ *
+ * The name above them is the one part that is type rather than the delivered
+ * script — see the note on it below.
+ */
+function Signature() {
+  return (
+    <FadeIn delay={0.7} className="mt-24 sm:mt-28">
+      <FadedRule />
+
+      <div className="mt-14 flex flex-col items-center text-center">
+        {/*
+          * The delivered signature sets this in a script face. The site loads
+          * Cormorant Garamond and Inter and nothing else, so this is the
+          * serif's italic — which is already how her name is set on the
+          * podcast page, so it reads as the house style rather than as a
+          * substitute. Matching the script exactly needs either the artwork
+          * on a ground that can be cut out, or a script webfont added to the
+          * two the site loads.
+          */}
+        <p className="font-serif text-[clamp(1.6rem,5vw,2.3rem)] italic leading-[1.2] text-ink">
+          Isabel Vanessa
+        </p>
+
+        {/* Sized so the line below sits on one line beneath it and the two
+            come out about the same width, which is the proportion the
+            delivered artwork has. The wordmark is 5.08:1, so 4rem of height
+            is roughly 325px of width — and the line, at 1rem of this serif,
+            measures about the same. Below `sm` both give way and the line
+            wraps, which is the only thing that fits. */}
+        <WordmarkArt
+          align="center"
+          height="clamp(2rem,6.6vw,4rem)"
+          className="mt-7"
+        />
+
+        <p className="mt-6 max-w-[46ch] text-balance font-serif text-[clamp(0.85rem,2.6vw,1rem)] leading-[1.7] tracking-[0.02em] text-ink-soft">
+          Embody your soul. Master your mind. Lead your life.
+        </p>
+      </div>
+    </FadeIn>
   );
 }
 

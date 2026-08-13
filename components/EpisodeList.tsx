@@ -34,7 +34,7 @@ export default function EpisodeList({ episodes }: { episodes: Episode[] }) {
         <AnimatePresence mode="wait" initial={false}>
           <motion.ul
             key={current}
-            className="flex flex-col gap-4"
+            className="flex flex-col gap-2.5"
             initial={reduced ? false : { opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={reduced ? { opacity: 1 } : { opacity: 0, y: -10 }}
@@ -43,16 +43,21 @@ export default function EpisodeList({ episodes }: { episodes: Episode[] }) {
             {shown.map((ep) => (
               <li
                 key={ep.id}
-                className="overflow-hidden rounded-[1.25rem] border border-line bg-paper-50/40 p-1.5 shadow-lift backdrop-blur-[3px] transition-[border-color] duration-500 hover:border-line-strong"
+                className="overflow-hidden rounded-[0.95rem] border border-line bg-paper-50/40 p-1 shadow-lift backdrop-blur-[3px] transition-[border-color] duration-500 hover:border-line-strong"
               >
+                {/* Spotify's embed picks its layout from the height it is
+                    given. At 152 it draws the full card — big artwork, date,
+                    a save row and a scrubber — which is most of a phone
+                    screen for one episode. At 80 it draws the compact row:
+                    thumbnail, title, play. Same player, half the height. */}
                 <iframe
                   title={`${ep.n} — ${ep.title}`}
                   src={`https://open.spotify.com/embed/episode/${ep.id}?theme=0`}
                   width="100%"
-                  height="152"
+                  height="80"
                   loading="lazy"
                   allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                  style={{ border: 0, borderRadius: "0.95rem", display: "block" }}
+                  style={{ border: 0, borderRadius: "0.7rem", display: "block" }}
                 />
               </li>
             ))}

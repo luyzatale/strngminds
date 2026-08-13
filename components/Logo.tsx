@@ -169,14 +169,31 @@ export function SpiralMark({
   );
 }
 
-export function LogoLockup({ className }: { className?: string }) {
+/**
+ * The wordmark on its own, at whatever height the caller sets.
+ *
+ * `height` is a CSS length rather than a number so a caller can hand it a
+ * clamp and let the mark scale with the viewport; the width follows from the
+ * artwork's proportions. `align` moves the mask within its box — the bar wants
+ * it flush left, a centred lockup wants it centred.
+ */
+export function WordmarkArt({
+  height,
+  align = "left",
+  className,
+}: {
+  /** omit to size it from `className` instead — an inline height would win */
+  height?: string;
+  align?: "left" | "center";
+  className?: string;
+}) {
+  const pos = align === "center" ? "center" : "left center";
   return (
     <span
-      /* The anchor around this already carries aria-label="Strng Minds — home",
-         and that wins over anything in here, so this is decoration. */
       aria-hidden="true"
-      className={clsx("block h-[1.35rem] sm:h-[1.6rem]", className)}
+      className={clsx("block", className)}
       style={{
+        ...(height ? { height } : null),
         aspectRatio: `${WORDMARK.w} / ${WORDMARK.h}`,
         backgroundColor: "var(--color-ink)",
         WebkitMaskImage: "url(/logo-wordmark.png)",
@@ -185,11 +202,17 @@ export function LogoLockup({ className }: { className?: string }) {
         maskRepeat: "no-repeat",
         WebkitMaskSize: "contain",
         maskSize: "contain",
-        WebkitMaskPosition: "left center",
-        maskPosition: "left center",
+        WebkitMaskPosition: pos,
+        maskPosition: pos,
       }}
     />
   );
+}
+
+export function LogoLockup({ className }: { className?: string }) {
+  /* The anchor around this already carries aria-label="Strng Minds — home",
+     and that wins over anything in here, so this is decoration. */
+  return <WordmarkArt className={clsx("h-[1.35rem] sm:h-[1.6rem]", className)} />;
 }
 
 /** Full circular emblem: two stacked lines of serif caps inside the orbit ring. */

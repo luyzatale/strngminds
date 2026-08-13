@@ -128,12 +128,17 @@ function Backdrop() {
         * front page does rather than six of one shape.
         */}
 
-      {/* ── the left margin ─────────────────────────────── */}
-      <Parallax strength={7} className="absolute -bottom-28 -left-24 hidden sm:block">
+      {/* ── the right margin ────────────────────────────
+             These three were the left margin. They keep every vertical they
+             had — -bottom-28, 9vh and 45vh — and the same insets, sizes,
+             tilts and breakpoints; only the side is mirrored, so the
+             arrangement reads at the same heights it did, on the other hand.
+             The left margin is empty now. ── */}
+      <Parallax strength={7} className="absolute -bottom-28 -right-24 hidden sm:block">
         <Galaxy seed={41} size={330} tilt={-18} flatten={0.32} duration={720} />
       </Parallax>
 
-      <Parallax strength={6} invert className="absolute left-[3%] top-[9vh] hidden lg:block">
+      <Parallax strength={6} invert className="absolute right-[3%] top-[9vh] hidden lg:block">
         <Galaxy
           seed={512}
           size={198}
@@ -147,7 +152,7 @@ function Backdrop() {
         />
       </Parallax>
 
-      <Parallax strength={4} className="absolute left-[7%] top-[45vh] hidden xl:block">
+      <Parallax strength={4} className="absolute right-[7%] top-[45vh] hidden xl:block">
         <Galaxy
           seed={733}
           size={146}
@@ -162,15 +167,12 @@ function Backdrop() {
         />
       </Parallax>
 
-      {/* ── the right margin is empty ────────────────────
-             All three that were here are gone — the frost spiral bleeding off
-             the top right, the verdant one low down, and the small lenticular
-             that only ever appeared past `xl`. Two of them is what a laptop
-             actually showed; the third is removed with them rather than left
-             to reappear on a wider screen alone.
-
-             The left margin below is untouched, so the field is deliberately
-             one-sided now. ── */}
+      {/* ── the left margin is empty ─────────────────────
+             Three galaxies used to live on the right — a frost spiral off the
+             top corner, a verdant one low down and a small lenticular past
+             `xl` — and they were removed. The three above then moved across
+             into the space they left, so the field is one-sided by intent:
+             everything beside this column is now on the right of it. ── */}
 
       {/* ── the phone ───────────────────────────────────────
              A phone has no margins to hide in: the column is the screen. So
