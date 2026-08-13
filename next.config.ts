@@ -24,7 +24,7 @@ const nextConfig: NextConfig = {
     return [
       { source: "/", headers: [fresh] },
       { source: "/contact", headers: [fresh] },
-      { source: "/meditation", headers: [fresh] },
+      { source: "/podcast", headers: [fresh] },
       { source: "/manifest.webmanifest", headers: [fresh] },
       {
         source: "/sw.js",
@@ -34,6 +34,14 @@ const nextConfig: NextConfig = {
         ],
       },
     ];
+  },
+  /**
+   * The podcast page lived at /meditation until it was renamed. Anything
+   * already shared, bookmarked or indexed under the old path still resolves —
+   * permanent, so crawlers move their record across rather than keep both.
+   */
+  async redirects() {
+    return [{ source: "/meditation", destination: "/podcast", permanent: true }];
   },
   experimental: {
     optimizePackageImports: ["framer-motion"],

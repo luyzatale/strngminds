@@ -20,11 +20,11 @@ import {
   VERDANT_CORE,
   VERDANT_INK,
 } from "@/components/Celestial";
+import EpisodeList from "@/components/EpisodeList";
 import { FadeIn, Parallax, PointerField } from "@/components/Motion";
 import { FadedRule } from "@/components/ui";
+import { getEpisodes, SHOW_URL } from "@/lib/spotify";
 
-const SHOW_ID = "1RiUyEr5E585brB4cuq2X9";
-const SHOW_URL = `https://open.spotify.com/show/${SHOW_ID}`;
 /** 640px cover from Spotify's CDN — the show art, host included. */
 const COVER =
   "https://image-cdn-ak.spotifycdn.com/image/ab6765630000ba8a4f41f6c32e5179ec8e15beaf";
@@ -39,29 +39,29 @@ const ABOUT =
   "purpose, helping you to connect with your soul, transform your habits, " +
   "master your mind and lead your life.";
 
-/**
- * Spotify's show embed only ever renders the newest episode, whatever size it
- * is given — so each episode gets its own compact player instead. The ids come
- * from the public show page; add a line here when a new episode lands.
- */
-const EPISODES = [
-  { id: "5Mgr3vhGIlLLqNT1RnKzem", n: "04", title: "Self-Sabotage: why we do it & how to stop it" },
-  { id: "5w8OF4hncsDqMFzaUWvJDa", n: "03", title: "Becoming your Higher Self" },
-  { id: "0phFg9T4kohROnXpifWita", n: "02", title: "Soul-led Leadership: leading from inner power, not performance" },
-  { id: "3IyLgdt0pEysei6csJL5m2", n: "01", title: "Ego vs Soul — who is leading your life?" },
-];
-
 export const metadata: Metadata = {
-  title: "Meditation",
+  title: "Podcast",
   description:
     "The Strng Minds podcast, hosted by Isabel Vanessa — every episode, in full.",
 };
 
 /**
+ * The episode list is fetched, not held here, so a newly published episode
+ * appears without a deploy. This is how often the page goes back and asks.
+ */
+export const revalidate = 900;
+
+/**
  * Every episode, each in its own Spotify player: a preview for listeners
  * without a Spotify session, the whole episode for those with one.
+ *
+ * Spotify's show embed only ever renders the newest episode, whatever size it
+ * is given — which is why each episode gets its own compact player rather than
+ * the page carrying one player for the show.
  */
-export default function MeditationPage() {
+export default async function PodcastPage() {
+  const episodes = await getEpisodes();
+
   return (
     <>
       <PointerField />
@@ -93,7 +93,7 @@ export default function MeditationPage() {
                   Podcast · every episode
                 </p>
                 <h1 className="mt-6 text-[clamp(2.2rem,5.4vw,3.6rem)] leading-[1.06] text-ink">
-                  Meditation
+                  Podcast
                 </h1>
                 <p className="mt-5 text-[0.95rem] leading-[1.9] text-ink-soft">
                   Hosted by{" "}
@@ -117,29 +117,12 @@ export default function MeditationPage() {
                 Episodes
               </h2>
               <span className="text-[0.62rem] uppercase tracking-[0.26em] text-ink-faint">
-                {EPISODES.length}
+                {episodes.length}
               </span>
             </div>
             <FadedRule className="mt-5" />
 
-            <ul className="mt-8 flex flex-col gap-4">
-              {EPISODES.map((ep) => (
-                <li
-                  key={ep.id}
-                  className="overflow-hidden rounded-[1.25rem] border border-line bg-paper-50/40 p-1.5 shadow-lift backdrop-blur-[3px] transition-[border-color] duration-500 hover:border-line-strong"
-                >
-                  <iframe
-                    title={`${ep.n} — ${ep.title}`}
-                    src={`https://open.spotify.com/embed/episode/${ep.id}?theme=0`}
-                    width="100%"
-                    height="152"
-                    loading="lazy"
-                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                    style={{ border: 0, borderRadius: "0.95rem", display: "block" }}
-                  />
-                </li>
-              ))}
-            </ul>
+            <EpisodeList episodes={episodes} />
 
             <p className="mt-8 text-[0.72rem] leading-[1.8] tracking-[0.02em] text-ink-faint">
               With a Spotify session you hear each episode in full; without one,
