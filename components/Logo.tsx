@@ -103,19 +103,41 @@ export function Wordmark({ className }: { className?: string }) {
   );
 }
 
-export function LogoLockup({
-  className,
-  animated = true,
-}: {
-  className?: string;
-  animated?: boolean;
-}) {
+/**
+ * The delivered wordmark, as artwork rather than as type.
+ *
+ * It arrived as white-on-black JPEG, which cannot sit on the parchment theme —
+ * it would be a black plate in the corner of an ivory page. So the luminance is
+ * carried as an alpha channel in public/logo-wordmark.png and the file is used
+ * as a *mask* rather than as an image: the colour underneath is `--color-ink`,
+ * so the mark takes whichever ink the active theme defines and needs no second
+ * asset and no `dark:` variant. The black ground is gone, not hidden.
+ *
+ * The PNG is the wordmark band of the original only — the tagline beneath it is
+ * set as live text under the system in Hero, where it can wrap and be read.
+ */
+const WORDMARK = { w: 665, h: 131 } as const;
+
+export function LogoLockup({ className }: { className?: string }) {
   return (
-    <span className={clsx("inline-flex items-center gap-2 sm:gap-2.5", className)}>
-      <LogoMark animated={animated} size={22} />
-      <Wordmark />
-      <span className="sr-only">Strng Minds — home</span>
-    </span>
+    <span
+      /* The anchor around this already carries aria-label="Strng Minds — home",
+         and that wins over anything in here, so this is decoration. */
+      aria-hidden="true"
+      className={clsx("block h-[1.35rem] sm:h-[1.6rem]", className)}
+      style={{
+        aspectRatio: `${WORDMARK.w} / ${WORDMARK.h}`,
+        backgroundColor: "var(--color-ink)",
+        WebkitMaskImage: "url(/logo-wordmark.png)",
+        maskImage: "url(/logo-wordmark.png)",
+        WebkitMaskRepeat: "no-repeat",
+        maskRepeat: "no-repeat",
+        WebkitMaskSize: "contain",
+        maskSize: "contain",
+        WebkitMaskPosition: "left center",
+        maskPosition: "left center",
+      }}
+    />
   );
 }
 
