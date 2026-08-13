@@ -267,12 +267,7 @@ function Signature() {
         <WordmarkArt
           align="center"
           height="clamp(2rem,6.6vw,4rem)"
-          /* Tucked up under the name, as in the delivered signature, where the
-             two read as one mark rather than as two stacked lines. It is
-             negative because the artwork carries its own air: the spiral runs
-             above the caps, so the PNG's top edge sits well clear of the
-             letters and a zero margin still leaves a visible gap. */
-          className="-mt-2 sm:-mt-3"
+          className="mt-7"
         />
 
         <p className="mt-6 max-w-[46ch] text-balance font-serif text-[clamp(0.85rem,2.6vw,1rem)] leading-[1.7] tracking-[0.02em] text-ink-soft">
