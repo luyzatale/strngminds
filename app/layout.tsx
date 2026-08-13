@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, Inter } from "next/font/google";
+import { Cormorant_Garamond, Inter, Stalemate } from "next/font/google";
 import MusicControls from "@/components/MusicControls";
 import SmoothScroll from "@/components/SmoothScroll";
 import { themeScript } from "@/components/ThemeToggle";
@@ -29,11 +29,25 @@ const inter = Inter({
 });
 
 /**
- * Two faces, and it stays two. A script (Sacramento) was loaded here for the
- * signature on /about and then taken back out — that line is set in the
- * serif's italic now, so the third font paid for a single line of text that
- * no longer uses it.
+ * The signature face, used in exactly one place: her name at the foot of
+ * /about.
+ *
+ * Chosen rather than guessed. Twenty-four scripts were rendered against the
+ * supplied signature; none of them is it — that is most likely a commercial
+ * signature face or a scan of a real hand — so the shortlist was the eight
+ * that share its description, thin and monoline and flowing, and Stalemate is
+ * the one picked off that sheet. The sheet and the eight are kept in
+ * creatives/signature-options/ so the choice can be revisited without redoing
+ * the search.
+ *
+ * Sacramento was here briefly for the same job and was taken out again.
  */
+const stalemate = Stalemate({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-stalemate",
+  display: "swap",
+});
 
 const site = "https://strngminds.com";
 
@@ -105,7 +119,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${cormorant.variable} ${inter.variable}`}
+      className={`${cormorant.variable} ${inter.variable} ${stalemate.variable}`}
       suppressHydrationWarning
     >
       <head>

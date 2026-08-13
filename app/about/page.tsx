@@ -236,24 +236,29 @@ function Signature() {
 
       <div className="mt-14 flex flex-col items-center text-center">
         {/*
-          * The serif's italic — the same setting as the pull quote higher up
-          * this page, so the sign-off is in the house voice rather than in a
-          * face brought in for one line. A script was tried and taken back
-          * out; the font it needed went with it.
+          * Stalemate, picked off the sheet in creatives/signature-options/
+          * after twenty-four scripts were rendered against the supplied
+          * signature and none of them was it.
           *
-          * Sized down from what the script wanted: a script face carries a
-          * small x-height for its em, so the point size that suited it reads
-          * oversized in a garalde.
+          * Three numbers, and all three are consequences of the face rather
+          * than preferences. The size is up by half again on the serif italic
+          * that was here: Stalemate is delicate and carries a small x-height
+          * for its em, so the same point size reads a good deal smaller. The
+          * rise is eight degrees rather than five — measured off the artwork
+          * again, where the name climbs about 27px across its 220px width,
+          * and the first pass under-read it. And the 88% is the artwork's own
+          * translucency; the lettering there sits under full strength rather
+          * than solid, which is most of why it reads as ink rather than as
+          * type.
           *
-          * The rise is kept — about five degrees, measured off the delivered
-          * signature. It is on an inner span so the <p> keeps an upright box:
+          * The rotation is on an inner span so the <p> keeps an upright box:
           * rotating the block itself would tilt the space it occupies and push
           * the wordmark below it off centre. `inline-block` is required for
-          * the transform to apply at all, and the small `pb` gives the
-          * descenders somewhere to go once they have swung down on the left.
+          * the transform to apply at all, and the `pb` gives the descenders
+          * somewhere to go once they have swung down on the left.
           */}
-        <p className="font-serif text-[clamp(1.9rem,5.8vw,2.8rem)] italic leading-[1.25] text-ink">
-          <span className="inline-block origin-center -rotate-[5deg] pb-1">
+        <p className="font-script text-[clamp(2.6rem,8vw,4rem)] leading-[1.15] text-ink opacity-[0.88]">
+          <span className="inline-block origin-center -rotate-[8deg] pb-1.5">
             Isabel Vanessa
           </span>
         </p>
