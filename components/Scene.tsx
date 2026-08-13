@@ -22,6 +22,21 @@ import { FadeIn } from "@/components/Motion";
  * the section's bottom edge drifted away from it on a tall window and crowded
  * it on a short one. Below the system, it is below the system at every size.
  */
+/**
+ * The solar system is hidden, not removed.
+ *
+ * Flip this to `true` and it comes back exactly as it was — SolarSystem, its
+ * drag springs and the tilt callback that parallaxes the sky behind it are all
+ * still here and still wired up. Nothing below this line was deleted for it.
+ *
+ * While it is `false` the star layer stays (it is a sibling, not a child) and
+ * the caption keeps its place, so the hero is the sky and the line on it. The
+ * one thing that stops is the drag parallax: `tilt` and `spin` are only ever
+ * written by the system's own callback, so with nothing to drag they hold at
+ * zero and the sky sits still.
+ */
+const SHOW_SYSTEM = false;
+
 export default function Scene({ caption }: { caption?: ReactNode }) {
   const tilt = useMotionValue(0);
   const spin = useMotionValue(0);
@@ -65,18 +80,20 @@ export default function Scene({ caption }: { caption?: ReactNode }) {
             space rather than fitted to the frame. A phone gives up less — the
             viewport is already tight there, and the same cut would leave the
             outer bodies too small to make out. */}
-        <div className="mx-auto w-[min(76vw,64svh)] sm:w-[min(72vw,64svh)]">
-          <SolarSystem
-            onTiltChange={(t, s) => {
-              // one write per frame is plenty for a background layer
-              const now = performance.now();
-              if (now - last.current < 16) return;
-              last.current = now;
-              tilt.set(t);
-              spin.set(s);
-            }}
-          />
-        </div>
+        {SHOW_SYSTEM && (
+          <div className="mx-auto w-[min(76vw,64svh)] sm:w-[min(72vw,64svh)]">
+            <SolarSystem
+              onTiltChange={(t, s) => {
+                // one write per frame is plenty for a background layer
+                const now = performance.now();
+                if (now - last.current < 16) return;
+                last.current = now;
+                tilt.set(t);
+                spin.set(s);
+              }}
+            />
+          </div>
+        )}
         {caption}
       </FadeIn>
     </>

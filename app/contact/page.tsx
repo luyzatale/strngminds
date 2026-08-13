@@ -20,7 +20,7 @@ import {
   VERDANT_INK,
 } from "@/components/Celestial";
 import { FadeIn, Parallax, PointerField } from "@/components/Motion";
-import { LogoMark } from "@/components/Logo";
+import { SpiralMark } from "@/components/Logo";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -49,7 +49,11 @@ export default function ContactPage() {
           <FadeIn delay={0.1}>
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-3.5">
-                <LogoMark size={22} />
+                {/* Taller than the ring it replaces: that mark was square at
+                    22px, and this one is 0.41 as wide as it is tall, so
+                    matching its height would have left a sliver beside the
+                    line. 30px puts the coil at about the ring's diameter. */}
+                <SpiralMark size={30} className="text-ink-soft" />
                 <p className="text-[0.62rem] uppercase tracking-[0.26em] text-ink-faint">
                   An hour, by arrangement
                 </p>

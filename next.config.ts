@@ -23,6 +23,7 @@ const nextConfig: NextConfig = {
     };
     return [
       { source: "/", headers: [fresh] },
+      { source: "/about", headers: [fresh] },
       { source: "/contact", headers: [fresh] },
       { source: "/podcast", headers: [fresh] },
       { source: "/manifest.webmanifest", headers: [fresh] },
