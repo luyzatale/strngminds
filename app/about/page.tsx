@@ -249,10 +249,12 @@ function Signature() {
           * and the first pass under-read it. And it is set well under full
           * strength, which is most of why it reads as ink rather than as type.
           *
-          * 70% is about as far as that can go. Against the parchment it puts
-          * the lettering at roughly 4.1:1 on the paper — under the 4.5 body
-          * copy needs, but far past the size at which the large-text floor of
-          * 3:1 applies, so it holds. Fainter starts failing that one too.
+          * The strength is a theme token rather than a number, because the two
+          * grounds do not have the same room to give. Ivory on near-black can
+          * go to 42% and still measure about 4.6:1; ink on parchment is at the
+          * large-text floor of 3:1 by 60% and fails below it. One shared value
+          * would have meant either a night theme held back by the day's limit
+          * or a day theme taken under it. See --signature-alpha in globals.css.
           *
           * The rotation is on an inner span so the <p> keeps an upright box:
           * rotating the block itself would tilt the space it occupies and push
@@ -260,7 +262,10 @@ function Signature() {
           * the transform to apply at all, and the `pb` gives the descenders
           * somewhere to go once they have swung down on the left.
           */}
-        <p className="font-script text-[clamp(2.6rem,8vw,4rem)] leading-[1.15] text-ink opacity-70">
+        <p
+          className="font-script text-[clamp(2.6rem,8vw,4rem)] leading-[1.15] text-ink"
+          style={{ opacity: "var(--signature-alpha, 0.6)" }}
+        >
           <span className="inline-block origin-center -rotate-[8deg] pb-1.5">
             Isabel Vanessa
           </span>

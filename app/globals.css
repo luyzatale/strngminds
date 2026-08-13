@@ -103,6 +103,9 @@
 @property --logo-weight { syntax: "<number>"; inherits: true; initial-value: 500; }
 @property --logo-ring-o { syntax: "<number>"; inherits: true; initial-value: 0.55; }
 @property --logo-stroke { syntax: "<length>"; inherits: true; initial-value: 0px; }
+/* How far under full strength her name sits at the foot of /about. Themed,
+   because the two grounds do not have the same room: see the values below. */
+@property --signature-alpha { syntax: "<number>"; inherits: true; initial-value: 0.6; }
 @property --logo-dot { syntax: "<color>"; inherits: true; initial-value: #a8813a; }
 @property --logo-dot-scale { syntax: "<number>"; inherits: true; initial-value: 1; }
 
@@ -346,6 +349,11 @@
        700 is the ceiling for this face; the night theme keeps 500. */
     --logo-weight: 700;
     --logo-ring-o: 0.85;
+    /* The floor on parchment, and it is a measured one. Ink at 60% over this
+       paper lands at about 3.25:1 — the name is far past the size where the
+       large-text threshold of 3:1 applies, so it passes, but only just. At
+       55% it is 2.9:1 and fails. Night has room to go fainter and does. */
+    --signature-alpha: 0.6;
     /* past 700 the face has nothing left, so the last of the weight is
        painted on as a hairline outline rather than selected */
     --logo-stroke: 0.32px;
@@ -512,6 +520,11 @@
     --logo-weight: 500;
     --logo-ring-o: 0.55;
     --logo-stroke: 0px;
+    /* Ivory on near-black has a great deal more contrast to spend than ink on
+       parchment: at 42% the name still measures about 4.6:1 here, where the
+       same value on paper would be well under half the minimum. This is the
+       theme the site opens in, so it is the one the request was aimed at. */
+    --signature-alpha: 0.42;
     --logo-dot: #e4d1ac;
     --logo-dot-scale: 1;
 
