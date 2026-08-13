@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, Inter, Sacramento } from "next/font/google";
+import { Cormorant_Garamond, Inter } from "next/font/google";
 import MusicControls from "@/components/MusicControls";
 import SmoothScroll from "@/components/SmoothScroll";
 import { themeScript } from "@/components/ThemeToggle";
@@ -29,23 +29,11 @@ const inter = Inter({
 });
 
 /**
- * The signature face, and the third the site loads — used in exactly one
- * place, her name at the foot of the About page.
- *
- * The delivered signature is a monoline script: uniform thin strokes, wide
- * open letterforms, no thick/thin contrast. Set against the alternatives —
- * Allura, Parisienne, Great Vibes and Petit Formal Script all carry
- * calligraphic contrast, Alex Brush and Dancing Script are heavier, Mrs Saint
- * Delafield is tighter and scratchier — Sacramento is the one that matches
- * that description. It ships a single 400 weight and about 23KB of latin,
- * which is what one line of text is worth paying.
+ * Two faces, and it stays two. A script (Sacramento) was loaded here for the
+ * signature on /about and then taken back out — that line is set in the
+ * serif's italic now, so the third font paid for a single line of text that
+ * no longer uses it.
  */
-const sacramento = Sacramento({
-  subsets: ["latin"],
-  weight: "400",
-  variable: "--font-sacramento",
-  display: "swap",
-});
 
 const site = "https://strngminds.com";
 
@@ -117,7 +105,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${cormorant.variable} ${inter.variable} ${sacramento.variable}`}
+      className={`${cormorant.variable} ${inter.variable}`}
       suppressHydrationWarning
     >
       <head>

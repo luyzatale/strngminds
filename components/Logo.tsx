@@ -212,7 +212,11 @@ export function WordmarkArt({
 export function LogoLockup({ className }: { className?: string }) {
   /* The anchor around this already carries aria-label="Strng Minds — home",
      and that wins over anything in here, so this is decoration. */
-  return <WordmarkArt className={clsx("h-[1.35rem] sm:h-[1.6rem]", className)} />;
+  /* Up from 1.35/1.6. The bar is 58px tall (62 from `sm`), and the artwork
+     carries the spiral above and below the caps, so the mark's own height is
+     not the type's: at 1.9rem the letters sit at roughly the size the old
+     text wordmark held, with the bar still leaving half its height as air. */
+  return <WordmarkArt className={clsx("h-[1.6rem] sm:h-[1.9rem]", className)} />;
 }
 
 /** Full circular emblem: two stacked lines of serif caps inside the orbit ring. */

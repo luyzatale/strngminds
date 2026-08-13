@@ -231,11 +231,14 @@ export default function Nav({ links = [] }: { links?: Link[] }) {
                           phone. Every other navigational thing here is small
                           uppercase sans on wide tracking: the desktop tabs at
                           0.62rem/0.2em, the eyebrows, the field labels. This
-                          is that, opened up enough to stay comfortable as a
-                          touch target. */}
+                          is that, a step up from the tabs and no more.
+
+                          The size does not carry the tap target — `py-5` on
+                          the row does, so this can come down to nearly label
+                          size without the row becoming hard to hit. */}
                       <span
                         className={clsx(
-                          "font-sans text-[0.82rem] uppercase leading-none tracking-[0.24em]",
+                          "font-sans text-[0.7rem] uppercase leading-none tracking-[0.24em]",
                           active ? "text-ink" : "text-ink-soft",
                         )}
                       >

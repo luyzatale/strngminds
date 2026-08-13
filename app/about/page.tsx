@@ -236,16 +236,23 @@ function Signature() {
 
       <div className="mt-14 flex flex-col items-center text-center">
         {/*
-          * Her name in the script, set on the rise the delivered signature
-          * has — measured off it at about five degrees, not guessed.
+          * The serif's italic — the same setting as the pull quote higher up
+          * this page, so the sign-off is in the house voice rather than in a
+          * face brought in for one line. A script was tried and taken back
+          * out; the font it needed went with it.
           *
-          * The rotation is on an inner span so the <p> keeps an upright box:
-          * rotating the block itself would tilt the space it occupies and
-          * push the wordmark below it off centre. `inline-block` is required
-          * for the transform to apply at all, and the small `pb` gives the
+          * Sized down from what the script wanted: a script face carries a
+          * small x-height for its em, so the point size that suited it reads
+          * oversized in a garalde.
+          *
+          * The rise is kept — about five degrees, measured off the delivered
+          * signature. It is on an inner span so the <p> keeps an upright box:
+          * rotating the block itself would tilt the space it occupies and push
+          * the wordmark below it off centre. `inline-block` is required for
+          * the transform to apply at all, and the small `pb` gives the
           * descenders somewhere to go once they have swung down on the left.
           */}
-        <p className="font-script text-[clamp(2.1rem,6.6vw,3.2rem)] leading-[1.15] text-ink">
+        <p className="font-serif text-[clamp(1.9rem,5.8vw,2.8rem)] italic leading-[1.25] text-ink">
           <span className="inline-block origin-center -rotate-[5deg] pb-1">
             Isabel Vanessa
           </span>
@@ -260,7 +267,12 @@ function Signature() {
         <WordmarkArt
           align="center"
           height="clamp(2rem,6.6vw,4rem)"
-          className="mt-7"
+          /* Tucked up under the name, as in the delivered signature, where the
+             two read as one mark rather than as two stacked lines. It is
+             negative because the artwork carries its own air: the spiral runs
+             above the caps, so the PNG's top edge sits well clear of the
+             letters and a zero margin still leaves a visible gap. */
+          className="-mt-2 sm:-mt-3"
         />
 
         <p className="mt-6 max-w-[46ch] text-balance font-serif text-[clamp(0.85rem,2.6vw,1rem)] leading-[1.7] tracking-[0.02em] text-ink-soft">
