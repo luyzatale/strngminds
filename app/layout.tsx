@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Inter, Stalemate } from "next/font/google";
+import FreshBuild from "@/components/FreshBuild";
 import MusicControls from "@/components/MusicControls";
 import SmoothScroll from "@/components/SmoothScroll";
 import { themeScript } from "@/components/ThemeToggle";
@@ -126,6 +127,7 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body className="bg-paper text-ink antialiased">
+        <FreshBuild />
         <SmoothScroll />
         <MusicControls />
         <a

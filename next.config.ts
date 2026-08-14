@@ -1,7 +1,17 @@
 import type { NextConfig } from "next";
+import { resolveBuildId } from "./lib/buildId";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  /**
+   * Inlined as a literal into the client bundle and the server one alike, so
+   * a running page can be asked whether it is still the build that is
+   * deployed. See lib/buildId.ts for why it has to be inlined rather than
+   * read at runtime.
+   */
+  env: {
+    NEXT_PUBLIC_BUILD_ID: resolveBuildId(),
+  },
   images: {
     formats: ["image/avif", "image/webp"],
     // the podcast artwork, served from Spotify's CDN so it tracks their cover
@@ -27,6 +37,14 @@ const nextConfig: NextConfig = {
       { source: "/contact", headers: [fresh] },
       { source: "/podcast", headers: [fresh] },
       { source: "/manifest.webmanifest", headers: [fresh] },
+      // The one answer that must never come from a cache at any layer: it is
+      // what decides whether the page holding it is out of date.
+      {
+        source: "/version",
+        headers: [
+          { key: "Cache-Control", value: "no-cache, no-store, must-revalidate" },
+        ],
+      },
       {
         source: "/sw.js",
         headers: [
