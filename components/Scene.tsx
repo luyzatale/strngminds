@@ -70,10 +70,13 @@ export default function Scene({ caption }: { caption?: ReactNode }) {
         <Starfield seed={21} count={380} mobileCount={150} clear={0} drift />
       </motion.div>
 
-      {/* Nudged up a touch on phones: a mobile browser's own bar overlays the
-          bottom of the visible area, so dead-centre in the viewport reads low
-          on the screen. */}
-      <FadeIn delay={0.2} y={18} className="relative z-10 -mt-[3svh] w-full sm:mt-0">
+      {/* No phone-specific nudge. There used to be a -3svh lift here, on the
+          reasoning that a mobile browser's own bar overlays the bottom of the
+          visible area and so dead-centre reads low — but the section is sized
+          in `svh`, the *small* viewport height, which is already the height
+          with those bars showing. The bar was being paid for twice, and the
+          line sat above centre on a phone as a result. */}
+      <FadeIn delay={0.2} y={18} className="relative z-10 w-full">
         {/* Neptune's centre is at 49.2% and it is ~1.7% wide, so the system
             paints out to ~50.9% — the box must leave room for that overhang.
 
