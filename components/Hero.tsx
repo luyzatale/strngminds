@@ -17,7 +17,7 @@ export default function Hero() {
   return (
     <section
       id="top"
-      className="relative flex min-h-[100svh] items-center justify-center overflow-hidden px-4 pb-24 pt-[var(--nav-h)] sm:px-10 sm:pb-16"
+      className="relative flex min-h-[100svh] items-center justify-center overflow-hidden px-4 py-[var(--nav-h)] sm:px-10"
     >
       <h1 className="sr-only">
         Strng Minds — a contemplative practice where philosophy, astronomy,
@@ -30,11 +30,15 @@ export default function Hero() {
           mounted directly rather than inside a wrapper.
 
           The line is handed to Scene rather than positioned here, so it sits
-          in the flow directly beneath the system. Anchored to the section's
-          bottom edge — which is what the old drag hint was — it drifts away
-          from the system on a tall window and crowds it on a short one,
-          because the system is centred and sized from the viewport while the
-          floor is not.
+          in the flow. With the system hidden it is the only thing in that
+          flow, and the section's centring — even vertical padding, so the
+          only asymmetry is the nav it has to clear — puts it in the middle of
+          the viewport. When the system comes back it takes the space above
+          the line again and both centre together, which is why the line is
+          not absolutely placed: anchored to the section's bottom edge — what
+          the old drag hint was — it drifts away from the system on a tall
+          window and crowds it on a short one, because the system is centred
+          and sized from the viewport while the floor is not.
 
           The hint that used to sit under this line is gone. The system is
           still draggable and its planets still answer to a pointer; it simply
@@ -45,7 +49,7 @@ export default function Hero() {
             {/* The headline the wordmark carries in the artwork, set as live
                 text so it wraps, scales and can be read aloud — the nav mark
                 is a mask and says nothing to a screen reader. */}
-            <p className="pointer-events-none mt-8 w-full text-balance px-2 text-center font-serif text-[clamp(0.98rem,3.6vw,1.32rem)] leading-[1.62] tracking-[0.015em] text-ink sm:mt-10 sm:px-0">
+            <p className="pointer-events-none w-full text-balance px-2 text-center font-serif text-[clamp(0.98rem,3.6vw,1.32rem)] leading-[1.62] tracking-[0.015em] text-ink sm:px-0">
               Embody your soul. Master your mind. Lead your life.
             </p>
           </>

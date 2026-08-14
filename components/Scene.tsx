@@ -29,12 +29,14 @@ import { FadeIn } from "@/components/Motion";
  * drag springs and the tilt callback that parallaxes the sky behind it are all
  * still here and still wired up. Nothing below this line was deleted for it.
  *
- * While it is `false` the star layer stays (it is a sibling, not a child) and
- * so does the system's own square box, empty — which is what keeps the caption
- * where it has always been, beneath the system rather than in the middle of
- * the viewport. The one thing that stops is the drag parallax: `tilt` and
- * `spin` are only ever written by the system's own callback, so with nothing
- * to drag they hold at zero and the sky sits still.
+ * While it is `false` the star layer stays (it is a sibling, not a child) but
+ * the system's square box goes with it, so the caption is the only thing in
+ * the flow and falls to the middle of the viewport, which is where the line is
+ * wanted while it stands alone. Flipping the switch back brings the box — and
+ * with it the gap the caption used to sit under — back in one move. The one
+ * other thing that stops is the drag parallax: `tilt` and `spin` are only ever
+ * written by the system's own callback, so with nothing to drag they hold at
+ * zero and the sky sits still.
  */
 const SHOW_SYSTEM = false;
 
@@ -81,14 +83,13 @@ export default function Scene({ caption }: { caption?: ReactNode }) {
             space rather than fitted to the frame. A phone gives up less — the
             viewport is already tight there, and the same cut would leave the
             outer bodies too small to make out. */}
-        {/* The box stays whether or not the system is in it.
-            SolarSystem is square, so an empty box of the same width holds
-            exactly the height the system held, and the caption below keeps
-            the position it has always had — measured from the system rather
-            than from the floor of the section. Dropping the box instead would
-            collapse the caption into the middle of the viewport. */}
-        <div className="mx-auto aspect-square w-[min(76vw,64svh)] sm:w-[min(72vw,64svh)]">
-          {SHOW_SYSTEM && (
+        {/* The box goes when the system does, so the caption is left alone in
+            the flow and centres in the viewport. It also carries the gap the
+            caption sits under, rather than the caption carrying it: that way
+            the spacing belongs to the thing being spaced away from, and comes
+            and goes with it. */}
+        {SHOW_SYSTEM && (
+          <div className="mx-auto mb-8 aspect-square w-[min(76vw,64svh)] sm:mb-10 sm:w-[min(72vw,64svh)]">
             <SolarSystem
               onTiltChange={(t, s) => {
                 // one write per frame is plenty for a background layer
@@ -99,8 +100,8 @@ export default function Scene({ caption }: { caption?: ReactNode }) {
                 spin.set(s);
               }}
             />
-          )}
-        </div>
+          </div>
+        )}
         {caption}
       </FadeIn>
     </>
